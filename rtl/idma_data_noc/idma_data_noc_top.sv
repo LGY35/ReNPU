@@ -4,17 +4,17 @@ module idma_data_noc_top #(
   parameter ADDR_FIFO_DEPTH   = 32    ,
   parameter ADDR_FIFO_CNT_WID = 5+1   ,
 
-  parameter AXI_DATA_WID      = 256   ,
+  parameter AXI_DATA_WID      = 256   , //这里的WID就是width，不是ID
   parameter AXI_ADDR_WID      = 32    ,
   parameter AXI_IDW           = 4     ,
   parameter AXI_LENW          = 4     ,
   parameter AXI_LOCKW         = 2     ,
-  parameter AXI_STRBW         = 32    
+  parameter AXI_STRBW         = 32       // 数据的字节选通，数据中每8bit对应这里的1bit，控制哪个字节有效
 )
 ( 
   input                               aclk             ,
   input                               aresetn          ,
-  // apb interface
+  // apb interface //这是完整的 APB4 总线协议
   input      [11:0]                   paddr            ,
   input      [0:0]                    psel             ,
   input                               penable          ,
@@ -29,7 +29,7 @@ module idma_data_noc_top #(
   output                              interrupt        ,
   // noc interface
   output                              data_out_valid   ,
-  output [AXI_DATA_WID-1:0]           data_out_flit    ,
+  output [AXI_DATA_WID-1:0]           data_out_flit    ,//数据flit 256bit
   output                              data_out_last    ,
   input                               data_out_ready   ,
   input                               data_in_valid    ,
@@ -45,6 +45,7 @@ module idma_data_noc_top #(
   input                               ctrl_in_last     ,
   output                              ctrl_in_ready    ,
   //axi interface
+  //读通道
   output                             	arvalid          ,
   output [AXI_IDW-1:0]               	arid             ,
   output [AXI_ADDR_WID-1:0]           araddr           ,
@@ -61,6 +62,7 @@ module idma_data_noc_top #(
   input  [AXI_DATA_WID-1:0]          	rdata            ,
   input  [1:0]                       	rresp            ,
   output                             	rready           ,
+  //写通道
   output                             	awvalid          ,
   output [AXI_IDW-1:0]               	awid             ,
   output [AXI_ADDR_WID-1:0]           awaddr           ,
@@ -120,24 +122,37 @@ wire     [31:0]   base_addr_2;
 wire     [31:0]   base_addr_3;
 wire     [31:0]   base_addr_4;
 wire     [31:0]   base_addr_5;
+wire     [31:0]   group_base_addr_0;
+wire     [31:0]   group_base_addr_1;
+wire     [31:0]   group_base_addr_2;
+wire     [31:0]   group_base_addr_3;
+wire     [31:0]   group_base_addr_4;
+wire     [31:0]   group_base_addr_5;
+wire     [31:0]   write_base_addr_0;
+wire     [31:0]   write_base_addr_1;
+wire     [31:0]   write_base_addr_2;
+wire     [31:0]   write_base_addr_3;
+wire     [31:0]   write_base_addr_4;
+wire     [31:0]   write_base_addr_5;
+
 
 idma_data_noc_regfile u_idma_data_noc_regfile(
-    .io_apb_PADDR                    ( paddr                        ),
-    .io_apb_PSEL                     ( psel                         ),
-    .io_apb_PENABLE                  ( penable                      ),
-    .io_apb_PREADY                   ( pready                       ),
-    .io_apb_PWRITE                   ( pwrite                       ),
-    .io_apb_PSTRB                    ( pstrb                        ),
-    .io_apb_PPROT                    ( pprot                        ),
-    .io_apb_PWDATA                   ( pwdata                       ),
-    .io_apb_PRDATA                   ( prdata                       ),
-    .io_apb_PSLVERR                  ( pslverr                      ),
+    .io_apb_PADDR                    ( paddr                        ), // APB 地址
+    .io_apb_PSEL                     ( psel                         ), // APB 选择信号
+    .io_apb_PENABLE                  ( penable                      ), // APB 使能信号
+    .io_apb_PREADY                   ( pready                       ), // APB 准备信号
+    .io_apb_PWRITE                   ( pwrite                       ), // APB 写使能信号
+    .io_apb_PSTRB                    ( pstrb                        ), // APB 字节选通
+    .io_apb_PPROT                    ( pprot                        ), // APB 保护类型
+    .io_apb_PWDATA                   ( pwdata                       ), // APB 写数据
+    .io_apb_PRDATA                   ( prdata                       ), // APB 读数据
+    .io_apb_PSLVERR                  ( pslverr                      ), // APB 错误信号
 
-    .io_rd_cfg_ready                 ( rd_cfg_ready                 ),
-    .io_rd_afifo_init                ( rd_afifo_init                ),
-    .io_rd_dfifo_init                ( rd_dfifo_init                ),
-    .io_rd_cfg_outstd                ( rd_cfg_outstd                ),
-    .io_rd_cfg_outstd_en             ( rd_cfg_outstd_en             ),
+    .io_rd_cfg_ready                 ( rd_cfg_ready                 ), 
+    .io_rd_afifo_init                ( rd_afifo_init                ), // 读地址FIFO初始化信号
+    .io_rd_dfifo_init                ( rd_dfifo_init                ), // 读数据FIFO初始化信号
+    .io_rd_cfg_outstd                ( rd_cfg_outstd                ), // 配置outstanding
+    .io_rd_cfg_outstd_en             ( rd_cfg_outstd_en             ), // outstanding 使能
     .io_rd_cfg_cross4k_en            ( rd_cfg_cross4k_en            ),
     .io_rd_cfg_arvld_hold_en         ( rd_cfg_arvld_hold_en         ),
     .io_rd_cfg_dfifo_thd             ( rd_cfg_dfifo_thd             ),
@@ -167,6 +182,18 @@ idma_data_noc_regfile u_idma_data_noc_regfile(
     .io_base_addr_3                  ( base_addr_3                  ),
     .io_base_addr_4                  ( base_addr_4                  ),
     .io_base_addr_5                  ( base_addr_5                  ),
+    .io_group_base_addr_0            ( group_base_addr_0            ),
+    .io_group_base_addr_1            ( group_base_addr_1            ),
+    .io_group_base_addr_2            ( group_base_addr_2            ),
+    .io_group_base_addr_3            ( group_base_addr_3            ),
+    .io_group_base_addr_4            ( group_base_addr_4            ),
+    .io_group_base_addr_5            ( group_base_addr_5            ),
+    .io_write_base_addr_0            ( write_base_addr_0            ),
+    .io_write_base_addr_1            ( write_base_addr_1            ),
+    .io_write_base_addr_2            ( write_base_addr_2            ),
+    .io_write_base_addr_3            ( write_base_addr_3            ),
+    .io_write_base_addr_4            ( write_base_addr_4            ),
+    .io_write_base_addr_5            ( write_base_addr_5            ),
 
     .io_intr                         ( interrupt                    ),
     .clk                             ( aclk                         ),
@@ -179,6 +206,8 @@ wire [DATA_FIFO_CNT_WID-1: 0]    wr_dfifo_word_cnt          ;
 wire [ADDR_FIFO_CNT_WID-1: 0]    wr_afifo_word_cnt          ;
 wire [AXI_IDW-1:0]               wid;
 
+
+// 数据传输内核模块，负责处理数据 FIFO 和 AXI 接口的通信
 idma_data_noc_kernel#(
     .DATA_FIFO_DEPTH        (DATA_FIFO_DEPTH  ),
     .DATA_FIFO_CNT_WID      (DATA_FIFO_CNT_WID),
@@ -268,6 +297,18 @@ idma_data_noc_kernel#(
     .base_addr_3                  ( base_addr_3               ),
     .base_addr_4                  ( base_addr_4               ),
     .base_addr_5                  ( base_addr_5               ),
+    .group_base_addr_0            ( group_base_addr_0            ),
+    .group_base_addr_1            ( group_base_addr_1            ),
+    .group_base_addr_2            ( group_base_addr_2            ),
+    .group_base_addr_3            ( group_base_addr_3            ),
+    .group_base_addr_4            ( group_base_addr_4            ),
+    .group_base_addr_5            ( group_base_addr_5            ),
+    .write_base_addr_0            ( write_base_addr_0            ),
+    .write_base_addr_1            ( write_base_addr_1            ),
+    .write_base_addr_2            ( write_base_addr_2            ),
+    .write_base_addr_3            ( write_base_addr_3            ),
+    .write_base_addr_4            ( write_base_addr_4            ),
+    .write_base_addr_5            ( write_base_addr_5            ),
 
     .data_out_valid               ( data_out_valid                ),
     .data_out_flit                ( data_out_flit                 ),

@@ -1,13 +1,12 @@
 
-
-// 双端口ibuffer，用于处理两组读写操作（分别通过端口 a 和 b）对共享存储器（ sram 实例）进行访问。
+// 双端口ibuffer，用于处理两组读写操作（分别通过端口 a 和 b）对共享sram进行访问。
 
 module ibuffer (
     input clk,
     input rst_n,
     // port a
-    input           cen_a,      // 使能信号，控制是否允许端口 a 访问内存。
-    input           last_a,     //
+    input           cen_a,  // 使能信号，控制是否允许端口 a 访问内存。
+    input           last_a,
     output          ready_a,
     input           wen_a,
     input [14:0]    addr_a,
@@ -55,7 +54,7 @@ wire [127:0] rdata_pipe_b [1:0];
 wire       rdata_valid_pipe_b [1:0];
 wire       rdata_ready_pipe_b [1:0];
 
-reg gnt_a_or_b; // 0 gnt a; 1 gnt b  对端口 a 和 b 的仲裁，确保在同一个时钟周期内不会同时对相同的内存块进行操作。
+reg gnt_a_or_b; // 0 gnt a; 1 gnt b  // 0 gnt a; 1 gnt b  对端口 a 和 b 的仲裁，确保在同一个时钟周期内不会同时对相同的内存块进行操作。
 wire gnt_a;
 wire gnt_b;
 wire [9:0] bank_addr_a = addr_a[9:0];
@@ -67,13 +66,14 @@ wire bank_cen_b = cen_b && ready_b;
 wire [127:0] rdata_a_stage1;
 wire [127:0] rdata_b_stage1;
 
+
 // ========================================
 // 采用流水方式进行读写
 // ========================================
 
 
 // ========================================
-// Stage 0 端口仲裁逻辑
+// Stage 0    端口仲裁逻辑
 // ========================================
 
 // arbit a/b request
@@ -81,21 +81,19 @@ always @(posedge clk or negedge rst_n) begin
     if (rst_n==1'b0) begin
         gnt_a_or_b <= 1'b0;
     end
-    else if(gnt_a_or_b==1'b0 && bank_cen_a) begin   // bank_cen_a 表示端口 a 有访问请求
-        gnt_a_or_b <= 1'b1;                         // 那么下一个周期给b
+    else if(gnt_a_or_b==1'b0 && bank_cen_a) begin    // bank_cen_a 表示端口 a 有访问请求
+        gnt_a_or_b <= 1'b1;                          // 那么下一个周期给b    
     end
     else if(gnt_a_or_b==1'b1 && bank_cen_b) begin
         gnt_a_or_b <= 1'b0;
     end
 end
 
-assign gnt_a = (~cen_b || (gnt_a_or_b==1'b0) || (gnt_a_or_b==1'b1 && bank_sel_a!=bank_sel_b)); // gnt_a: （1）当b没有使能，（2）或者 gnt_a_or_b=0，（3）或者 gnt_a_or_b=1但是端口a和端口b访问的bank不同。
+assign gnt_a = (~cen_b || (gnt_a_or_b==1'b0) || (gnt_a_or_b==1'b1 && bank_sel_a!=bank_sel_b));
 assign gnt_b = (~cen_a || (gnt_a_or_b==1'b1) || (gnt_a_or_b==1'b0 && bank_sel_a!=bank_sel_b));
 
-
-//ready_a 和 ready_b ： 端口 a 和 b 是否准备好进行读写操作。
 // assign ready_a = sel_ready_pipe_a[0]
-assign ready_a = (rready_a || wen_a) && gnt_a;  // 只有当端口 a 已经准备好进行下一次读操作（rready_a 为高）或执行写操作（wen_a 为高），且端口 a 获得优先权（gnt_a 为高）时，ready_a 才会为高。
+assign ready_a = (rready_a || wen_a) && gnt_a; // 只有当端口 a 已经准备好进行下一次读操作（rready_a 为高）或执行写操作（wen_a 为高），且端口 a 获得优先权（gnt_a 为高）时，ready_a 才会为高。
 // assign ready_a = ((rready_a && !sel_valid_pipe_a[1]) || wen_a) && gnt_a;
 
 // assign ready_b = sel_ready_pipe_b[0]
@@ -103,10 +101,10 @@ assign ready_b = (rready_b || wen_b) && gnt_b;
 // assign ready_b = ((rready_b && !sel_valid_pipe_b[1]) || wen_b) && gnt_b;
 
 // pipe stage 0 signals
-assign sel_valid_pipe_a[0] = cen_a && ~wen_a && ready_a; //端口 a 选择了一个有效的读操作，条件是端口 a 被使能（cen_a 为高）、不是写操作（~wen_a 为高），并且端口 a 已经准备好（ready_a 为高）
+assign sel_valid_pipe_a[0] = cen_a && ~wen_a && ready_a;    //端口 a 选择了一个有效的读操作，条件是端口 a 被使能（cen_a 为高）、不是写操作（~wen_a 为高），并且端口 a 已经准备好（ready_a 为高）
 assign sel_valid_pipe_b[0] = cen_b && ~wen_b && ready_b;
 assign sel_pipe_a[0] = bank_sel_a;  // 端口 a 和 b 访问的 bank 选择信号
-assign sel_pipe_b[0] = bank_sel_b;  
+assign sel_pipe_b[0] = bank_sel_b;
 
 assign last_valid_pipe_a[0] = sel_valid_pipe_a[0];  //两个信号 跟踪端口 a 在传输过程中是否是最后一个读周期的信息。last_a 是传入的信号，用来表明这次操作是否是最后一个周期。
 assign last_pipe_a[0] = last_a;
@@ -118,14 +116,14 @@ assign last_pipe_a[0] = last_a;
 
 //通过 generate 语句生成多个存储单元实例，每个存储单元与一个 bank 对应，并为每个 bank 分配不同的控制信号（使能、写使能、地址、数据等）。
 generate
-    for(i=0; i<24; i=i+1) begin: BANK   // BANK 是一个命名块，便于组织和引用生成的硬件。
+    for(i=0; i<24; i=i+1) begin: BANK  // BANK 是一个命名块，便于组织和引用生成的硬件。
 
         assign bank_cen[i] = ((bank_cen_a && (bank_sel_a==i)) 
-                            || (bank_cen_b && (bank_sel_b==i)));
+                           || (bank_cen_b && (bank_sel_b==i)));
         assign bank_wen[i] = (bank_cen_a & wen_a) 
-                            | (bank_cen_b & wen_b);
+                           | (bank_cen_b & wen_b);
         assign bank_addr[i]= ({10{bank_cen_a && (bank_sel_a==i)}} & bank_addr_a) 
-                            | ({10{bank_cen_b && (bank_sel_b==i)}} & bank_addr_b);
+                           | ({10{bank_cen_b && (bank_sel_b==i)}} & bank_addr_b);
         assign bank_wdata[i]= ({128{bank_cen_a}} & wdata_a) 
                             | ({128{bank_cen_b}} & wdata_b);
         assign bank_wstrb[i]= ({16{bank_cen_a}} & wstrb_a) 

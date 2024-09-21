@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.8.1    git head : 2a7592004363e5b40ec43e1f122ed8641cd8965b
 // Component : idma_data_noc_regfile
-// Git hash  : 09a80a4a428526d0394acd90fec253fbd728da3b
+// Git hash  : 5ed3a227fa124f7bf84f7232dae0a17f3dade535
 
 `timescale 1ns/1ps
 
@@ -48,11 +48,25 @@ module idma_data_noc_regfile (
   output     [31:0]   io_base_addr_3,
   output     [31:0]   io_base_addr_4,
   output     [31:0]   io_base_addr_5,
+  output     [31:0]   io_group_base_addr_0,
+  output     [31:0]   io_group_base_addr_1,
+  output     [31:0]   io_group_base_addr_2,
+  output     [31:0]   io_group_base_addr_3,
+  output     [31:0]   io_group_base_addr_4,
+  output     [31:0]   io_group_base_addr_5,
+  output     [31:0]   io_write_base_addr_0,
+  output     [31:0]   io_write_base_addr_1,
+  output     [31:0]   io_write_base_addr_2,
+  output     [31:0]   io_write_base_addr_3,
+  output     [31:0]   io_write_base_addr_4,
+  output     [31:0]   io_write_base_addr_5,
   output              io_intr,
   input               clk,
   input               resetn
 );
 
+  wire       [0:0]    tmp_wr_done_intr_mask;
+  wire       [0:0]    tmp_rd_done_intr_mask;
   wire       [0:0]    tmp_rd_cfg_en;
   wire       [0:0]    tmp_rd_cfg_outstd_en;
   wire       [0:0]    tmp_rd_cfg_cross4k_en;
@@ -64,8 +78,6 @@ module idma_data_noc_regfile (
   wire       [0:0]    tmp_wr_cfg_arvld_hold_en;
   wire       [0:0]    tmp_wr_cfg_arvld_hold_olen_en;
   wire       [0:0]    tmp_wr_cfg_strb_force;
-  wire       [0:0]    tmp_wr_done_intr_mask;
-  wire       [0:0]    tmp_rd_done_intr_mask;
   wire       [11:0]   tmp_1;
   reg                 busif_readError;
   reg        [31:0]   busif_readData;
@@ -116,6 +128,43 @@ module idma_data_noc_regfile (
   wire                write_hit_0x0048;
   wire                read_hit_0x004c;
   wire                write_hit_0x004c;
+  wire                read_hit_0x0050;
+  wire                write_hit_0x0050;
+  wire                read_hit_0x0054;
+  wire                write_hit_0x0054;
+  wire                read_hit_0x0058;
+  wire                write_hit_0x0058;
+  reg                 wr_done_intr_raw;
+  reg                 wr_done_intr_mask;
+  wire                wr_done_intr_status;
+  reg                 rd_done_intr_raw;
+  reg                 rd_done_intr_mask;
+  wire                rd_done_intr_status;
+  wire                INTR_intr;
+  wire                read_hit_0x005c;
+  wire                write_hit_0x005c;
+  wire                read_hit_0x0060;
+  wire                write_hit_0x0060;
+  wire                read_hit_0x0064;
+  wire                write_hit_0x0064;
+  wire                read_hit_0x0068;
+  wire                write_hit_0x0068;
+  wire                read_hit_0x006c;
+  wire                write_hit_0x006c;
+  wire                read_hit_0x0070;
+  wire                write_hit_0x0070;
+  wire                read_hit_0x0074;
+  wire                write_hit_0x0074;
+  wire                read_hit_0x0078;
+  wire                write_hit_0x0078;
+  wire                read_hit_0x007c;
+  wire                write_hit_0x007c;
+  wire                read_hit_0x0080;
+  wire                write_hit_0x0080;
+  wire                read_hit_0x0084;
+  wire                write_hit_0x0084;
+  wire                read_hit_0x0088;
+  wire                write_hit_0x0088;
   reg                 rd_cfg_en;
   reg                 rd_afifo_init;
   reg                 rd_dfifo_init;
@@ -149,21 +198,22 @@ module idma_data_noc_regfile (
   reg        [31:0]   base_addr_3;
   reg        [31:0]   base_addr_4;
   reg        [31:0]   base_addr_5;
-  wire                read_hit_0x0050;
-  wire                write_hit_0x0050;
-  wire                read_hit_0x0054;
-  wire                write_hit_0x0054;
-  wire                read_hit_0x0058;
-  wire                write_hit_0x0058;
-  reg                 wr_done_intr_raw;
-  reg                 wr_done_intr_mask;
-  wire                wr_done_intr_status;
-  reg                 rd_done_intr_raw;
-  reg                 rd_done_intr_mask;
-  wire                rd_done_intr_status;
-  wire                INTR_intr;
+  reg        [31:0]   group_base_addr_0;
+  reg        [31:0]   group_base_addr_1;
+  reg        [31:0]   group_base_addr_2;
+  reg        [31:0]   group_base_addr_3;
+  reg        [31:0]   group_base_addr_4;
+  reg        [31:0]   group_base_addr_5;
+  reg        [31:0]   write_base_addr_0;
+  reg        [31:0]   write_base_addr_1;
+  reg        [31:0]   write_base_addr_2;
+  reg        [31:0]   write_base_addr_3;
+  reg        [31:0]   write_base_addr_4;
+  reg        [31:0]   write_base_addr_5;
 
   assign tmp_1 = {io_apb_PADDR[11 : 2],2'b00};
+  assign tmp_wr_done_intr_mask = ((wr_done_intr_mask & busif_wmaskn[0 : 0]) | (io_apb_PWDATA[0 : 0] & busif_wmask[0 : 0]));
+  assign tmp_rd_done_intr_mask = ((rd_done_intr_mask & busif_wmaskn[1 : 1]) | (io_apb_PWDATA[1 : 1] & busif_wmask[1 : 1]));
   assign tmp_rd_cfg_en = ((rd_cfg_en & busif_wmaskn[0 : 0]) | (io_apb_PWDATA[0 : 0] & busif_wmask[0 : 0]));
   assign tmp_rd_cfg_outstd_en = ((rd_cfg_outstd_en & busif_wmaskn[4 : 4]) | (io_apb_PWDATA[4 : 4] & busif_wmask[4 : 4]));
   assign tmp_rd_cfg_cross4k_en = ((rd_cfg_cross4k_en & busif_wmaskn[5 : 5]) | (io_apb_PWDATA[5 : 5] & busif_wmask[5 : 5]));
@@ -175,8 +225,6 @@ module idma_data_noc_regfile (
   assign tmp_wr_cfg_arvld_hold_en = ((wr_cfg_arvld_hold_en & busif_wmaskn[6 : 6]) | (io_apb_PWDATA[6 : 6] & busif_wmask[6 : 6]));
   assign tmp_wr_cfg_arvld_hold_olen_en = ((wr_cfg_arvld_hold_olen_en & busif_wmaskn[7 : 7]) | (io_apb_PWDATA[7 : 7] & busif_wmask[7 : 7]));
   assign tmp_wr_cfg_strb_force = ((wr_cfg_strb_force & busif_wmaskn[8 : 8]) | (io_apb_PWDATA[8 : 8] & busif_wmask[8 : 8]));
-  assign tmp_wr_done_intr_mask = ((wr_done_intr_mask & busif_wmaskn[0 : 0]) | (io_apb_PWDATA[0 : 0] & busif_wmask[0 : 0]));
-  assign tmp_rd_done_intr_mask = ((rd_done_intr_mask & busif_wmaskn[1 : 1]) | (io_apb_PWDATA[1 : 1] & busif_wmask[1 : 1]));
   assign busif_wstrb = io_apb_PSTRB; // @ Apb4BusInterface.scala l16
   assign io_apb_PREADY = 1'b1; // @ Apb4BusInterface.scala l21
   assign io_apb_PRDATA = busif_readData; // @ Apb4BusInterface.scala l22
@@ -239,33 +287,6 @@ module idma_data_noc_regfile (
   assign write_hit_0x0048 = ((io_apb_PADDR == 12'h048) && busif_doWrite); // @ BaseType.scala l305
   assign read_hit_0x004c = (({io_apb_PADDR[11 : 2],2'b00} == 12'h04c) && busif_doRead); // @ BaseType.scala l305
   assign write_hit_0x004c = ((io_apb_PADDR == 12'h04c) && busif_doWrite); // @ BaseType.scala l305
-  assign reserved = 15'h0; // @ Bits.scala l133
-  assign reserved_1 = 15'h0; // @ Bits.scala l133
-  assign io_rd_cfg_ready = rd_cfg_en; // @ idma_data_noc_regfile.scala l116
-  assign io_rd_afifo_init = rd_afifo_init; // @ idma_data_noc_regfile.scala l117
-  assign io_rd_dfifo_init = rd_dfifo_init; // @ idma_data_noc_regfile.scala l118
-  assign io_rd_cfg_outstd = rd_cfg_outstd; // @ idma_data_noc_regfile.scala l119
-  assign io_rd_cfg_outstd_en = rd_cfg_outstd_en; // @ idma_data_noc_regfile.scala l120
-  assign io_rd_cfg_cross4k_en = rd_cfg_cross4k_en; // @ idma_data_noc_regfile.scala l121
-  assign io_rd_cfg_arvld_hold_en = rd_cfg_arvld_hold_en; // @ idma_data_noc_regfile.scala l122
-  assign io_rd_cfg_dfifo_thd = rd_cfg_dfifo_thd[6:0]; // @ idma_data_noc_regfile.scala l123
-  assign io_rd_cfg_resi_mode = rd_cfg_resi_mode; // @ idma_data_noc_regfile.scala l124
-  assign io_rd_cfg_resi_fmap_a_addr = rd_cfg_resi_fmap_a_addr; // @ idma_data_noc_regfile.scala l125
-  assign io_rd_cfg_resi_fmap_b_addr = rd_cfg_resi_fmap_b_addr; // @ idma_data_noc_regfile.scala l126
-  assign io_rd_cfg_resi_addr_gap = rd_cfg_resi_addr_gap[15:0]; // @ idma_data_noc_regfile.scala l127
-  assign io_rd_cfg_resi_loop_num = rd_cfg_resi_loop_num[15:0]; // @ idma_data_noc_regfile.scala l128
-  assign io_wr_cfg_ready = wr_cfg_en; // @ idma_data_noc_regfile.scala l130
-  assign io_wr_afifo_init = wr_afifo_init; // @ idma_data_noc_regfile.scala l131
-  assign io_wr_dfifo_init = wr_dfifo_init; // @ idma_data_noc_regfile.scala l132
-  assign io_wr_cfg_outstd = wr_cfg_outstd; // @ idma_data_noc_regfile.scala l133
-  assign io_wr_cfg_outstd_en = wr_cfg_outstd_en; // @ idma_data_noc_regfile.scala l134
-  assign io_wr_cfg_cross4k_en = wr_cfg_cross4k_en; // @ idma_data_noc_regfile.scala l135
-  assign io_wr_cfg_arvld_hold_en = wr_cfg_arvld_hold_en; // @ idma_data_noc_regfile.scala l136
-  assign io_wr_cfg_arvld_hold_olen_en = wr_cfg_arvld_hold_olen_en; // @ idma_data_noc_regfile.scala l137
-  assign io_wr_cfg_dfifo_thd = wr_cfg_dfifo_thd[6:0]; // @ idma_data_noc_regfile.scala l138
-  assign io_wr_cfg_strb_force = wr_cfg_strb_force; // @ idma_data_noc_regfile.scala l139
-  assign debug_dma_rd_in_cnt = io_debug_dma_rd_in_cnt; // @ idma_data_noc_regfile.scala l141
-  assign debug_dma_wr_out_cnt = io_debug_dma_wr_out_cnt; // @ idma_data_noc_regfile.scala l142
   assign read_hit_0x0050 = (({io_apb_PADDR[11 : 2],2'b00} == 12'h050) && busif_doRead); // @ BaseType.scala l305
   assign write_hit_0x0050 = ((io_apb_PADDR == 12'h050) && busif_doWrite); // @ BaseType.scala l305
   assign read_hit_0x0054 = (({io_apb_PADDR[11 : 2],2'b00} == 12'h054) && busif_doRead); // @ BaseType.scala l305
@@ -275,17 +296,84 @@ module idma_data_noc_regfile (
   assign wr_done_intr_status = (wr_done_intr_raw && (! wr_done_intr_mask)); // @ BusIfBase.scala l313
   assign rd_done_intr_status = (rd_done_intr_raw && (! rd_done_intr_mask)); // @ BusIfBase.scala l313
   assign INTR_intr = (|(wr_done_intr_status || rd_done_intr_status)); // @ BaseType.scala l312
-  assign io_intr = INTR_intr; // @ idma_data_noc_regfile.scala l143
-  assign io_base_addr_0 = base_addr_0; // @ idma_data_noc_regfile.scala l145
-  assign io_base_addr_1 = base_addr_1; // @ idma_data_noc_regfile.scala l146
-  assign io_base_addr_2 = base_addr_2; // @ idma_data_noc_regfile.scala l147
-  assign io_base_addr_3 = base_addr_3; // @ idma_data_noc_regfile.scala l148
-  assign io_base_addr_4 = base_addr_4; // @ idma_data_noc_regfile.scala l149
-  assign io_base_addr_5 = base_addr_5; // @ idma_data_noc_regfile.scala l150
+  assign io_intr = INTR_intr; // @ idma_data_noc_regfile.scala l85
+  assign read_hit_0x005c = (({io_apb_PADDR[11 : 2],2'b00} == 12'h05c) && busif_doRead); // @ BaseType.scala l305
+  assign write_hit_0x005c = ((io_apb_PADDR == 12'h05c) && busif_doWrite); // @ BaseType.scala l305
+  assign read_hit_0x0060 = (({io_apb_PADDR[11 : 2],2'b00} == 12'h060) && busif_doRead); // @ BaseType.scala l305
+  assign write_hit_0x0060 = ((io_apb_PADDR == 12'h060) && busif_doWrite); // @ BaseType.scala l305
+  assign read_hit_0x0064 = (({io_apb_PADDR[11 : 2],2'b00} == 12'h064) && busif_doRead); // @ BaseType.scala l305
+  assign write_hit_0x0064 = ((io_apb_PADDR == 12'h064) && busif_doWrite); // @ BaseType.scala l305
+  assign read_hit_0x0068 = (({io_apb_PADDR[11 : 2],2'b00} == 12'h068) && busif_doRead); // @ BaseType.scala l305
+  assign write_hit_0x0068 = ((io_apb_PADDR == 12'h068) && busif_doWrite); // @ BaseType.scala l305
+  assign read_hit_0x006c = (({io_apb_PADDR[11 : 2],2'b00} == 12'h06c) && busif_doRead); // @ BaseType.scala l305
+  assign write_hit_0x006c = ((io_apb_PADDR == 12'h06c) && busif_doWrite); // @ BaseType.scala l305
+  assign read_hit_0x0070 = (({io_apb_PADDR[11 : 2],2'b00} == 12'h070) && busif_doRead); // @ BaseType.scala l305
+  assign write_hit_0x0070 = ((io_apb_PADDR == 12'h070) && busif_doWrite); // @ BaseType.scala l305
+  assign read_hit_0x0074 = (({io_apb_PADDR[11 : 2],2'b00} == 12'h074) && busif_doRead); // @ BaseType.scala l305
+  assign write_hit_0x0074 = ((io_apb_PADDR == 12'h074) && busif_doWrite); // @ BaseType.scala l305
+  assign read_hit_0x0078 = (({io_apb_PADDR[11 : 2],2'b00} == 12'h078) && busif_doRead); // @ BaseType.scala l305
+  assign write_hit_0x0078 = ((io_apb_PADDR == 12'h078) && busif_doWrite); // @ BaseType.scala l305
+  assign read_hit_0x007c = (({io_apb_PADDR[11 : 2],2'b00} == 12'h07c) && busif_doRead); // @ BaseType.scala l305
+  assign write_hit_0x007c = ((io_apb_PADDR == 12'h07c) && busif_doWrite); // @ BaseType.scala l305
+  assign read_hit_0x0080 = (({io_apb_PADDR[11 : 2],2'b00} == 12'h080) && busif_doRead); // @ BaseType.scala l305
+  assign write_hit_0x0080 = ((io_apb_PADDR == 12'h080) && busif_doWrite); // @ BaseType.scala l305
+  assign read_hit_0x0084 = (({io_apb_PADDR[11 : 2],2'b00} == 12'h084) && busif_doRead); // @ BaseType.scala l305
+  assign write_hit_0x0084 = ((io_apb_PADDR == 12'h084) && busif_doWrite); // @ BaseType.scala l305
+  assign read_hit_0x0088 = (({io_apb_PADDR[11 : 2],2'b00} == 12'h088) && busif_doRead); // @ BaseType.scala l305
+  assign write_hit_0x0088 = ((io_apb_PADDR == 12'h088) && busif_doWrite); // @ BaseType.scala l305
+  assign reserved = 15'h0; // @ Bits.scala l133
+  assign reserved_1 = 15'h0; // @ Bits.scala l133
+  assign io_rd_cfg_ready = rd_cfg_en; // @ idma_data_noc_regfile.scala l149
+  assign io_rd_afifo_init = rd_afifo_init; // @ idma_data_noc_regfile.scala l150
+  assign io_rd_dfifo_init = rd_dfifo_init; // @ idma_data_noc_regfile.scala l151
+  assign io_rd_cfg_outstd = rd_cfg_outstd; // @ idma_data_noc_regfile.scala l152
+  assign io_rd_cfg_outstd_en = rd_cfg_outstd_en; // @ idma_data_noc_regfile.scala l153
+  assign io_rd_cfg_cross4k_en = rd_cfg_cross4k_en; // @ idma_data_noc_regfile.scala l154
+  assign io_rd_cfg_arvld_hold_en = rd_cfg_arvld_hold_en; // @ idma_data_noc_regfile.scala l155
+  assign io_rd_cfg_dfifo_thd = rd_cfg_dfifo_thd[6:0]; // @ idma_data_noc_regfile.scala l156
+  assign io_rd_cfg_resi_mode = rd_cfg_resi_mode; // @ idma_data_noc_regfile.scala l157
+  assign io_rd_cfg_resi_fmap_a_addr = rd_cfg_resi_fmap_a_addr; // @ idma_data_noc_regfile.scala l158
+  assign io_rd_cfg_resi_fmap_b_addr = rd_cfg_resi_fmap_b_addr; // @ idma_data_noc_regfile.scala l159
+  assign io_rd_cfg_resi_addr_gap = rd_cfg_resi_addr_gap[15:0]; // @ idma_data_noc_regfile.scala l160
+  assign io_rd_cfg_resi_loop_num = rd_cfg_resi_loop_num[15:0]; // @ idma_data_noc_regfile.scala l161
+  assign io_wr_cfg_ready = wr_cfg_en; // @ idma_data_noc_regfile.scala l162
+  assign io_wr_afifo_init = wr_afifo_init; // @ idma_data_noc_regfile.scala l163
+  assign io_wr_dfifo_init = wr_dfifo_init; // @ idma_data_noc_regfile.scala l164
+  assign io_wr_cfg_outstd = wr_cfg_outstd; // @ idma_data_noc_regfile.scala l165
+  assign io_wr_cfg_outstd_en = wr_cfg_outstd_en; // @ idma_data_noc_regfile.scala l166
+  assign io_wr_cfg_cross4k_en = wr_cfg_cross4k_en; // @ idma_data_noc_regfile.scala l167
+  assign io_wr_cfg_arvld_hold_en = wr_cfg_arvld_hold_en; // @ idma_data_noc_regfile.scala l168
+  assign io_wr_cfg_arvld_hold_olen_en = wr_cfg_arvld_hold_olen_en; // @ idma_data_noc_regfile.scala l169
+  assign io_wr_cfg_dfifo_thd = wr_cfg_dfifo_thd[6:0]; // @ idma_data_noc_regfile.scala l170
+  assign io_wr_cfg_strb_force = wr_cfg_strb_force; // @ idma_data_noc_regfile.scala l171
+  assign debug_dma_rd_in_cnt = io_debug_dma_rd_in_cnt; // @ idma_data_noc_regfile.scala l172
+  assign debug_dma_wr_out_cnt = io_debug_dma_wr_out_cnt; // @ idma_data_noc_regfile.scala l173
+  assign io_base_addr_0 = base_addr_0; // @ idma_data_noc_regfile.scala l176
+  assign io_base_addr_1 = base_addr_1; // @ idma_data_noc_regfile.scala l177
+  assign io_base_addr_2 = base_addr_2; // @ idma_data_noc_regfile.scala l178
+  assign io_base_addr_3 = base_addr_3; // @ idma_data_noc_regfile.scala l179
+  assign io_base_addr_4 = base_addr_4; // @ idma_data_noc_regfile.scala l180
+  assign io_base_addr_5 = base_addr_5; // @ idma_data_noc_regfile.scala l181
+  assign io_group_base_addr_0 = group_base_addr_0; // @ idma_data_noc_regfile.scala l183
+  assign io_group_base_addr_1 = group_base_addr_1; // @ idma_data_noc_regfile.scala l184
+  assign io_group_base_addr_2 = group_base_addr_2; // @ idma_data_noc_regfile.scala l185
+  assign io_group_base_addr_3 = group_base_addr_3; // @ idma_data_noc_regfile.scala l186
+  assign io_group_base_addr_4 = group_base_addr_4; // @ idma_data_noc_regfile.scala l187
+  assign io_group_base_addr_5 = group_base_addr_5; // @ idma_data_noc_regfile.scala l188
+  assign io_write_base_addr_0 = write_base_addr_0; // @ idma_data_noc_regfile.scala l190
+  assign io_write_base_addr_1 = write_base_addr_1; // @ idma_data_noc_regfile.scala l191
+  assign io_write_base_addr_2 = write_base_addr_2; // @ idma_data_noc_regfile.scala l192
+  assign io_write_base_addr_3 = write_base_addr_3; // @ idma_data_noc_regfile.scala l193
+  assign io_write_base_addr_4 = write_base_addr_4; // @ idma_data_noc_regfile.scala l194
+  assign io_write_base_addr_5 = write_base_addr_5; // @ idma_data_noc_regfile.scala l195
   always @(posedge clk or negedge resetn) begin
     if(!resetn) begin
       busif_readError <= 1'b0; // @ Data.scala l400
       busif_readData <= 32'h0; // @ Data.scala l400
+      wr_done_intr_raw <= 1'b0; // @ Data.scala l400
+      wr_done_intr_mask <= 1'b1; // @ Data.scala l400
+      rd_done_intr_raw <= 1'b0; // @ Data.scala l400
+      rd_done_intr_mask <= 1'b1; // @ Data.scala l400
       rd_cfg_en <= 1'b1; // @ Data.scala l400
       rd_afifo_init <= 1'b0; // @ Data.scala l400
       rd_dfifo_init <= 1'b0; // @ Data.scala l400
@@ -315,11 +403,41 @@ module idma_data_noc_regfile (
       base_addr_3 <= 32'h0; // @ Data.scala l400
       base_addr_4 <= 32'h0; // @ Data.scala l400
       base_addr_5 <= 32'h0; // @ Data.scala l400
-      wr_done_intr_raw <= 1'b0; // @ Data.scala l400
-      wr_done_intr_mask <= 1'b1; // @ Data.scala l400
-      rd_done_intr_raw <= 1'b0; // @ Data.scala l400
-      rd_done_intr_mask <= 1'b1; // @ Data.scala l400
+      group_base_addr_0 <= 32'h0; // @ Data.scala l400
+      group_base_addr_1 <= 32'h0; // @ Data.scala l400
+      group_base_addr_2 <= 32'h0; // @ Data.scala l400
+      group_base_addr_3 <= 32'h0; // @ Data.scala l400
+      group_base_addr_4 <= 32'h0; // @ Data.scala l400
+      group_base_addr_5 <= 32'h0; // @ Data.scala l400
+      write_base_addr_0 <= 32'h0; // @ Data.scala l400
+      write_base_addr_1 <= 32'h0; // @ Data.scala l400
+      write_base_addr_2 <= 32'h0; // @ Data.scala l400
+      write_base_addr_3 <= 32'h0; // @ Data.scala l400
+      write_base_addr_4 <= 32'h0; // @ Data.scala l400
+      write_base_addr_5 <= 32'h0; // @ Data.scala l400
     end else begin
+      if(write_hit_0x0050) begin
+        if((io_apb_PWDATA[0] && busif_wmask[0])) begin
+          wr_done_intr_raw <= (wr_done_intr_raw && busif_wmaskn[0]); // @ RegInst.scala l642
+        end
+      end
+      if(write_hit_0x0054) begin
+        wr_done_intr_mask <= tmp_wr_done_intr_mask[0]; // @ Bool.scala l189
+      end
+      if(io_wr_done_intr) begin
+        wr_done_intr_raw <= 1'b1; // @ BusIfBase.scala l312
+      end
+      if(write_hit_0x0050) begin
+        if((io_apb_PWDATA[1] && busif_wmask[1])) begin
+          rd_done_intr_raw <= (rd_done_intr_raw && busif_wmaskn[1]); // @ RegInst.scala l642
+        end
+      end
+      if(write_hit_0x0054) begin
+        rd_done_intr_mask <= tmp_rd_done_intr_mask[0]; // @ Bool.scala l189
+      end
+      if(io_rd_done_intr) begin
+        rd_done_intr_raw <= 1'b1; // @ BusIfBase.scala l312
+      end
       if(write_hit_0x0000) begin
         rd_cfg_en <= tmp_rd_cfg_en[0]; // @ Bool.scala l189
       end
@@ -415,27 +533,41 @@ module idma_data_noc_regfile (
       if(write_hit_0x0044) begin
         base_addr_5 <= ((base_addr_5 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
       end
-      if(write_hit_0x0050) begin
-        if((io_apb_PWDATA[0] && busif_wmask[0])) begin
-          wr_done_intr_raw <= (wr_done_intr_raw && busif_wmaskn[0]); // @ RegInst.scala l642
-        end
+      if(write_hit_0x005c) begin
+        group_base_addr_0 <= ((group_base_addr_0 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
       end
-      if(write_hit_0x0054) begin
-        wr_done_intr_mask <= tmp_wr_done_intr_mask[0]; // @ Bool.scala l189
+      if(write_hit_0x0060) begin
+        group_base_addr_1 <= ((group_base_addr_1 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
       end
-      if(io_wr_done_intr) begin
-        wr_done_intr_raw <= 1'b1; // @ BusIfBase.scala l312
+      if(write_hit_0x0064) begin
+        group_base_addr_2 <= ((group_base_addr_2 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
       end
-      if(write_hit_0x0050) begin
-        if((io_apb_PWDATA[1] && busif_wmask[1])) begin
-          rd_done_intr_raw <= (rd_done_intr_raw && busif_wmaskn[1]); // @ RegInst.scala l642
-        end
+      if(write_hit_0x0068) begin
+        group_base_addr_3 <= ((group_base_addr_3 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
       end
-      if(write_hit_0x0054) begin
-        rd_done_intr_mask <= tmp_rd_done_intr_mask[0]; // @ Bool.scala l189
+      if(write_hit_0x006c) begin
+        group_base_addr_4 <= ((group_base_addr_4 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
       end
-      if(io_rd_done_intr) begin
-        rd_done_intr_raw <= 1'b1; // @ BusIfBase.scala l312
+      if(write_hit_0x0070) begin
+        group_base_addr_5 <= ((group_base_addr_5 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
+      end
+      if(write_hit_0x0074) begin
+        write_base_addr_0 <= ((write_base_addr_0 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
+      end
+      if(write_hit_0x0078) begin
+        write_base_addr_1 <= ((write_base_addr_1 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
+      end
+      if(write_hit_0x007c) begin
+        write_base_addr_2 <= ((write_base_addr_2 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
+      end
+      if(write_hit_0x0080) begin
+        write_base_addr_3 <= ((write_base_addr_3 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
+      end
+      if(write_hit_0x0084) begin
+        write_base_addr_4 <= ((write_base_addr_4 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
+      end
+      if(write_hit_0x0088) begin
+        write_base_addr_5 <= ((write_base_addr_5 & busif_wmaskn[31 : 0]) | (io_apb_PWDATA[31 : 0] & busif_wmask[31 : 0])); // @ UInt.scala l381
       end
       if(busif_askRead) begin
         case(tmp_1)
@@ -529,6 +661,54 @@ module idma_data_noc_regfile (
           end
           12'h058 : begin
             busif_readData <= {30'h0,{rd_done_intr_status,wr_done_intr_status}}; // @ BusIfBase.scala l357
+            busif_readError <= 1'b0; // @ BusIfBase.scala l358
+          end
+          12'h05c : begin
+            busif_readData <= group_base_addr_0; // @ BusIfBase.scala l357
+            busif_readError <= 1'b0; // @ BusIfBase.scala l358
+          end
+          12'h060 : begin
+            busif_readData <= group_base_addr_1; // @ BusIfBase.scala l357
+            busif_readError <= 1'b0; // @ BusIfBase.scala l358
+          end
+          12'h064 : begin
+            busif_readData <= group_base_addr_2; // @ BusIfBase.scala l357
+            busif_readError <= 1'b0; // @ BusIfBase.scala l358
+          end
+          12'h068 : begin
+            busif_readData <= group_base_addr_3; // @ BusIfBase.scala l357
+            busif_readError <= 1'b0; // @ BusIfBase.scala l358
+          end
+          12'h06c : begin
+            busif_readData <= group_base_addr_4; // @ BusIfBase.scala l357
+            busif_readError <= 1'b0; // @ BusIfBase.scala l358
+          end
+          12'h070 : begin
+            busif_readData <= group_base_addr_5; // @ BusIfBase.scala l357
+            busif_readError <= 1'b0; // @ BusIfBase.scala l358
+          end
+          12'h074 : begin
+            busif_readData <= write_base_addr_0; // @ BusIfBase.scala l357
+            busif_readError <= 1'b0; // @ BusIfBase.scala l358
+          end
+          12'h078 : begin
+            busif_readData <= write_base_addr_1; // @ BusIfBase.scala l357
+            busif_readError <= 1'b0; // @ BusIfBase.scala l358
+          end
+          12'h07c : begin
+            busif_readData <= write_base_addr_2; // @ BusIfBase.scala l357
+            busif_readError <= 1'b0; // @ BusIfBase.scala l358
+          end
+          12'h080 : begin
+            busif_readData <= write_base_addr_3; // @ BusIfBase.scala l357
+            busif_readError <= 1'b0; // @ BusIfBase.scala l358
+          end
+          12'h084 : begin
+            busif_readData <= write_base_addr_4; // @ BusIfBase.scala l357
+            busif_readError <= 1'b0; // @ BusIfBase.scala l358
+          end
+          12'h088 : begin
+            busif_readData <= write_base_addr_5; // @ BusIfBase.scala l357
             busif_readError <= 1'b0; // @ BusIfBase.scala l358
           end
           default : begin

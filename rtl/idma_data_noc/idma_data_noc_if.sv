@@ -1,3 +1,8 @@
+
+//将DMA数据通过NOC（网络芯片）传输，并处理读写请求。
+// 模块使用了一系列的FIFO和流水线结构来管理读写操作，将数据从NOC传输至DMA控制器，
+// 或从DMA控制器传输至NOC，同时通过状态机控制这些操作的顺序。
+
 module idma_data_noc_if #(
   parameter ADDR_WIDTH = 32,
   parameter DATA_WIDTH = 256,
@@ -14,8 +19,20 @@ module idma_data_noc_if #(
   input  [ADDR_WIDTH-1:0]  base_addr_3,
   input  [ADDR_WIDTH-1:0]  base_addr_4,
   input  [ADDR_WIDTH-1:0]  base_addr_5,
+  input  [ADDR_WIDTH-1:0]  group_base_addr_0,
+  input  [ADDR_WIDTH-1:0]  group_base_addr_1,
+  input  [ADDR_WIDTH-1:0]  group_base_addr_2,
+  input  [ADDR_WIDTH-1:0]  group_base_addr_3,
+  input  [ADDR_WIDTH-1:0]  group_base_addr_4,
+  input  [ADDR_WIDTH-1:0]  group_base_addr_5,
+  input  [ADDR_WIDTH-1:0]  write_base_addr_0,
+  input  [ADDR_WIDTH-1:0]  write_base_addr_1,
+  input  [ADDR_WIDTH-1:0]  write_base_addr_2,
+  input  [ADDR_WIDTH-1:0]  write_base_addr_3,
+  input  [ADDR_WIDTH-1:0]  write_base_addr_4,
+  input  [ADDR_WIDTH-1:0]  write_base_addr_5,
 
-  // idma 0 ports
+  // idma 0 ports 用于向DMA发出读写请求，并通过DMA接口进行数据传输和控制数据的有效性及传输状态。
   output                   rd_req           ,
   output [ADDR_WIDTH-1:0]  rd_addr          ,
   output [31:0]            rd_num           ,
@@ -52,6 +69,11 @@ module idma_data_noc_if #(
   output                   ctrl_in_ready    
 );
 
+// 12 13 14 15
+// 8  9  10 11
+// 4  5  6  7
+// 0  1  2  3
+
 localparam LEFT_NOC_ID_0 = 4'd0;
 localparam LEFT_NOC_ID_1 = 4'd1;
 localparam LEFT_NOC_ID_2 = 4'd4;
@@ -66,11 +88,16 @@ localparam RIGHT_NOC_ID_3 = 4'd7;
 localparam RIGHT_NOC_ID_4 = 4'd10;
 localparam RIGHT_NOC_ID_5 = 4'd11;
 
+//读取：从NOC接收数据并将其发送至DMA
+// 在 IDLE 状态下，如果接收到有效的读请求（read_fifo_hs），状态会切换到 SEND_HEAD，开始传输头部数据。
+// 在 SEND_RDATA 状态下，模块将数据发送到DMA，直到传输完成。
 localparam IDLE = 2'd0;
 localparam SEND_HEAD = 2'd1;
 localparam HALT = 2'd2;
 localparam SEND_RDATA = 2'd3;
 
+//写入：从NOC写入到DMA的过程
+// 在 WRITE_IDLE 状态下，等待写请求（dma_write_req[0]），然后在 WRITE_DATA 状态下，发送数据到DMA。
 localparam WRITE_IDLE = 3'd0;
 localparam WRITE_REQ = 3'd1;
 localparam WRITE_DATA = 3'd2;
@@ -96,9 +123,12 @@ reg  [13-1:0]   write_num_reg;
 reg             data_in_flit_bit13;
 reg  [3:0]      data_in_flit_bit17_14;
 
+wire           noc_read_base_sel;
 wire [25-1:0]  noc_read_addr_256bit;
 wire [25-1:0]  noc_write_addr_256bit;
 wire [ADDR_WIDTH-1:0] read_base_addr;
+wire [ADDR_WIDTH-1:0] read_group_base_addr;
+wire [ADDR_WIDTH-1:0] read_base_addr_after_sel;
 wire [ADDR_WIDTH-1:0] write_base_addr;
 wire [ADDR_WIDTH-1:0] dma_read_addr [0:1];
 wire [13-1:0]  dma_read_num  [0:1];
@@ -167,6 +197,7 @@ end
 // ===================================
 // Pipe read addr/num for DMA
 // ===================================
+assign noc_read_base_sel = ctrl_in_flit[254]; // 1: choose group_base_addr; 0: choose base_addr
 assign noc_read_addr_256bit = ctrl_in_flit[43:19];
 assign dma_read_req[0]   = ctrl_in_hs;
 assign read_base_addr    =  ({ADDR_WIDTH{(noc_read_id==LEFT_NOC_ID_0 || noc_read_id==RIGHT_NOC_ID_0)}} & base_addr_0)
@@ -176,7 +207,15 @@ assign read_base_addr    =  ({ADDR_WIDTH{(noc_read_id==LEFT_NOC_ID_0 || noc_read
                           | ({ADDR_WIDTH{(noc_read_id==LEFT_NOC_ID_4 || noc_read_id==RIGHT_NOC_ID_4)}} & base_addr_4)
                           | ({ADDR_WIDTH{(noc_read_id==LEFT_NOC_ID_5 || noc_read_id==RIGHT_NOC_ID_5)}} & base_addr_5)
 ;
-assign dma_read_addr[0]  = read_base_addr + {noc_read_addr_256bit[ADDR_WIDTH-8-1:0], 8'b0};
+assign read_group_base_addr=  ({ADDR_WIDTH{(noc_read_id==LEFT_NOC_ID_0 || noc_read_id==RIGHT_NOC_ID_0)}} & group_base_addr_0)
+                            | ({ADDR_WIDTH{(noc_read_id==LEFT_NOC_ID_1 || noc_read_id==RIGHT_NOC_ID_1)}} & group_base_addr_1)
+                            | ({ADDR_WIDTH{(noc_read_id==LEFT_NOC_ID_2 || noc_read_id==RIGHT_NOC_ID_2)}} & group_base_addr_2)
+                            | ({ADDR_WIDTH{(noc_read_id==LEFT_NOC_ID_3 || noc_read_id==RIGHT_NOC_ID_3)}} & group_base_addr_3)
+                            | ({ADDR_WIDTH{(noc_read_id==LEFT_NOC_ID_4 || noc_read_id==RIGHT_NOC_ID_4)}} & group_base_addr_4)
+                            | ({ADDR_WIDTH{(noc_read_id==LEFT_NOC_ID_5 || noc_read_id==RIGHT_NOC_ID_5)}} & group_base_addr_5)
+;
+assign read_base_addr_after_sel = noc_read_base_sel ? read_group_base_addr : read_base_addr;
+assign dma_read_addr[0]  = read_base_addr_after_sel + {noc_read_addr_256bit[ADDR_WIDTH-8-1:0], 8'b0};
 assign dma_read_num[0]   = read_num_fifo[0];
 
 fwd_pipe#(
@@ -306,12 +345,12 @@ end
 // ===================================
 // Pipe write addr/num/wdata for DMA
 // ===================================
-assign write_base_addr   =  ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_0 || noc_write_id==RIGHT_NOC_ID_0)}} & base_addr_0)
-                          | ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_1 || noc_write_id==RIGHT_NOC_ID_1)}} & base_addr_1)
-                          | ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_2 || noc_write_id==RIGHT_NOC_ID_2)}} & base_addr_2)
-                          | ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_3 || noc_write_id==RIGHT_NOC_ID_3)}} & base_addr_3)
-                          | ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_4 || noc_write_id==RIGHT_NOC_ID_4)}} & base_addr_4)
-                          | ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_5 || noc_write_id==RIGHT_NOC_ID_5)}} & base_addr_5)
+assign write_base_addr   =  ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_0 || noc_write_id==RIGHT_NOC_ID_0)}} & write_base_addr_0)
+                          | ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_1 || noc_write_id==RIGHT_NOC_ID_1)}} & write_base_addr_1)
+                          | ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_2 || noc_write_id==RIGHT_NOC_ID_2)}} & write_base_addr_2)
+                          | ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_3 || noc_write_id==RIGHT_NOC_ID_3)}} & write_base_addr_3)
+                          | ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_4 || noc_write_id==RIGHT_NOC_ID_4)}} & write_base_addr_4)
+                          | ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_5 || noc_write_id==RIGHT_NOC_ID_5)}} & write_base_addr_5)
 ;
 assign noc_write_addr_256bit = data_in_flit[42:18];
 assign dma_write_req[0] = data_in_hs && (write_cur_state==WRITE_IDLE);

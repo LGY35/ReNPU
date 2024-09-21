@@ -1,0 +1,149 @@
+module cluster #(  // 定义名为 cluster 的模块，并设置参数化部分
+
+    // 定义局部参数，用于配置 FIFO 的深度和 AXI 接口的宽度
+    localparam DATA_FIFO_DEPTH      = 64 ,  // 数据 FIFO 深度
+    localparam DATA_FIFO_CNT_WID    = 6+1,  // 数据 FIFO 计数器宽度
+    localparam ADDR_FIFO_DEPTH      = 32 ,  // 地址 FIFO 深度
+    localparam ADDR_FIFO_CNT_WID    = 5+1,  // 地址 FIFO 计数器宽度
+
+    // AXI 数据和地址宽度
+    localparam D_AXI_DATA_WID       = 256,  // 数据宽度（256位）
+    localparam D_AXI_ADDR_WID       = 32 ,  // 地址宽度（32位）
+    localparam D_AXI_IDW            = 4  ,  // AXI ID 宽度
+    localparam D_AXI_LENW           = 4  ,  // AXI 长度字段宽度
+    localparam D_AXI_LOCKW          = 2  ,  // AXI 锁字段宽度
+    localparam D_AXI_STRBW          = 32 ,  // AXI 写数据选通宽度
+
+    // 其他 AXI 宽度
+    localparam AXI_DW               = 128,  // AXI 数据宽度
+    localparam AXI_AW               = 32,   // AXI 地址宽度
+    localparam STRB_WIDTH           = (AXI_DW/8),  // AXI 字节宽度
+    localparam ID_WIDTH             = 8,    // AXI ID 宽度
+    localparam AXI_LENW             = 4,    // AXI 传输长度宽度
+    localparam AXI_LOCKW            = 1,    // AXI 锁宽度
+    localparam I_FLIT_WIDTH         = 32    // Flit 宽度，用于网络传输
+
+)
+
+(
+    // 输入和输出端口定义
+    input                                   clk,  // 时钟信号
+    input                                   rst_n,  // 复位信号（低电平有效）
+
+    // Data AXI接口信号
+    output  [1:0]                           d_arvalid,  // 地址读取有效信号
+    output  [1:0][D_AXI_IDW-1:0]            d_arid   ,  // 地址读取ID
+    output  [1:0][D_AXI_ADDR_WID-1:0]       d_araddr ,  // 读取地址
+    output  [1:0][D_AXI_LENW-1:0]           d_arlen  ,  // 读取传输长度
+    output  [1:0][2:0]                      d_arsize ,  // 读取数据宽度
+    output  [1:0][1:0]                      d_arburst,  // 读取突发类型
+    output  [1:0][D_AXI_LOCKW-1:0]          d_arlock ,  // 读取锁信号
+    output  [1:0][3:0]                      d_arcache,  // 读取缓存控制信号
+    output  [1:0][2:0]                      d_arprot ,  // 读取保护信号
+    input   [1:0]                           d_arready,  // 地址读取就绪信号
+    input   [1:0]                           d_rvalid ,  // 读取数据有效信号
+    input   [1:0][D_AXI_IDW-1:0]            d_rid    ,  // 读取ID信号
+    input   [1:0]                           d_rlast  ,  // 读取最后一个数据信号
+    input   [1:0][D_AXI_DATA_WID-1:0]       d_rdata  ,  // 读取的数据
+    input   [1:0][1:0]                      d_rresp  ,  // 读取响应信号
+    output  [1:0]                           d_rready ,  // 读取就绪信号
+
+    // AXI Slave接口信号定义（用于连接控制器等外设）
+    input   [ID_WIDTH-1:0]                  s_axi_awid,    // 写地址通道ID
+    input   [AXI_AW-1:0]                    s_axi_awaddr,  // 写地址
+    input   [7:0]                           s_axi_awlen,   // 写突发传输长度
+    input   [2:0]                           s_axi_awsize,  // 写传输大小
+    input   [1:0]                           s_axi_awburst, // 写突发类型
+    input                                   s_axi_awlock,  // 写锁信号
+    input   [3:0]                           s_axi_awcache, // 写缓存信号
+    input   [2:0]                           s_axi_awprot,  // 写保护信号
+    input                                   s_axi_awvalid, // 写地址有效信号
+    output                                  s_axi_awready, // 写地址就绪信号
+    input   [AXI_DW-1:0]                    s_axi_wdata,   // 写数据
+    input   [STRB_WIDTH-1:0]                s_axi_wstrb,   // 写字节选通信号
+    input                                   s_axi_wlast,   // 写最后一个数据信号
+    input                                   s_axi_wvalid,  // 写数据有效信号
+    output                                  s_axi_wready,  // 写数据就绪信号
+    output  [ID_WIDTH-1:0]                  s_axi_bid,     // 写响应ID
+    output  [1:0]                           s_axi_bresp,   // 写响应信号
+    output                                  s_axi_bvalid,  // 写响应有效信号
+    input                                   s_axi_bready,  // 写响应就绪信号
+
+    // APB 接口，用于配置寄存器
+    input      [11:0]                       cfg_apb_PADDR,   // APB 地址
+    input      [0:0]                        cfg_apb_PSEL,    // APB 选择信号
+    input                                   cfg_apb_PENABLE, // APB 使能信号
+    output                                  cfg_apb_PREADY,  // APB 准备信号
+    input                                   cfg_apb_PWRITE,  // APB 写使能
+    input      [3:0]                        cfg_apb_PSTRB,   // APB 字节选通信号
+    input      [2:0]                        cfg_apb_PPROT,   // APB 保护信号
+    input      [31:0]                       cfg_apb_PWDATA,  // APB 写数据
+    output     [31:0]                       cfg_apb_PRDATA,  // APB 读取数据
+    output                                  cfg_apb_PSLVERR, // APB 从设备错误信号
+
+    output                                  i_interrupt      // 中断输出信号
+
+);
+
+// 定义局部参数，用于计算网络节点和通道信息
+localparam NODES        = 16;   // 网络中的节点数
+localparam CHANNELS     = 2;    // 每个节点的通道数
+localparam FLIT_WIDTH   = 256;  // Flit 数据宽度
+localparam X            = 4;    // 网络X方向维度
+localparam Y            = 4;    // 网络Y方向维度
+
+// 定义网络数据流信号
+logic   [NODES-1:0][CHANNELS-1:0][FLIT_WIDTH-1:0]   in_flit;   // 输入数据 flit
+logic   [NODES-1:0][CHANNELS-1:0]                   in_last;   // 输入数据最后一个信号
+logic   [NODES-1:0][CHANNELS-1:0]                   in_valid;  // 输入数据有效信号
+logic   [NODES-1:0][CHANNELS-1:0]                   in_ready;  // 输入数据就绪信号
+
+logic   [NODES-1:0][CHANNELS-1:0][FLIT_WIDTH-1:0]   out_flit;  // 输出数据 flit
+logic   [NODES-1:0][CHANNELS-1:0]                   out_last;  // 输出数据最后一个信号
+logic   [NODES-1:0][CHANNELS-1:0]                   out_valid; // 输出数据有效信号
+logic   [NODES-1:0][CHANNELS-1:0]                   out_ready; // 输出数据就绪信号
+
+// 定义 L2 缓存接口信号
+logic   [11:0][31:0]                                fetch_L2cache_info;   // 缓存信息
+logic   [11:0]                                      fetch_L2cache_req;    // 缓存请求信号
+logic   [11:0]                                      fetch_L2cache_gnt;    // 缓存授予信号
+logic   [11:0][31:0]                                fetch_L2cache_r_data; // 缓存读取数据
+logic   [11:0]                                      fetch_L2cache_r_valid;// 缓存读取数据有效信号
+logic   [11:0]                                      fetch_L2cache_r_ready;// 缓存读取就绪信号
+
+// 定义时钟和复位信号
+logic                                               aclk            ; // 时钟
+logic                                               aresetn         ; // 复位（低电平有效）
+
+// APB 接口信号定义
+logic   [1:0][11:0]                                 d_paddr         ; // APB 地址
+logic   [1:0][0:0]                                  d_psel          ; // APB 选择
+logic   [1:0]                                       d_penable       ; // APB 使能
+logic   [1:0]                                       d_pready        ; // APB 就绪
+logic   [1:0]                                       d_pwrite        ; // APB 写使能
+logic   [1:0][3:0]                                  d_pstrb         ; // APB 字节选通信号
+logic   [1:0][2:0]                                  d_pprot         ; // APB 保护信号
+logic   [1:0][31:0]                                 d_pwdata        ; // APB 写数据
+logic   [1:0][31:0]                                 d_prdata        ; // APB 读取数据
+logic   [1:0]                                       d_pslverr       ; // APB 错误信号
+
+// NOC (网络) 连接
+noc_mesh #(  // 网络拓扑定义
+    .FLIT_WIDTH         (256),  // 数据宽度
+    .CHANNELS           (2),    // 通道数
+    .X                  (4),    // X 维度
+    .Y                  (4),    // Y 维度
+    .BUFFER_SIZE_IN     (4),    // 输入缓冲区大小
+    .BUFFER_SIZE_OUT    (4)     // 输出缓冲区大小
+) U_noc_mesh (
+    .clk                (clk),   // 时钟
+    .rst_n              (rst_n), // 复位
+    .in_flit            (in_flit),    // 输入 flit
+    .in_last            (in_last),    // 输入最后一个信号
+    .in_valid           (in_valid),   // 输入有效信号
+    .in_ready           (in_ready),   // 输入就绪信号
+    .out_flit           (out_flit),   // 输出 flit
+    .out_last           (out_last),   // 输出最后一个信号
+    .out_valid          (out_valid),  // 输出有效信号
+    .out_ready          (out_ready)   // 输出就绪信号
+);

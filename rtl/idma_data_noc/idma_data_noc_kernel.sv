@@ -1,10 +1,11 @@
-// 模块功能：
+// 模块功能：数据传输内核模块，用于处理从DMA到NoC的通信。
+//          该模块接收配置信号并通过AXI接口和NoC接口进行数据读写操作。
 // 数据读写操作：   模块处理来自 AXI 接口的数据读写请求，并通过内部的 FIFO 缓存数据，以匹配处理速度和外部接口的速度。
 // 配置与控制：     提供配置接口用于动态设置操作模式，如 FIFO 的阈值设置、outstanding 读写请求的配置等。
 // 信号整合与处理：  集成多个控制和数据信号，确保数据一致性和同步。
 
 module idma_data_noc_kernel #(
-  parameter DATA_FIFO_DEPTH   = 64    ,//数据 FIFO 的深度和计数宽度。
+  parameter DATA_FIFO_DEPTH   = 64    ,
   parameter DATA_FIFO_CNT_WID = 6+1   ,
   parameter ADDR_FIFO_DEPTH   = 32    ,
   parameter ADDR_FIFO_CNT_WID = 5+1   ,
@@ -15,24 +16,23 @@ module idma_data_noc_kernel #(
   parameter AXI_LENW          = 4     ,
   parameter AXI_LOCKW         = 2     ,
   parameter AXI_STRBW         = 32    
-  // 分别对应 AXI 的 ID 宽度、长度宽度、锁宽度和 strobe 宽度。
 )
 (
 input                              	aclk                    ,
 input                              	aresetn                 ,
 // =========================== m0 ============================
-input    [1:0]                      idma_cfg_ready             ,
+input    [1:0]                      idma_cfg_ready             ,  // DMA配置就绪信号
 //rd channel
-input                              	rd_afifo_init              ,
-input                              	rd_dfifo_init              ,
-output  [DATA_FIFO_CNT_WID-1: 0]    rd_dfifo_word_cnt          ,
-output  [ADDR_FIFO_CNT_WID-1: 0]    rd_afifo_word_cnt          ,
-input	[3:0]			                    rd_cfg_outstd              ,
+input                              	rd_afifo_init              ,  // 读地址FIFO初始化信号 
+input                              	rd_dfifo_init              ,  // 读数据FIFO初始化信号
+output  [DATA_FIFO_CNT_WID-1: 0]    rd_dfifo_word_cnt          ,  // 读数据FIFO计数
+output  [ADDR_FIFO_CNT_WID-1: 0]    rd_afifo_word_cnt          ,  // 读地址FIFO计数
+input	[3:0]			                    rd_cfg_outstd              ,  // outstanding 配置
 input	     			                    rd_cfg_outstd_en           ,
-input                               rd_cfg_cross4k_en          ,
-input                               rd_cfg_arvld_hold_en       ,
-input  [DATA_FIFO_CNT_WID-1:0]      rd_cfg_dfifo_thd           ,
-input                               rd_resi_mode               ,
+input                               rd_cfg_cross4k_en          ,  // 读通道跨4K页面使能信号
+input                               rd_cfg_arvld_hold_en       ,  // 读通道地址有效保持使能信号
+input  [DATA_FIFO_CNT_WID-1:0]      rd_cfg_dfifo_thd           ,  // 读通道的数据FIFO阈值
+input                               rd_resi_mode               ,  
 input  [AXI_ADDR_WID-1:0]           rd_resi_fmapA_addr         ,
 input  [AXI_ADDR_WID-1:0]           rd_resi_fmapB_addr         ,
 input  [16-1:0]                     rd_resi_addr_gap           ,
@@ -91,13 +91,26 @@ input  [AXI_IDW-1:0]                bid                      ,
 input  [1:0]                        bresp                    ,
 output                              bready                   ,
 
+
 // base addr
-input  [AXI_ADDR_WID-1:0]           base_addr_0,
+input  [AXI_ADDR_WID-1:0]           base_addr_0,  //单个32bit，只是对应于一个节点的权重addr
 input  [AXI_ADDR_WID-1:0]           base_addr_1,
 input  [AXI_ADDR_WID-1:0]           base_addr_2,
 input  [AXI_ADDR_WID-1:0]           base_addr_3,
 input  [AXI_ADDR_WID-1:0]           base_addr_4,
 input  [AXI_ADDR_WID-1:0]           base_addr_5,
+input  [AXI_ADDR_WID-1:0]           group_base_addr_0,
+input  [AXI_ADDR_WID-1:0]           group_base_addr_1,
+input  [AXI_ADDR_WID-1:0]           group_base_addr_2,
+input  [AXI_ADDR_WID-1:0]           group_base_addr_3,
+input  [AXI_ADDR_WID-1:0]           group_base_addr_4,
+input  [AXI_ADDR_WID-1:0]           group_base_addr_5,
+input  [AXI_ADDR_WID-1:0]           write_base_addr_0,
+input  [AXI_ADDR_WID-1:0]           write_base_addr_1,
+input  [AXI_ADDR_WID-1:0]           write_base_addr_2,
+input  [AXI_ADDR_WID-1:0]           write_base_addr_3,
+input  [AXI_ADDR_WID-1:0]           write_base_addr_4,
+input  [AXI_ADDR_WID-1:0]           write_base_addr_5,
 
 // noc ports
 output                              data_out_valid   ,
@@ -135,6 +148,8 @@ wire  [AXI_DATA_WID-1:0]            wr_data            ;
 wire                                wr_data_ready      ;
 wire  [AXI_STRBW-1:0] 	        	  wr_strb            ;
 
+
+//处理DMA与NoC之间的数据传输，包括地址、数据流的传递。
 idma_data_noc_if#(
     .ADDR_WIDTH     ( AXI_ADDR_WID   ),
     .DATA_WIDTH     ( AXI_DATA_WID   ),
@@ -148,6 +163,18 @@ idma_data_noc_if#(
     .base_addr_3    ( base_addr_3    ),
     .base_addr_4    ( base_addr_4    ),
     .base_addr_5    ( base_addr_5    ),
+    .group_base_addr_0( group_base_addr_0  ),
+    .group_base_addr_1( group_base_addr_1  ),
+    .group_base_addr_2( group_base_addr_2  ),
+    .group_base_addr_3( group_base_addr_3  ),
+    .group_base_addr_4( group_base_addr_4  ),
+    .group_base_addr_5( group_base_addr_5  ),
+    .write_base_addr_0( write_base_addr_0  ),
+    .write_base_addr_1( write_base_addr_1  ),
+    .write_base_addr_2( write_base_addr_2  ),
+    .write_base_addr_3( write_base_addr_3  ),
+    .write_base_addr_4( write_base_addr_4  ),
+    .write_base_addr_5( write_base_addr_5  ),
 
     .rd_req            ( rd_req            ),
     .rd_addr           ( rd_addr           ),
@@ -185,7 +212,7 @@ idma_data_noc_if#(
 );
 
 
-
+// 用于处理DMA与AXI之间的数据同步和传输，处理FIFO的读写操作。
 idma_sync_256b_top #(
   .DATA_FIFO_DEPTH        (DATA_FIFO_DEPTH  ),
   .DATA_FIFO_CNT_WID      (DATA_FIFO_CNT_WID),
