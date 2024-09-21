@@ -1,3 +1,6 @@
+
+// 接口模块，连接了DMA、Ibuffer、APB 总线、NOC（Network on Chip）接口，负责在这些模块之间进行数据的读写、控制和管理。
+
 module idma_inoc_interface
 #(
     parameter DATA_WIDTH = 128,
@@ -16,7 +19,7 @@ module idma_inoc_interface
     input                  fsm_auto_restart_en, // if 1, auto restart next loop
     input                  fsm_restart, // if pulse asserts, restart next loop
 
-    // dma port
+    // dma port     //idma 从DDR读取指令
     input                  dma_rd_req,
     input                  dma_rd_data_valid,
     input [DATA_WIDTH-1:0] dma_rd_data,
@@ -25,7 +28,7 @@ module idma_inoc_interface
     input [31:0]           dma_rd_addr,
     input [31:0]           dma_rd_num, // how many word
 
-    // ibuffer port
+    // ibuffer port    // 读取的指令放到ibuffer中
     output                 ibuffer_cen,
     output                 ibuffer_wen,
     input                  ibuffer_ready,
@@ -36,7 +39,7 @@ module idma_inoc_interface
     input                  ibuffer_rvalid,
     output                 ibuffer_rready,
 
-    // apb interface master 0
+    // apb interface master 0   //
     output [11:0]          m0_paddr  ,
     output [0:0]           m0_psel   ,
     output                 m0_penable,
@@ -55,7 +58,7 @@ module idma_inoc_interface
     output [31:0]          m1_pwdata ,
 
 
-    // send to noc
+    // send to noc      //与节点之间的通信端口
     output [11:0]           send_valid ,
     output [11:0][FLIT_WIDTH-1:0] send_flit  ,
     input  [11:0]           send_ready ,
@@ -65,14 +68,16 @@ module idma_inoc_interface
     input  [11:0][FLIT_WIDTH-1:0] recv_flit  ,
     output [11:0]           recv_ready ,
 
-    // send intr
+    // send intr    //反馈给顶层SoC CPU的状态
     output [11:0]           nodes_status,
     output                  small_loop_end_int,
     output                  finish_intr
 );
 
 wire [MEM_AW-1:0]     dma_rd_data_num;
-wire [MEM_AW+2-1:0]   dma_rd_word_addr;
+// DDR[31:0] 内部应该是按照128bit来寻址的。因为上面的rd_data是128bit
+// 所以这里 + 2 目的是为了能转换成word
+wire [MEM_AW+2-1:0]   dma_rd_word_addr; 
 wire [MEM_AW+2-1:0]   dma_rd_word_addr_end;
 wire                  dma_read_to_ibuffer_cen;
 wire                  dma_read_to_ibuffer_wen;
@@ -82,7 +87,10 @@ wire [DATA_WIDTH-1:0] dma_read_to_ibuffer_wdata;
 wire [STRB_WIDTH-1:0] dma_read_to_ibuffer_strb;
 wire                  dma_read_to_ibuffer_done;
 
-// noc wr port
+// noc wr port   从内部缓冲区 (ibuffer) 中读取数据，并通过 noc 传输数据到节点
+// MEM_AW 是寻址ibuffer内部的一个cacheline的，而要具体定位到每个word，就需要增加地址位宽。
+// ibuffer内部的一个cacheline是128bit，而一个flit是32bit，所以 可以用DATA_WIDTH/FLIT_WIDTH的对数来确定需要增加地址线 2条。
+// 虽然是128bit的一个line，但是实际上的存储组织应该还是按照一个地址线一个word这样，或者是一个地址bit一个byte这样组织的。
 wire [MEM_AW+$clog2(DATA_WIDTH/FLIT_WIDTH)-1:0] ibuffer_word_addr; // word addr
 wire [12:0]             ibuffer_word_num; // how many word
 wire                    noc_read_from_ibuffer_cen;
@@ -99,8 +107,15 @@ wire                    return_ready;
 wire                    return_last;
 wire [FLIT_WIDTH-1:0]   return_data;
 
-assign dma_rd_word_addr = dma_rd_addr[2+:(MEM_AW+2)];
+// 应该不是以字节寻址
+/////////// 如果DDR以字节寻址：
+///////////          [2:17] 共16bit，每个bit对应一个4B，所以共 2^18B = 256 KB
+// 如果DDR以128bit寻址：
+//          [2:17] 共16bit，每个bit对应一个128bit=16B，所以共 2^20B = 1 MB
+assign dma_rd_word_addr = dma_rd_addr[2+:(MEM_AW+2)];   //[2:17] 2+: 指从 dma_rd_addr 的第2位开始，选择MEM_AW+2位。
+// [0+:(MEM_AW+2)]从0开始选择MEM_AW+2位，实际上就是0到MEM_AW+1。所以后面 MEM_AW+1{1'b0} 个0，最后补1个1
 assign dma_rd_word_addr_end = dma_rd_word_addr + dma_rd_num[0+:(MEM_AW+2)] - {{MEM_AW+1{1'b0}}, 1'b1};
+//用word的end地址和start地址得到word的数量
 assign dma_rd_data_num = dma_rd_word_addr_end[2+:MEM_AW] - dma_rd_word_addr[2+:MEM_AW] + {{MEM_AW-1{1'b0}}, 1'b1};
 
 
