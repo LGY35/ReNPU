@@ -1,3 +1,7 @@
+
+//控制和管理数据流：连接到ibuffer、APB接口、以及NoC接口。
+//主要负责启动和监控数据读取、处理FSM的启动和重新启动、以及控制数据发送到NoC和从NoC接收数据。
+
 module idma_inoc_control
 #(
     parameter FLIT_WIDTH = 32,
@@ -17,8 +21,8 @@ module idma_inoc_control
     output                 ibuffer_rd_start,
     output [16:0]          ibuffer_word_addr,
     output [12:0]          ibuffer_word_num,
-    input                  return_valid,
-    output                 return_ready,
+    input                  return_valid,    //ibuffer的数据valid
+    output                 return_ready,    //FSM准备好接收指令，ready
     input [FLIT_WIDTH-1:0] return_data,
     input                  return_last,
     input                  return_done,
@@ -57,11 +61,13 @@ module idma_inoc_control
     output                 finish_intr
 );
 
+//opcode
 localparam OP_BASE = 7'd0;
 localparam OP_GROUP = 7'd1;
 localparam OP_LAST = 7'd2;
 localparam OP_FINISH = 7'd3;
 
+// 取feature基地址
 localparam APB_BASE_ADDR_GROUP_0 = 12'h5c;
 localparam APB_BASE_ADDR_GROUP_1 = 12'h60;
 localparam APB_BASE_ADDR_GROUP_2 = 12'h5c;
@@ -75,6 +81,7 @@ localparam APB_BASE_ADDR_GROUP_9 = 12'h70;
 localparam APB_BASE_ADDR_GROUP_10 = 12'h6c;
 localparam APB_BASE_ADDR_GROUP_11 = 12'h70;
 
+// 写回地址
 localparam APB_BASE_ADDR_WRITE = 12'h74;
 localparam APB_BASE_ADDR_WRITE_0 = 12'h74;
 localparam APB_BASE_ADDR_WRITE_1 = 12'h78;
@@ -89,6 +96,7 @@ localparam APB_BASE_ADDR_WRITE_9 = 12'h88;
 localparam APB_BASE_ADDR_WRITE_10 = 12'h84;
 localparam APB_BASE_ADDR_WRITE_11 = 12'h88;
 
+//握手成功
 wire return_handshake = return_valid && return_ready;
 
 // config ports
@@ -134,7 +142,7 @@ wire  [20:0] recv_pipe_data_out;
 wire         recv_pipe_ready_in;
 wire         recv_pipe_in_handshake;
 
-
+// 状态机
 localparam IDLE      = 3'd0;
 localparam RD_BASE   = 3'd1;
 localparam RD_INFO   = 3'd2;
@@ -146,7 +154,10 @@ localparam FINISH    = 3'd7;
 reg [2:0] cur_state;
 reg [2:0] nxt_state;
 
-
+//   m0  |    m1
+// 8  9  |  10 11
+// 4  5  |  6  7
+// 0  1  |  2  3
 localparam GROUP_VALID_BITS_M0 = 12'b001100110011;
 localparam GROUP_VALID_BITS_M1 = 12'b110011001100;
 localparam APB_IDLE = 2'd0;
@@ -175,6 +186,7 @@ reg [1:0] return_base1_cfg_group_cnt; // 0: base1;  1: cfg;  2: group
 wire return_base1_cfg_group_cnt_clr;
 wire return_base1_cfg_group_cnt_inc;
 
+//return_data就是ibuffer中的一个flit，即32bit的指令/数据
 wire return_data_op_base = (return_data[6:0]==OP_BASE);
 wire return_data_op_group= (return_data[6:0]==OP_GROUP);
 wire return_data_op_last = (return_data[6:0]==OP_LAST);
@@ -222,9 +234,10 @@ reg read_base_loop_start_reg;
 // ======================================================================
 // ALL    Counters   HERE
 // ======================================================================
-// count base, cfg info and group info number
-assign small_loop_cnt_clear = (return_data_op_last || return_data_op_finish) && return_handshake;
-assign small_loop_cnt_incr  = small_loop_processing && return_handshake;
+// count base, cfg info and group info number   
+//每个小循环中的基地址、配置信息、组信息的处理
+assign small_loop_cnt_clear = (return_data_op_last || return_data_op_finish) && return_handshake;//清零条件：处理到小循环中的最后一个task，或最后一个小循环，且正确握手
+assign small_loop_cnt_incr  = small_loop_processing && return_handshake;// 递增条件：正在处理中，并且握手成功，那么进入下一个小循环
 always @(posedge clk or negedge rst_n) begin
     if (rst_n==1'b0) begin
         small_loop_cnt <= 17'd0;
@@ -238,7 +251,8 @@ always @(posedge clk or negedge rst_n) begin
 end
 
 // count info num
-assign return_info_cnt_clear = ((return_info_cnt==4'd11) && return_handshake) || small_loop_cnt_clear;
+//当前已经处理的小循环的信息
+assign return_info_cnt_clear = ((return_info_cnt==4'd11) && return_handshake) || small_loop_cnt_clear;  //小循环清0或者 
 assign return_info_cnt_incr = (cur_state==RD_INFO) && return_handshake;
 always @(posedge clk or negedge rst_n) begin
     if (rst_n==1'b0) begin
