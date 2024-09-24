@@ -1,6 +1,12 @@
+
+//构建router的mesh网络
+// 内部例化16个router，每个router有5个方向，local 与 东西南北
+// local方向是与CuCore连接，所以需要作为顶层通信端口与外部交互(带_local的一组信号，如信号node_in_flit_local)
+// 东西南北四个方向，通过(没有_local的信号，如node_in_flit) 完成mesh连接
+
 module noc_mesh #(
     parameter FLIT_WIDTH = 32,
-    parameter CHANNELS = 2,
+    parameter CHANNELS = 2,     //有2个虚拟通道
     parameter X = 4,
     parameter Y = 4,
     parameter BUFFER_SIZE_IN = 4,
@@ -11,12 +17,13 @@ module noc_mesh #(
     input                                               clk, 
     input                                               rst_n,
 
-    input   [NODES-1:0][FLIT_WIDTH-1:0]                 node_in_flit_local,
-    input   [NODES-1:0]                                 node_in_last_local,
+    // local是来自cucore的，所以需要作为对外通信的端口，从core接收/向core传输。
+    input   [NODES-1:0][FLIT_WIDTH-1:0]                 node_in_flit_local, //节点接收的flit，local方向
+    input   [NODES-1:0]                                 node_in_last_local, 
     input   [NODES-1:0][CHANNELS-1:0]                   node_in_valid_local,
     output  [NODES-1:0][CHANNELS-1:0]                   node_in_ready_local,
 
-    output  [NODES-1:0][FLIT_WIDTH-1:0]                 node_out_flit_local,
+    output  [NODES-1:0][FLIT_WIDTH-1:0]                 node_out_flit_local,//节点发送的flit，local方向
     output  [NODES-1:0]                                 node_out_last_local,
     output  [NODES-1:0][CHANNELS-1:0]                   node_out_valid_local,
     input   [NODES-1:0][CHANNELS-1:0]                   node_out_ready_local
@@ -53,10 +60,10 @@ module noc_mesh #(
         // Arrays of wires between the routers. Each router has a
         // pair of NoC wires per direction and below those are hooked
         // up.
-        wire [4:0][PCHANNELS-1:0][FLIT_WIDTH-1:0]     node_in_flit [0:NODES-1];
-        wire [4:0][PCHANNELS-1:0]                     node_in_last [0:NODES-1];
-        wire [4:0][CHANNELS-1:0]                      node_in_valid [0:NODES-1];
-        wire [4:0][CHANNELS-1:0]                      node_in_ready [0:NODES-1];
+        wire [4:0][PCHANNELS-1:0][FLIT_WIDTH-1:0]     node_in_flit [0:NODES-1]; //每个节点有5个方向，每个方向有1个物理通道，每个通道的宽度是flit-1。如果要定位到某个bit，那这是一个4维数组。
+        wire [4:0][PCHANNELS-1:0]                     node_in_last [0:NODES-1]; //每个节点的每个方向的每个通道的最后一个flit
+        wire [4:0][CHANNELS-1:0]                      node_in_valid [0:NODES-1];//上面用物理通道，握手信号用虚拟通道
+        wire [4:0][CHANNELS-1:0]                      node_in_ready [0:NODES-1];//上面用物理通道，握手信号用虚拟通道
         wire [4:0][PCHANNELS-1:0][FLIT_WIDTH-1:0]     node_out_flit [0:NODES-1];
         wire [4:0][PCHANNELS-1:0]                     node_out_last [0:NODES-1];
         wire [4:0][CHANNELS-1:0]                      node_out_valid [0:NODES-1];
@@ -93,7 +100,8 @@ module noc_mesh #(
 
                 // Instantiate the router. We call a function to
                 // generate the routing table
-                assign node_in_flit[nodenum(x,y)][LOCAL][0] = node_in_flit_local;
+                // 设置每个节点的 本地 通信通道——将router与本地的cucore进行连接：node_in_flit_local是本地的Cucore输入的信息
+                assign node_in_flit[nodenum(x,y)][LOCAL][0] = node_in_flit_local;//先选择节点，然后选择方向，最后选择channel
                 assign node_in_last[nodenum(x,y)][LOCAL][0] = node_in_last_local;
                 assign node_in_valid[nodenum(x,y)][LOCAL] = node_in_valid_local;
                 assign node_in_ready_local = node_in_ready[nodenum(x,y)][LOCAL];
@@ -109,8 +117,8 @@ module noc_mesh #(
                     .VCHANNELS  (CHANNELS),
                     .INPUTS     (5),
                     .OUTPUTS    (5),
-                    .X          (x[1:0]),
-                    .Y          (y[1:0]),
+                    .X          (x[1:0]),   //上下一共4个
+                    .Y          (y[1:0]),   //上下一共4个
                     .BUFFER_SIZE_IN (BUFFER_SIZE_IN),
                     .BUFFER_SIZE_OUT (BUFFER_SIZE_OUT),
                     .DESTS      (NODES),
@@ -118,8 +126,8 @@ module noc_mesh #(
                 )
                 u_router
                 (
-                    .*,
-                    .in_flit   (node_in_flit[nodenum(x,y)]),
+                    .*, //自动将同名的端口连接
+                    .in_flit   (node_in_flit[nodenum(x,y)]),    //每个节点都例化一个router
                     .in_last   (node_in_last[nodenum(x,y)]),
                     .in_valid  (node_in_valid[nodenum(x,y)]),
                     .in_ready  (node_in_ready[nodenum(x,y)]),
@@ -132,48 +140,50 @@ module noc_mesh #(
                 // The following are all the connections of the routers
                 // in the four directions. If the router is on an outer
                 // border, tie off.
-                if (y > 0) begin
+                // 路由器之间的连接逻辑
+                if (y > 0) begin          //y>0 即节点不在最底部
+                    //(x,y) 的 south通道 连接到 (x,y)south方向节点的 north通道 
                     assign node_in_flit[nodenum(x,y)][SOUTH] = node_out_flit[southof(x,y)][NORTH];
                     assign node_in_last[nodenum(x,y)][SOUTH] = node_out_last[southof(x,y)][NORTH];
                     assign node_in_valid[nodenum(x,y)][SOUTH] = node_out_valid[southof(x,y)][NORTH];
                     assign node_out_ready[nodenum(x,y)][SOUTH] = node_in_ready[southof(x,y)][NORTH];
-                    end else begin
-                    assign node_in_flit[nodenum(x,y)][SOUTH] = 'x;
-                    assign node_in_last[nodenum(x,y)][SOUTH] = 'x;
+                end else begin
+                    assign node_in_flit[nodenum(x,y)][SOUTH] = 'x;// 常量，不定值
+                    assign node_in_last[nodenum(x,y)][SOUTH] = 'x;// 常量，不定值
                     assign node_in_valid[nodenum(x,y)][SOUTH] = 0;
                     assign node_out_ready[nodenum(x,y)][SOUTH] = 0;
                 end
 
-                if (y < Y-1) begin
+                if (y < Y-1) begin  // 不是顶部节点
                     assign node_in_flit[nodenum(x,y)][NORTH] = node_out_flit[northof(x,y)][SOUTH];
                     assign node_in_last[nodenum(x,y)][NORTH] = node_out_last[northof(x,y)][SOUTH];
                     assign node_in_valid[nodenum(x,y)][NORTH] = node_out_valid[northof(x,y)][SOUTH];
                     assign node_out_ready[nodenum(x,y)][NORTH] = node_in_ready[northof(x,y)][SOUTH];
-                    end else begin
+                end else begin
                     assign node_in_flit[nodenum(x,y)][NORTH] = 'x;
                     assign node_in_last[nodenum(x,y)][NORTH] = 'x;
                     assign node_in_valid[nodenum(x,y)][NORTH] = 0;
                     assign node_out_ready[nodenum(x,y)][NORTH] = 0;
                 end
 
-                if (x > 0) begin
+                if (x > 0) begin    //不是最左侧节点
                     assign node_in_flit[nodenum(x,y)][WEST] = node_out_flit[westof(x,y)][EAST];
                     assign node_in_last[nodenum(x,y)][WEST] = node_out_last[westof(x,y)][EAST];
                     assign node_in_valid[nodenum(x,y)][WEST] = node_out_valid[westof(x,y)][EAST];
                     assign node_out_ready[nodenum(x,y)][WEST] = node_in_ready[westof(x,y)][EAST];
-                    end else begin
+                end else begin
                     assign node_in_flit[nodenum(x,y)][WEST] = 'x;
                     assign node_in_last[nodenum(x,y)][WEST] = 'x;
                     assign node_in_valid[nodenum(x,y)][WEST] = 0;
                     assign node_out_ready[nodenum(x,y)][WEST] = 0;
                 end
 
-                if (x < X-1) begin
+                if (x < X-1) begin  //不是最右侧节点
                     assign node_in_flit[nodenum(x,y)][EAST] = node_out_flit[eastof(x,y)][WEST];
                     assign node_in_last[nodenum(x,y)][EAST] = node_out_last[eastof(x,y)][WEST];
                     assign node_in_valid[nodenum(x,y)][EAST] = node_out_valid[eastof(x,y)][WEST];
                     assign node_out_ready[nodenum(x,y)][EAST] = node_in_ready[eastof(x,y)][WEST];
-                    end else begin
+                end else begin
                     assign node_in_flit[nodenum(x,y)][EAST] = 'x;
                     assign node_in_last[nodenum(x,y)][EAST] = 'x;
                     assign node_in_valid[nodenum(x,y)][EAST] = 0;
@@ -209,13 +219,15 @@ module noc_mesh #(
     endfunction // westof
 
     // This generates the lookup table for each individual node
+    // 通过一个LUT来确定要去那一个节点
     function [NODES-1:0][4:0] genroutes(input integer x, input integer y);
         integer yd,xd;
         integer nd;
         reg [4:0] d;
 
-        genroutes = {NODES{5'b00000}};
+        genroutes = {NODES{5'b00000}};  //返回值
 
+        //路由算法，X-Yrouting，先走x再走y
         for (yd = 0; yd < Y; yd++) begin
             for (xd = 0; xd < X; xd++) begin : inner_loop
                 nd = nodenum(xd,yd);
@@ -237,7 +249,7 @@ module noc_mesh #(
                         d = DIR_EAST;
                     end
                 end // else: !if(xd==x)
-                genroutes[nd] = d;
+                genroutes[nd] = d;  //到节点nd 的方向独热码
             end
         end
     endfunction

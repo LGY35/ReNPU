@@ -1,14 +1,14 @@
 module noc_router #(
     parameter FLIT_WIDTH = 32,
     parameter VCHANNELS = 2,
-    parameter INPUTS = 'x,
-    parameter OUTPUTS = 'x,
-    parameter X = 2'd0,
-    parameter Y = 2'd0,
+    parameter INPUTS = 'x,      //参数默认是x，就需要在例化的时候明确指定
+    parameter OUTPUTS = 'x, //输入和输出的方向数，即东西南北local 5个
+    parameter X = 2'd0,     
+    parameter Y = 2'd0,     //东西南北四个方向的x和y的节点
     parameter BUFFER_SIZE_IN = 4,
     parameter BUFFER_SIZE_OUT = 4,
-    parameter DESTS = 'x,
-    parameter [OUTPUTS*DESTS-1:0] ROUTES = {DESTS*OUTPUTS{1'b0}}
+    parameter DESTS = 'x,   //目的节点数
+    parameter [OUTPUTS*DESTS-1:0] ROUTES = {DESTS*OUTPUTS{1'b0}}    //输出端口与目的节点之间关系的路由表
 )
 (
     input                                   clk, 
@@ -46,6 +46,7 @@ module noc_router #(
     generate
         for (i = 0; i < INPUTS; i++) begin : inputs
          // The input stages
+         //处理入站数据，根据路由策略（由 ROUTES 参数指定）决定将数据发送到哪个输出端口。
             noc_router_input 
             #(
                 .FLIT_WIDTH(FLIT_WIDTH), 
@@ -53,7 +54,7 @@ module noc_router #(
                 .X(X),
                 .Y(Y),
                 .OUTPUTS(OUTPUTS), 
-                .ROUTES(ROUTES),
+                .ROUTES(ROUTES),    
                 .BUFFER_DEPTH (BUFFER_SIZE_IN)
             )
             U_input
@@ -71,6 +72,7 @@ module noc_router #(
         end // block: inputs
 
         // The switching logic
+        //数据在输入到输出的转换过程中通过交换逻辑。将输入端的数据分配到正确的输出端，基于输入端提供的有效信号和输出端的就绪信号。
         for (o = 0; o < OUTPUTS; o++) begin
             for (v = 0; v < VCHANNELS; v++) begin
                 for (i = 0; i < INPUTS; i++) begin
@@ -82,6 +84,7 @@ module noc_router #(
             end
         end
 
+        //输出阶段：从交换逻辑接收数据，并将其发送到目标输出端口。
         for (o = 0; o < OUTPUTS; o++) begin :  outputs
             // The output stages
             noc_router_output

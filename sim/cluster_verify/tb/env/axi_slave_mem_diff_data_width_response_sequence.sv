@@ -21,7 +21,8 @@ class axi_slave_mem_diff_data_width_response_sequence extends axi_slave_mem_resp
   bit[`SVT_AXI_MAX_ADDR_WIDTH-1:0] addr_t;
   bit[7:0] data;
   bit[7:0] data_t;
-  bit [127:0]datain[127:0];
+  bit [7:0]instr_in[511:0];
+  bit [255:0]data_in[0:511];
   /** UVM Object Utility macro */
   `uvm_object_utils(axi_slave_mem_diff_data_width_response_sequence)
 
@@ -35,15 +36,21 @@ class axi_slave_mem_diff_data_width_response_sequence extends axi_slave_mem_resp
   
   virtual task body();
 
-  integer fp,i;
+  integer fp,i,fp1;
     `uvm_info("body", "Entered ...", UVM_LOW)
 
     $cast(slave_agt, p_sequencer.get_parent()); 
 
-    fp = $fopen("/home/zhangshiwei/project/cluster_verify/test/instr_data.txt","r");
-        for(i=0;i<128;i++) begin
-               $fscanf(fp,"%h",datain[i]);
-               $display("$fscanf instr data%d: %h",i,datain[i]);
+    fp = $fopen("../../test/DVcase/case1_dmawr/case1_instr.txt","r");
+        for(i=0;i<512;i++) begin
+               $fscanf(fp,"%h",instr_in[i]);
+               $display("$fscanf instr data%d: %h",i,instr_in[i]);
+        end
+
+    fp1 = $fopen("../../test/DVcase/case1_dmawr/case1_data.txt","r");
+        for(i=0;i<512;i++) begin
+               $fscanf(fp1,"%h",data_in[i]);
+               $display("$fscanf test data%d: %h",i,data_in[i]);
         end
 
     //write using write_byte API. 
@@ -62,12 +69,28 @@ class axi_slave_mem_diff_data_width_response_sequence extends axi_slave_mem_resp
     end
 
 
-     for (int j=0;j<128;j++) begin
-        for(int i=0;i<16;i++) begin
-            addr_t = (j*16) + i ;
-            data_t = datain [j] [(8*i) +: 8];
+     //for (int j=0;j<512;j++) begin
+     //   for(int i=0;i<4;i++) begin
+     //       addr_t = (j*4) + i ;
+     //       data_t = instr_in [j] [(8*i) +: 8];
+     //       slave_agt.write_byte(addr_t,data_t);
+     //   `uvm_info("body", $sformatf("mem init addr=%0h  data=%0h",addr_t,data_t), UVM_LOW)
+     //   end 
+     //end
+
+     for (int j=0;j<512;j++) begin
+            addr_t = j ;
+            data_t = instr_in [j];
             slave_agt.write_byte(addr_t,data_t);
-        `uvm_info("body", $sformatf("mem init addr=%0h  data=%0h",addr_t,data_t), UVM_LOW)
+        `uvm_info("body", $sformatf("mem init addr=%0h  data=%0h",addr_t,data_t), UVM_LOW) 
+     end
+
+     for (int j=0;j<512;j++) begin
+        for(int i=0;i<32;i++) begin
+            addr_t = (j*32) + i + 92000000;
+            data_t = data_in [j] [(8*i) +: 8];
+            slave_agt.write_byte(addr_t,data_t);
+        `uvm_info("body", $sformatf("mem data addr=%0h  data=%0h",addr_t,data_t), UVM_LOW)
         end 
      end
 
