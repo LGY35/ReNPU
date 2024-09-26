@@ -118,13 +118,9 @@ module icache_L1_L2_itf(
 
         ns = cs;
 
-
-
         // core_cmd_itf_gnt = 1'b0;
 
         // core_cmd_ok = 1'b0;
-
-
 
         pri_cache_refill_gnt = 1'b0;
 
@@ -132,21 +128,15 @@ module icache_L1_L2_itf(
 
         pri_cache_refill_r_data = 'b0;
 
-
-
         fetch_L2cache_info = 'b0;
 
         fetch_L2cache_req = 'b0;
 
         fetch_L2cache_r_ready = 1'b1;
 
-
-
         core_wakeup_irq = 1'b0;
 
         soft_rst_n = 1'b1;
-
-
 
         case(cs)
 
@@ -157,15 +147,10 @@ module icache_L1_L2_itf(
             if(fetch_L2cache_r_valid) begin
 
                 // if(core_rst_n) begin
-
                 //     ns = RESET;
-
                 // end
-
                 // else begin
-
                 //     ns = WAKEUP;
-
                 // end
 
                 ns = IDLE;

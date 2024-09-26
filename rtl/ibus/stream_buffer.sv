@@ -1,31 +1,24 @@
+
+
+
+//TODO: 如果没有icache miss，stream怎么变？
+
 module stream_buffer(
 
     input                   clk,
 
     input                   rst_n,
-
-
-
+    // fetch_stream_req 会连接到core，当streamhit的时候，一边向core搬运数据，一边向icache中也搬运数据
     input                   fetch_stream_req,
-
     input           [18:0]  fetch_stream_addr,
-
     output  logic           fetch_stream_gnt,
-
     output  logic           fetch_stream_r_valid,
-
     output  logic   [31:0]  fetch_stream_r_data,
 
-
-
     output  logic           stream_to_icache_valid,
-
     output  logic   [31:0]  stream_to_icache_data,
-
-
-
+    
     input                   prefetch_r_valid,
-
     input           [31:0]  prefetch_r_data,
 
     // output  logic   [18:0]  prefetch_addr,
@@ -34,43 +27,27 @@ module stream_buffer(
 
     // input                   prefetch_gnt,
 
-
-
     input                   icache_work_en,
-
     input                   icache_sleep_en,
-
     input                   stream_fetch_valid,
-
     input                   stream_miss,
-
     output  logic           stream_busy,
-
     output  logic           stream_move_done,
-
     output  logic           stream_hit
 
 );
 
-
-
 localparam SLEEP = 3'b000;
-
 localparam IDLE = 3'b001;
-
 localparam FETCH_CHECK = 3'b010;
-
 localparam STREAM_MOVE = 3'b011;
-
 // localparam STREAM_MOVE_WAIT = 3'b100;
-
 localparam STREAM_MOVE_HIT = 3'b101;
 
+//TODO: set怎么显示？
+logic [15:0][31:0] stream_buffer;   //每个buffer里面存了16个words，即1个cacheline
 
-
-logic [15:0][31:0] stream_buffer;
-
-logic [12:0] stream_buffer_addr;
+logic [12:0] stream_buffer_addr;    // tag + entry(即3bit代表8个cacheline) 
 
 logic [3:0] hit_index;
 
@@ -97,7 +74,6 @@ logic [12:0] line_addr_cut;
 // logic []
 
 
-
 logic [15:0][31:0] prefetch_buffer;
 
 logic [12:0] prefetch_buffer_addr, prefetch_buffer_addr_ns; //////////////////////////////////
@@ -107,11 +83,9 @@ logic [3:0] stream_move_cnt, stream_move_cnt_ns;
 logic [3:0] stream_refill_cnt;
 
 
-
 logic icache_sleep_en_reg;
 
 logic [2:0] cs, ns;
-
 
 
 always_ff @(posedge clk or negedge rst_n) begin
@@ -147,31 +121,22 @@ always_comb begin
     // stream_refill_cnt_ns = stream_refill_cnt;
 
     sfetch_miss_ns = sfetch_miss;
-
     prefetch_buffer_addr_ns = prefetch_buffer_addr;
 
 
-
     stream_hit = 1'b0;
-
     stream_move_hit = 1'b0;
 
-    
 
     stream_moving = 1'b1;
-
     stream_move_done = 1'b0;
 
 
-
     stream_to_icache_valid = 1'b0;
-
     stream_to_icache_data = stream_buffer[stream_move_cnt];
 
 
-
     fetch_stream_r_valid = 'b0;
-
     hit_index = fetch_stream_addr[5:2];
 
     move_hit_index_ns = move_hit_index;
@@ -180,11 +145,7 @@ always_comb begin
 
     fetch_stream_gnt = 'b0;
 
-
-
     // line_addr_cut = fetch_stream_addr[18:6];
-
-
 
     case(cs)
 
@@ -207,7 +168,7 @@ always_comb begin
             if(icache_sleep_en | icache_sleep_en_reg)
 
                 ns = SLEEP;
-
+                // BOTH_COMPARE 时，或者 ICACHE_STREAM_HIT
             else if(fetch_stream_req) begin
 
                 stream_hit = (stream_buffer_addr == fetch_stream_addr[18:6]) & stream_buffer_valid;
@@ -218,7 +179,7 @@ always_comb begin
 
                     ns = FETCH_CHECK;
 
-                    fetch_stream_r_valid = 1'b1;
+                    fetch_stream_r_valid = 1'b1;    //hit之后就给出valid信号
 
                 end
 
@@ -237,96 +198,59 @@ always_comb begin
         FETCH_CHECK: begin
 
 		    stream_moving = 1'b0;
-
-            if(stream_fetch_valid) begin
-
-                prefetch_buffer_addr_ns = (line_addr_cut + 1'b1);
-
+            //stream_fetch_valid之后就需要预取了
+            if(stream_fetch_valid) begin    
+                // 下一个cacheline的地址
+                prefetch_buffer_addr_ns = (line_addr_cut + 1'b1); //加1就代表一个cacheline
                 if(stream_hit_reg)begin
-
+                    // stream hit之后就可以开始move了
                     ns = STREAM_MOVE;
-
                     // stream_move_cnt_ns = 'b0; 
-
                 end
-
                 else begin
-
                     ns = IDLE;
-
                 end
-
             end
-
             else begin
-
                 ns = IDLE;
-
             end
 
         end
 
         STREAM_MOVE: begin
-
             stream_to_icache_valid = 1'b1;
-
-            if(stream_move_cnt == 4'hf)begin
-
+            if(stream_move_cnt == 4'hf)begin    //需要搬16次
                 stream_move_cnt_ns = 'b0;
-
                 ns = IDLE;
-
                 stream_move_done = 1'b1;
-
-                sfetch_miss_ns = 1'b0;
-
+                sfetch_miss_ns = 1'b0;  //恢复推测预取
             end
 
             else begin
-
                 stream_move_cnt_ns = stream_move_cnt + 1'b1;
-
+                //只有req有效，并且恢复推测执行的时候，才会计数继续加
                 if(fetch_stream_req & ~sfetch_miss) begin
-
+                    //move hit
                     stream_move_hit = (stream_buffer_addr == fetch_stream_addr[18:6]);
-
                     if(stream_move_hit) begin
-
+                        //TODO: 这里的gnt逻辑是什么，与valid的关系？
                         fetch_stream_gnt = 1'b1;
-
                         move_hit_index_ns = fetch_stream_addr[5:2];
-
                     end
-
                     else begin
-
                         // ns = STREAM_MOVE_WAIT;
-
                         sfetch_miss_ns = 1'b1;
-
                     end
-
                 end
-
             end
-
             if(stream_move_hit_reg)begin
-
                 fetch_stream_r_valid = 1'b1;
-
                 fetch_stream_r_data = stream_buffer[move_hit_index];
-
             end
-
         end
-
     endcase
 
-
-
-	stream_busy = stream_refilling | stream_moving;
-
-
+	stream_busy = stream_refilling | stream_moving; 
 
 end
 
@@ -401,11 +325,11 @@ always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n)
 
         refill_done <= 'b0;
-
+    // 完成refill时，复位
     else if((((stream_refill_cnt == 4'hf) & prefetch_r_valid) | refill_done) & stream_refilling & ~stream_moving)
 
         refill_done <= 'b0;
-
+    //
     else if((stream_refill_cnt == 4'hf) & prefetch_r_valid & stream_refilling)
 
         refill_done <= 'b1;
@@ -509,15 +433,10 @@ end
 
 
 always_ff @(posedge clk or negedge rst_n) begin
-
     if(!rst_n)
-
         line_addr_cut <= 'b0;
-
-    else if((cs == IDLE) & fetch_stream_req)
-
-        line_addr_cut <= fetch_stream_addr[18:6];
-
+    else if((cs == IDLE) & fetch_stream_req)    //如果IDLE状态收到了req，就接收预取的cacheline的地址
+        line_addr_cut <= fetch_stream_addr[18:6];   //
 end
 
 
