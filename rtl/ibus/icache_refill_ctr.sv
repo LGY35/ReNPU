@@ -30,6 +30,7 @@ module icache_refill_ctr(
 
 
 
+    // 与stream buffer的接口
     output  logic           prefetch_r_valid,
 
     output  logic   [31:0]  prefetch_r_data,
@@ -37,7 +38,7 @@ module icache_refill_ctr(
     // output  logic           stream_buffer_refill_done,
 
 
-
+    // 与pri_icache的接口
     output  logic           pri_cache_refill_req,
 
     input                   pri_cache_refill_gnt,
@@ -167,109 +168,63 @@ always_comb begin
     case(cs)
 
         SLEEP: begin
-
             if(icache_work_en) begin
-
                 ns = IDLE;
-
             end
-
         end
 
         IDLE: begin
-
             if(icache_sleep_en | icache_sleep_en_reg)
-
                 ns = SLEEP;
-
             else if(ctr_refill_req) begin
-
                 transfer_cnt_ns = 4'h0;
-
                 // transfer_lenth_ns = 4'hf;
-
+                // L1_L2_itf 给出了gnt
                 if(pri_cache_refill_gnt) begin
-
+                    //如果是1，就给icache和streambuffer都预取
                     if(ctr_refill_lenth) begin
-
                         ns = BOTH_MISS;
-
                     end
-
                     else begin
-
+                        // mode=1是给icache，mode=0是给streambuffer
                         if(ctr_refill_mode) begin
-
                             ns = ICACHE_MISS;
-
                         end
-
                         else begin
-
                             ns = STREAM_MISS;
-
                         end
-
                     end
-
                 end
 
-                else begin
-
+                else begin //没有gnt就进入wait
                     ns = WAIT;
-
+                    //把信号保存
                     ctr_refill_req_ns = ctr_refill_req;
-
                     ctr_refill_lenth_ns = ctr_refill_lenth;
-
                     ctr_refill_mode_ns = ctr_refill_mode;
-
                     ctr_refill_addr_ns = ctr_refill_addr;
-
                 end
-
             end
-
         end
-
+        
         WAIT: begin
-
             pri_cache_refill_req = ctr_refill_req_reg;
-
             pri_cache_refill_addr = ctr_refill_addr_reg;
-
             pri_cache_refill_lenth = ctr_refill_lenth_reg;
-
-
-
             if(pri_cache_refill_gnt) begin
-
                 ctr_refill_req_ns = 1'b0;
-
                 if(ctr_refill_lenth_reg) begin
-
                     ns = BOTH_MISS;
-
                 end
-
                 else begin
-
                     if(ctr_refill_mode_reg) begin
-
                         ns = ICACHE_MISS;
-
                     end
-
                     else begin
-
                         ns = STREAM_MISS;
-
                     end
-
                 end
-
             end
-
         end
 
         BOTH_MISS: begin
