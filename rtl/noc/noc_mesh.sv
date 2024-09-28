@@ -5,10 +5,10 @@
 // 东西南北四个方向，通过(没有_local的信号，如node_in_flit) 完成mesh连接
 
 module noc_mesh #(
-    parameter FLIT_WIDTH = 32,
+    parameter FLIT_WIDTH = 32,  //例化的时候是256
     parameter CHANNELS = 2,     //有2个虚拟通道
     parameter X = 4,
-    parameter Y = 4,
+    parameter Y = 4,        //mesh的行列数
     parameter BUFFER_SIZE_IN = 4,
     parameter BUFFER_SIZE_OUT = 4,
     localparam NODES = X*Y
@@ -29,13 +29,15 @@ module noc_mesh #(
     input   [NODES-1:0][CHANNELS-1:0]                   node_out_ready_local
 );
     
-    // Those are indexes into the wiring arrays
+    // 方向索引
+    // Those are indexes into the wiring arrays 
     localparam LOCAL = 0;
     localparam NORTH = 1;
     localparam EAST  = 2;
     localparam SOUTH = 3;
     localparam WEST  = 4;
 
+    // 用于路由
     // Those are direction codings that match the wiring indices
     // above. The router is configured to use those to select the
     // proper output port.
@@ -101,7 +103,7 @@ module noc_mesh #(
                 // Instantiate the router. We call a function to
                 // generate the routing table
                 // 设置每个节点的 本地 通信通道——将router与本地的cucore进行连接：node_in_flit_local是本地的Cucore输入的信息
-                ssign node_in_flit[nodenum(x,y)][LOCAL][0] = node_in_flit_local[nodenum(x,y)];
+                assign node_in_flit[nodenum(x,y)][LOCAL][0] = node_in_flit_local[nodenum(x,y)];
                 assign node_in_last[nodenum(x,y)][LOCAL][0] = node_in_last_local[nodenum(x,y)];
                 assign node_in_valid[nodenum(x,y)][LOCAL] = node_in_valid_local[nodenum(x,y)];
                 assign node_in_ready_local[nodenum(x,y)] = node_in_ready[nodenum(x,y)][LOCAL];
@@ -117,12 +119,12 @@ module noc_mesh #(
                     .VCHANNELS  (CHANNELS),
                     .INPUTS     (5),
                     .OUTPUTS    (5),
-                    .X          (x[1:0]),   //上下一共4个
-                    .Y          (y[1:0]),   //上下一共4个
+                    .X          (x[1:0]),   // 00 01 10 11 即每个方向的编号
+                    .Y          (y[1:0]),   // 00 01 10 11 即每个方向的编号
                     .BUFFER_SIZE_IN (BUFFER_SIZE_IN),
                     .BUFFER_SIZE_OUT (BUFFER_SIZE_OUT),
                     .DESTS      (NODES),
-                    .ROUTES     (genroutes(x,y))
+                    .ROUTES     (genroutes(x,y))    
                 )
                 u_router
                 (
@@ -140,7 +142,7 @@ module noc_mesh #(
                 // The following are all the connections of the routers
                 // in the four directions. If the router is on an outer
                 // border, tie off.
-                // 路由器之间的连接逻辑
+                // 本router与其他router之间的连接逻辑
                 if (y > 0) begin          //y>0 即节点不在最底部
                     //(x,y) 的 south通道 连接到 (x,y)south方向节点的 north通道 
                     assign node_in_flit[nodenum(x,y)][SOUTH] = node_out_flit[southof(x,y)][NORTH];
@@ -219,11 +221,11 @@ module noc_mesh #(
     endfunction // westof
 
     // This generates the lookup table for each individual node
-    // 通过一个LUT来确定要去那一个节点
+    // 通过LUT来确定要去那一个节点      //TODO: 这里的目的节点怎么传递？
     function [NODES-1:0][4:0] genroutes(input integer x, input integer y);
         integer yd,xd;
         integer nd;
-        reg [4:0] d;
+        reg [4:0] d;    //方向
 
         genroutes = {NODES{5'b00000}};  //返回值
 
