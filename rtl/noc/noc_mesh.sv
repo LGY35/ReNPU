@@ -101,15 +101,15 @@ module noc_mesh #(
                 // Instantiate the router. We call a function to
                 // generate the routing table
                 // 设置每个节点的 本地 通信通道——将router与本地的cucore进行连接：node_in_flit_local是本地的Cucore输入的信息
-                assign node_in_flit[nodenum(x,y)][LOCAL][0] = node_in_flit_local;//先选择节点，然后选择方向，最后选择channel
-                assign node_in_last[nodenum(x,y)][LOCAL][0] = node_in_last_local;
-                assign node_in_valid[nodenum(x,y)][LOCAL] = node_in_valid_local;
-                assign node_in_ready_local = node_in_ready[nodenum(x,y)][LOCAL];
+                ssign node_in_flit[nodenum(x,y)][LOCAL][0] = node_in_flit_local[nodenum(x,y)];
+                assign node_in_last[nodenum(x,y)][LOCAL][0] = node_in_last_local[nodenum(x,y)];
+                assign node_in_valid[nodenum(x,y)][LOCAL] = node_in_valid_local[nodenum(x,y)];
+                assign node_in_ready_local[nodenum(x,y)] = node_in_ready[nodenum(x,y)][LOCAL];
 
-                assign node_out_flit_local = node_out_flit[nodenum(x,y)][LOCAL][0];
-                assign node_out_last_local = node_out_last[nodenum(x,y)][LOCAL][0];
-                assign node_out_valid_local = node_out_valid[nodenum(x,y)][LOCAL];
-                assign node_out_ready[nodenum(x,y)][LOCAL] = node_out_ready_local;
+                assign node_out_flit_local[nodenum(x,y)] = node_out_flit[nodenum(x,y)][LOCAL][0];
+                assign node_out_last_local[nodenum(x,y)] = node_out_last[nodenum(x,y)][LOCAL][0];
+                assign node_out_valid_local[nodenum(x,y)] = node_out_valid[nodenum(x,y)][LOCAL];
+                assign node_out_ready[nodenum(x,y)][LOCAL] = node_out_ready_local[nodenum(x,y)];
 
                 noc_router
                 #(

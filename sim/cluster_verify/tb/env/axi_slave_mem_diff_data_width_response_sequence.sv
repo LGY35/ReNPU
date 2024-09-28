@@ -87,7 +87,7 @@ class axi_slave_mem_diff_data_width_response_sequence extends axi_slave_mem_resp
 
      for (int j=0;j<512;j++) begin
         for(int i=0;i<32;i++) begin
-            addr_t = (j*32) + i + 92000000;
+            addr_t = (j*32) + i + 512;
             data_t = data_in [j] [(8*i) +: 8];
             slave_agt.write_byte(addr_t,data_t);
         `uvm_info("body", $sformatf("mem data addr=%0h  data=%0h",addr_t,data_t), UVM_LOW)
