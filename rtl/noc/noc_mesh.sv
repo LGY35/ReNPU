@@ -23,6 +23,7 @@ module noc_mesh #(
     input   [NODES-1:0][CHANNELS-1:0]                   node_in_valid_local,
     output  [NODES-1:0][CHANNELS-1:0]                   node_in_ready_local,
 
+    //router 发送给 core的
     output  [NODES-1:0][FLIT_WIDTH-1:0]                 node_out_flit_local,//节点发送的flit，local方向
     output  [NODES-1:0]                                 node_out_last_local,
     output  [NODES-1:0][CHANNELS-1:0]                   node_out_valid_local,
@@ -107,7 +108,7 @@ module noc_mesh #(
                 assign node_in_last[nodenum(x,y)][LOCAL][0] = node_in_last_local[nodenum(x,y)];
                 assign node_in_valid[nodenum(x,y)][LOCAL] = node_in_valid_local[nodenum(x,y)];
                 assign node_in_ready_local[nodenum(x,y)] = node_in_ready[nodenum(x,y)][LOCAL];
-
+                //把router接收到的数据传递给local
                 assign node_out_flit_local[nodenum(x,y)] = node_out_flit[nodenum(x,y)][LOCAL][0];
                 assign node_out_last_local[nodenum(x,y)] = node_out_last[nodenum(x,y)][LOCAL][0];
                 assign node_out_valid_local[nodenum(x,y)] = node_out_valid[nodenum(x,y)][LOCAL];

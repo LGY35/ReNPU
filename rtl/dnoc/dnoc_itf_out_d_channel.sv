@@ -1,3 +1,5 @@
+// //  dma rd channel
+
 module dnoc_itf_out_d_channel #(
 
     parameter NODE_ID   = 4'd0,
@@ -62,7 +64,7 @@ module dnoc_itf_out_d_channel #(
 
 
 
-    input           [12:0]          c_cfg_c_w_base_addr, //鐢变簬涓嶆敮鎸佽法鑺傜偣鍐欎箳涔擄紝鎵€浠ュ彧鏈塸ing鍦板潃
+    input           [12:0]          c_cfg_c_w_base_addr, //由于不支持跨节点写pingpang，所以只有ping地址
 
     // input           [12:0]          c_cfg_c_r_total_lenth,
 
@@ -80,10 +82,9 @@ module dnoc_itf_out_d_channel #(
 
 
 
-//core妯″紡涓嬬殑dma rd浠呰繘琛屽崟鎾殑鍐欏嚭锛屾墍浠ヤ笉闇€瑕乵c_scale鍙傛暟銆乻ync_target鍙傛暟
-
-//涓诲姩鍚戝鍐欐暟鎹病鏈塸ingpong妯″紡锛屾墍浠ヤ粎闇€瑕佸熀鍦板潃鍜岄暱搴︿袱涓弬鏁?
-//noc rd 妯″紡涓嬮渶瑕佹妸璇昏姹傚彂杩囨潵鐨刴c_scale閫佸嚭
+// core 模式下的dma rd仅进行单播的写出，所以不需要mc scale 参数、 sync target 参数
+// 主动向外写数据没有pingpang模式，所以仅需要基地址和长度两个参数
+// noc rd 模式下要把读请求发过来的mc scale 送出
 
 
 
@@ -107,15 +108,15 @@ module dnoc_itf_out_d_channel #(
 
     input           [24:0]          d_r_n_o_cfg_base_addr, //dma mode do not include node id info; others do
 
-    input           [12:0]          d_r_n_o_cfg_lenth, //dma 鍚戝杈撳嚭鏁版嵁鏃剁殑闀垮害
+    input           [12:0]          d_r_n_o_cfg_lenth, //dma 向外输出数据时的长度
 
-    input                           d_r_n_o_cfg_mode, //dma rd 閫氶亾鏄痗ore鎺у埗鐨勫啓杈撳嚭杩樻槸noc鎺у埗鐨勮杩斿洖
+    input                           d_r_n_o_cfg_mode, //dma rd 通道是core控制的写输出还是noc控制的读返回
 
-    input                           d_r_n_o_cfg_req_sel, //璇昏繑鍥炵殑鏁版嵁缁?core rd 杩樻槸dma wr
+    input                           d_r_n_o_cfg_req_sel, //读返回的数据给 core rd 还是 dma wr
 
 
 
-    input           [11:0]          d_r_n_o_cfg_noc_mc_scale, //璇昏繑鍥炵殑鏁版嵁浠ュ箍鎾殑褰㈠紡缁欏嚭
+    input           [11:0]          d_r_n_o_cfg_noc_mc_scale, //读返回的数据以广播的形式给出
 
 
 
@@ -133,9 +134,9 @@ module dnoc_itf_out_d_channel #(
 
     // input           [11:0]          c_cfg_d_r_sync_target,
 
-    //鍚岀悊锛宑ore閰嶇疆鐨刣ma妯″紡涓嶅叿澶囧箍鎾啓鍏ョ殑妯″紡
+    //同理，core配置的dma模式不具备广播写入的模式
 
-    //鍙湁鍦╮d return data鎯呭喌涓嬪箍鎾彂鍑烘暟鎹?
+    //只有 rd return data 情况下广播发出数据
 
 
 );
@@ -320,14 +321,14 @@ end
 
 assign actual_c_w_noc_target_id = c_cfg_c_w_dma_transfer ? DMA_ID : c_cfg_c_w_noc_target_id;
 
-assign actual_d_r_noc_target_id = c_cfg_d_r_dma_transfer ? DMA_ID : d_r_n_o_cfg_base_addr[16:13]; //鍖呭惈鍚戝叾瀹冮潪dma鑺傜偣鍙戦€佽璇锋眰浠ュ強鍐欑浉搴?
+assign actual_d_r_noc_target_id = c_cfg_d_r_dma_transfer ? DMA_ID : d_r_n_o_cfg_base_addr[16:13]; //包含向其他非dma节点发送读请求以及写响应
 
 
 
 
 always_comb begin
 
-    core_head_flit[255]     = 1'b0; //鏍囪褰撳墠浼犳挱鐘舵€侊紱鍗曟挱澶氭挱
+    core_head_flit[255]     = 1'b0; //标记当前传播状态：单播多播
 
     core_head_flit[254]     = 1'b0; 
 

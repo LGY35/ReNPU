@@ -1,3 +1,6 @@
+// core rd channel
+
+
 module dnoc_itf_out_c_channel #(
 
     parameter NODE_ID   = 4'd0,
@@ -56,7 +59,7 @@ module dnoc_itf_out_c_channel #(
 
     input                           c_cfg_c_r_dma_access_mode,//
 
-    input           [3:0]           c_cfg_c_r_noc_target_id, //鐩稿綋浜庡湴鍧€鐨勯珮4浣嶏紝鍐冲畾鑺傜偣鍦板潃
+    input           [3:0]           c_cfg_c_r_noc_target_id, //相当于地址高4位，决定节点地址
 
 
 
@@ -342,7 +345,7 @@ assign actual_c_r_noc_target_id = c_cfg_c_r_dma_transfer ? DMA_ID : c_cfg_c_r_no
 
 assign c_cfg_d_w_noc_sync_tid = c_cfg_d_w_noc_mc_scale[3:0];
 
-assign actual_d_w_noc_target_id = c_cfg_d_w_dma_transfer ? DMA_ID : d_w_n_o_cfg_base_addr[16:13]; //鍖呭惈鍚戝叾瀹冮潪dma鑺傜偣鍙戦€佽璇锋眰浠ュ強鍐欑浉搴?
+assign actual_d_w_noc_target_id = c_cfg_d_w_dma_transfer ? DMA_ID : d_w_n_o_cfg_base_addr[16:13]; //包含向其他非dma节点发送读请求以及写响应
 
 
 always_comb begin
@@ -351,7 +354,7 @@ always_comb begin
 
     // core_head_flit[44:32]   = c_cfg_c_r_loop_lenth[3];
 
-    // core_head_flit[44:32]   = c_cfg_c_r_loop_gap[3];    //鏈€鍐呭眰寰幆锛岃璁¤緝澶х殑lenth鍜実ap
+    // core_head_flit[44:32]   = c_cfg_c_r_loop_gap[3];    //最内层循环，设计较大的length和gap
 
 
 
@@ -389,7 +392,7 @@ always_comb begin
 
     core_head_flit[94:82]   = c_cfg_c_r_pong_lenth;
 
-    core_head_flit[81:69]   = c_cfg_c_r_ping_lenth; //ping lenth灏辨槸闈瀙ingpong妯″紡涓嬬殑浼犺緭闀垮害
+    core_head_flit[81:69]   = c_cfg_c_r_ping_lenth; //ping lenth 就是非pingpang模式下的传输长度
 
     core_head_flit[68:58]   = c_cfg_c_r_pingpong_num;
 
@@ -399,18 +402,18 @@ always_comb begin
 
     core_head_flit[56:44]   = c_cfg_c_r_base_addr[1];
 
-    core_head_flit[43:19]   = {12'b0,c_cfg_c_r_base_addr[0]}; //缁檇ma鐨勫湴鍧€鐢ㄩ暱鍦板潃锛岀粰鍏跺畠鑺傜偣鐨勭敤鐭?3bit鍦板潃
+    core_head_flit[43:19]   = {12'b0,c_cfg_c_r_base_addr[0]}; //给dma的地址用长地址，给其他节点的用短13bit地址
 
 
 
-    core_head_flit[18:7]    = (c_cfg_c_r_mc & (c_cfg_c_r_noc_sync_tid == NODE_ID)) ? c_cfg_c_r_noc_mc_scale : {8'b0, NODE_ID}; //瑙勫畾杩斿洖鐨勫湴鍧€
+    core_head_flit[18:7]    = (c_cfg_c_r_mc & (c_cfg_c_r_noc_sync_tid == NODE_ID)) ? c_cfg_c_r_noc_mc_scale : {8'b0, NODE_ID}; //规定返回的地址
 
-    //闇€瑕佽€冭檻鍚屾璇锋眰绫荤殑锛岄渶瑕佸寘鍚妭鐐筰d
+    //需要考虑同步请求类的，需要包含节点id
 
     core_head_flit[6]       = c_cfg_c_r_mc & (c_cfg_c_r_noc_sync_tid != NODE_ID);
 
-    core_head_flit[5]       = 1'b0; //璇昏姹傛槸鏉ヨ嚜core杩樻槸dma锛況esponse杩斿洖缁檆ore杩樻槸dma锛?
-    core_head_flit[4]       = 1'b0; //鏄痳d req杩樻槸response
+    core_head_flit[5]       = 1'b0; //读请求是来自core还是dma；response返回给core还是dma
+    core_head_flit[4]       = 1'b0; //是rd req还是response
 
     core_head_flit[3:0]     = c_cfg_c_r_mc ? 
 
@@ -468,7 +471,7 @@ always_comb begin
 
 
 
-    dma_head_flit[81:69]    = d_w_n_o_cfg_lenth; //ping lenth灏辨槸闈瀙ingpong妯″紡涓嬬殑浼犺緭闀垮害
+    dma_head_flit[81:69]    = d_w_n_o_cfg_lenth; //ping lenth 就是非pingpong模式下的传输长度
 
     dma_head_flit[68:58]    = 'b0; //pingpong num
 
@@ -478,7 +481,7 @@ always_comb begin
 
     dma_head_flit[56:44]    = 'b0;
 
-    dma_head_flit[43:19]    = d_w_n_o_cfg_base_addr; //缁檇ma鐨勫湴鍧€鐢ㄩ暱鍦板潃锛岀粰鍏跺畠鑺傜偣鐨勭敤鐭?3bdma
+    dma_head_flit[43:19]    = d_w_n_o_cfg_base_addr; //
 
 
 
@@ -488,7 +491,7 @@ always_comb begin
 
     dma_head_flit[6]        = c_cfg_d_w_mc & (c_cfg_d_w_noc_sync_tid != NODE_ID);
 
-    // dma_head_flit[6]        = 1'b1; // 鏍囧織鏄璇锋眰鏄潵鑷猚ore杩樻槸dma
+    // dma_head_flit[6]        = 1'b1; // 标志请求来自dma还是core
 
     dma_head_flit[5]        = d_w_n_o_cfg_mode ? d_w_n_o_cfg_resp_sel : 1'b1;
 

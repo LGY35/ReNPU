@@ -1,224 +1,124 @@
 module cu_node #(
-
     parameter NODE_ID       = 4'd0,
-
     parameter CLUSTER_ID    = 6'd0,
-
     parameter DMA_ID        = 4'b1101
-
 )
-
 (
 
     input                           clk,
-
     input                           rst_n,
 
-
-
-    //noc interface
-
-
-
+    // core node 与noc的接口，即core与router之间的接口
+    //noc interface    
+        // core给router发送的信号
     input           [256-1:0]       node_out_flit_local,
-
     input                           node_out_last_local,
-
     input           [1:0]           node_out_valid_local,
-
     output  logic   [1:0]           node_out_ready_local,
 
-
-
+        // router给core发送的信号
     output  logic   [256-1:0]       node_in_flit_local,
-
     output  logic                   node_in_last_local,
-
     output  logic   [1:0]           node_in_valid_local,
-
     input           [1:0]           node_in_ready_local,
 
 
-
     //instruction interface
-
     output  logic   [31:0]          fetch_L2cache_info,
-
     output  logic                   fetch_L2cache_req,
-
     input                           fetch_L2cache_gnt,
-
     input   [31:0]                  fetch_L2cache_r_data,
-
     input                           fetch_L2cache_r_valid,
-
     output  logic                   fetch_L2cache_r_ready
-
 );
 
-
-
-
-
 //memory
-
-
-
 logic                           L2_dmem_core_rd_en;
-
 logic           [12:0]          L2_dmem_core_rd_addr;
-
 logic           [255:0]         L2_dmem_core_rd_data;
-
-
 
 logic                           L2_dmem_core_wr_en;
 
 logic           [12:0]          L2_dmem_core_wr_addr;
-
 logic           [255:0]         L2_dmem_core_wr_data;
 
-
-
 logic                           L2_dmem_dma_rd_en;
-
 logic           [12:0]          L2_dmem_dma_rd_addr;
-
 logic           [255:0]         L2_dmem_dma_rd_data;
 
-
-
 logic                           L2_dmem_dma_wr_en;
-
 logic           [12:0]          L2_dmem_dma_wr_addr;
-
 logic           [255:0]         L2_dmem_dma_wr_data;
 
 
-
 //core cfg
-
 logic   [6:0]           core_cfg_addr;
-
 logic   [12:0]          core_cfg_data;
-
 logic                   core_cfg_valid;
 
 
-
 logic                   core_cmd_req;
-
 logic   [2:0]           core_cmd_addr;
-
 logic                   core_cmd_gnt;
-
 logic                   core_cmd_ok;
-
 logic                   core_sleep_irq_pulse;
 
 
-
 logic                   core_cmd_dma_rd_req;
-
 logic                   core_cmd_dma_rd_gnt;
-
 
 
 logic                   d_r_transaction_done;
 
-
-
 logic                   c_cfg_d_r_pingpong_en;
-
 logic   [10:0]          c_cfg_d_r_pingpong_num;
-
 logic   [12:0]          c_cfg_d_r_ping_lenth;
-
 logic   [12:0]          c_cfg_d_r_pong_lenth;
 
-
-
 logic   [1:0][12:0]     c_cfg_d_r_ram_base_addr;
-
 logic   [24:0]          c_cfg_d_r_noc_base_addr;
-
 logic   [3:0][12:0]     c_cfg_d_r_loop_lenth;
-
 logic   [3:0][12:0]     c_cfg_d_r_loop_gap;
-
-
 
 logic                   c_cfg_d_r_dma_transfer;
 
 // logic                   c_cfg_d_r_dma_access_mode;
 
-
-
-
-
 logic                   core_cmd_dma_wr_req;
-
 logic                   core_cmd_dma_wr_gnt;
-
-
 
 logic                   d_w_transaction_done;
 
-
-
 logic                   c_cfg_d_w_pingpong_en;
-
 logic   [10:0]          c_cfg_d_w_pingpong_num;
-
 logic   [12:0]          c_cfg_d_w_ping_lenth;
-
 logic   [12:0]          c_cfg_d_w_pong_lenth;
 
 
-
 logic   [1:0][12:0]     c_cfg_d_w_ram_base_addr;
-
 logic   [24:0]          c_cfg_d_w_noc_base_addr;
-
 logic   [3:0][12:0]     c_cfg_d_w_loop_lenth;
-
 logic   [3:0][12:0]     c_cfg_d_w_loop_gap;
 
 
-
 logic                   c_cfg_d_w_mc;
-
 logic                   c_cfg_d_w_dma_transfer;
-
 logic                   c_cfg_d_w_dma_access_mode;
-
 
 
 logic         [11:0]    c_cfg_d_w_noc_mc_scale;
 
-
-
 logic         [11:0]    c_cfg_d_w_sync_target;
-
-
 
 //ctr core read channel
 
 logic                   core_cmd_core_rd_req;
-
 logic                   core_cmd_core_rd_gnt;
 
-
-
 logic                   c_cfg_c_r_pingpong_en;
-
 logic   [10:0]          c_cfg_c_r_pingpong_num;
-
 logic   [12:0]          c_cfg_c_r_ping_lenth;
-
 logic   [12:0]          c_cfg_c_r_pong_lenth;
-
-
 
 logic                   c_cfg_c_r_local_access;
 
@@ -346,6 +246,7 @@ u_vc_mux
 
     // .clk        (clk),
 
+    // in代表core给router
     .in_flit    (in_flit),
 
     .in_last    (in_last),
@@ -354,7 +255,8 @@ u_vc_mux
 
     .in_ready   (in_ready),
 
-    .out_flit   (node_in_flit_local),
+    //out代表要router给core的
+    .out_flit   (node_in_flit_local),   // output
 
     .out_last   (node_in_last_local),
 
@@ -371,22 +273,18 @@ u_vc_mux
 //--------------------- virtual channel demux -------------------------
 
 
+// 这个out_valid代表当前节点的router接收到的数据有效，要发送给core内了
+assign out_valid = node_out_valid_local;    //其他router传递给本router的valid信号，当有效时，router发送给core
 
-assign out_valid = node_out_valid_local;
-
-assign node_out_ready_local = out_ready;
-
-
+assign node_out_ready_local = out_ready;    //out_ready 连接到in_c_channel的out_ready
 
 genvar i;
-
-
 
 generate
 
     for(i = 0; i < 2; i = i+1) begin
 
-        assign out_flit[i] = node_out_flit_local;
+        assign out_flit[i] = node_out_flit_local;   //router要发送给core的flit
 
         assign out_last[i] = node_out_last_local;
 
@@ -803,73 +701,42 @@ logic   [3:0][12:0]     n_cfg_d_w_loop_lenth;
 logic   [3:0][12:0]     n_cfg_d_w_loop_gap;
 
 
-
+// 对应dma_wr通道
 dnoc_itf_in_d_channel U_in_d_channel
 
 (
 
     .clk                        (clk),
-
     .rst_n                      (core_rst_n),
 
-
-
     //noc signals
-
     .out_flit                   (out_flit[0]),
-
     .out_last                   (out_last[0]),
-
     .out_valid                  (out_valid[0]),
-
     .out_ready                  (out_ready[0]),
 
 
-
     .noc_in_core_rd_data        (noc_in_core_rd_data),
-
     .noc_in_core_rd_valid       (noc_in_core_rd_valid),
-
     .noc_in_core_rd_last        (noc_in_core_rd_last),
-
     .noc_in_core_rd_ready       (noc_in_core_rd_ready),
 
 
-
-
-
     //noc to dma wr data and cfg
-
     .noc_cmd_dma_wr_req         (noc_cmd_dma_wr_req),
-
     .noc_cmd_dma_wr_gnt         (noc_cmd_dma_wr_gnt),
 
-
-
     .noc_in_dma_wr_data         (noc_in_dma_wr_data),
-
     .noc_in_dma_wr_valid        (noc_in_dma_wr_valid),
-
     .noc_in_dma_wr_ready        (noc_in_dma_wr_ready),
 
-
-
     .n_cfg_d_w_ram_base_addr    (n_cfg_d_w_ram_base_addr),
-
     .n_cfg_d_w_ram_total_lenth  (n_cfg_d_w_ram_total_lenth),
-
     .n_cfg_d_w_source_id        (n_cfg_d_w_source_id),
-
     .n_cfg_d_w_resp_sel         (n_cfg_d_w_resp_sel),
 
-
-
     .n_cfg_d_w_loop_lenth       (n_cfg_d_w_loop_lenth),
-
     .n_cfg_d_w_loop_gap         (n_cfg_d_w_loop_gap)
-
-    
-
 );
 
 
@@ -1563,113 +1430,60 @@ logic                           in_pingpong_wr_done;
 
 
 dnoc_itf_dma_wr U_dma_wr
-
 (
-
     .clk                        (clk),
-
     .rst_n                      (core_rst_n),
 
-
-
     //core cfg cmmu
-
     .c_cfg_d_w_ram_base_addr    (c_cfg_d_w_ram_base_addr),
-
     .c_cfg_d_w_ping_lenth       (c_cfg_d_w_ping_lenth),
-
     .c_cfg_d_w_pong_lenth       (c_cfg_d_w_pong_lenth),
 
-
-
     .c_cfg_d_w_pingpong_en      (c_cfg_d_w_pingpong_en),
-
     .c_cfg_d_w_pingpong_num     (c_cfg_d_w_pingpong_num),
-
-
 
     .c_cfg_d_w_noc_base_addr    (c_cfg_d_w_noc_base_addr),
 
-
-
     .c_cfg_d_w_loop_lenth       (c_cfg_d_w_loop_lenth),
-
     .c_cfg_d_w_loop_gap         (c_cfg_d_w_loop_gap),
 
-
-
     .core_cmd_dma_wr_req        (core_cmd_dma_wr_req),
-
     .core_cmd_dma_wr_gnt        (core_cmd_dma_wr_gnt),
-
     .d_w_transaction_done       (d_w_transaction_done),
 
-
-
     .pingpong_state             (in_pingpong_state),
-
     .pingpong_wr_done           (in_pingpong_wr_done),
 
 
-
     //noc cfg dma,
-
     .n_cfg_d_w_ram_base_addr    (n_cfg_d_w_ram_base_addr),
-
     .n_cfg_d_w_ram_total_lenth  (n_cfg_d_w_ram_total_lenth),
-
     .n_cfg_d_w_source_id        (n_cfg_d_w_source_id),
-
     .n_cfg_d_w_resp_sel         (n_cfg_d_w_resp_sel),
 
-
-
     .n_cfg_d_w_loop_lenth       (n_cfg_d_w_loop_lenth),
-
     .n_cfg_d_w_loop_gap         (n_cfg_d_w_loop_gap),
 
-
-
     .noc_cmd_dma_wr_req         (noc_cmd_dma_wr_req),
-
     .noc_cmd_dma_wr_gnt         (noc_cmd_dma_wr_gnt),
 
-
-
     //noc write input data
-
     .noc_in_dma_wr_data         (noc_in_dma_wr_data),
-
     .noc_in_dma_wr_valid        (noc_in_dma_wr_valid),
-
     .noc_in_dma_wr_ready        (noc_in_dma_wr_ready),
 
-
-
     //noc req : read out req or write in response
-
     .dma_wr_noc_out_req         (dma_wr_noc_out_req),
-
     .dma_wr_noc_out_gnt         (dma_wr_noc_out_gnt),
-
     .d_w_n_o_cfg_base_addr      (d_w_n_o_cfg_base_addr),
-
     .d_w_n_o_cfg_lenth          (d_w_n_o_cfg_lenth),
-
     .d_w_n_o_cfg_mode           (d_w_n_o_cfg_mode),
-
     .d_w_n_o_cfg_resp_sel       (d_w_n_o_cfg_resp_sel),
 
-
-
     //ram rd control
-
     .L2_dmem_dma_wr_en          (L2_dmem_dma_wr_en),
-
     .L2_dmem_dma_wr_addr        (L2_dmem_dma_wr_addr),
-
     .L2_dmem_dma_wr_data        (L2_dmem_dma_wr_data)
-
 );
 
 

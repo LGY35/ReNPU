@@ -1,3 +1,6 @@
+// core wr channel
+
+
 module dnoc_itf_in_c_channel(
 
     input                           clk,

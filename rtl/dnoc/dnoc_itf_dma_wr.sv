@@ -1,3 +1,9 @@
+//
+// 有两部分通道，一部分连接core，一部分连接noc
+
+
+
+
 module dnoc_itf_dma_wr(
 
     input                           clk,
@@ -6,7 +12,7 @@ module dnoc_itf_dma_wr(
 
 
 
-    //core cfg cmmu
+    //core cfg cmmu     //core用来配置dma wr通道的端口
 
     input           [1:0][12:0]     c_cfg_d_w_ram_base_addr,
 
@@ -24,7 +30,7 @@ module dnoc_itf_dma_wr(
 
 
 
-    input           [24:0]          c_cfg_d_w_noc_base_addr, //11 13鎷艰鑰屾垚
+    input           [24:0]          c_cfg_d_w_noc_base_addr, //11 13拼装成
 
     // input           [3:0]           c_cfg_d_w_noc_target_id, 
 
@@ -68,13 +74,13 @@ module dnoc_itf_dma_wr(
 
 
 
-    //noc cfg dma,
+    //noc cfg dma,      //
 
     input           [12:0]          n_cfg_d_w_ram_base_addr,
 
     input           [12:0]          n_cfg_d_w_ram_total_lenth,
 
-    input           [3:0]           n_cfg_d_w_source_id, // 杩欓儴鍒嗗氨鏄鐢ㄧ殑noc_mc_scale鐨勬渶浣?浣?
+    input           [3:0]           n_cfg_d_w_source_id, // 这部分就是复用的noc_mc_scale的最低4bit
     input                           n_cfg_d_w_resp_sel, //0: core; 1:dma
 
 
@@ -109,7 +115,7 @@ module dnoc_itf_dma_wr(
 
     output  logic   [24:0]          d_w_n_o_cfg_base_addr,
 
-    output  logic   [12:0]          d_w_n_o_cfg_lenth, //鍙戠粰c out 姣忔璇荤殑鏁版嵁闀垮害
+    output  logic   [12:0]          d_w_n_o_cfg_lenth, //发给c out 每次读的数据长度
 
     // output  logic   [3:0]           d_w_n_o_cfg_noc_target_id,
 
