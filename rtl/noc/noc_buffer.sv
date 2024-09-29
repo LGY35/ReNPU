@@ -13,7 +13,7 @@ module noc_buffer
     output                           in_ready,
 
     //FIFO output side
-    output reg [FLIT_WIDTH-1:0]      out_flit,
+    output reg [FLIT_WIDTH-1:0]      out_flit,  //输出是一个reg，所以可以保存，相当于FIFO深度加1
     output reg                       out_last,
     output                           out_valid,
     input                            out_ready
@@ -50,19 +50,19 @@ module noc_buffer
             rd_addr <= 'b0;
             rd_count <= 'b0;
         end else begin
-            if (fifo_write & ~fifo_read)
+            if (fifo_write & ~fifo_read)    // 只有写
                 rd_count <=  rd_count + 1'b1;
-            else if (fifo_read & ~fifo_write)
-                rd_count <= rd_count - 1'b1;
+            else if (fifo_read & ~fifo_write)   //只有读
+                rd_count <= rd_count - 1'b1;    
             if (write_ram)
-                wr_addr <= wr_addr + 1'b1;
+                wr_addr <= wr_addr + 1'b1;  // 写到ram中
             if (read_ram)
-                rd_addr <= rd_addr + 1'b1;
+                rd_addr <= rd_addr + 1'b1;  //从ram中读取
         end
     end
 
    // Generic dual-port, single clock memory
-    reg [FLIT_WIDTH:0] ram [DEPTH-1:0];
+    reg [FLIT_WIDTH:0] ram [DEPTH-1:0]; // 最高bit表示是不是 last——flit
 
     // Write
     always_ff @(posedge clk) begin
@@ -74,7 +74,7 @@ module noc_buffer
     // Read
     always_ff @(posedge clk) begin
         if (read_ram) begin
-            out_flit <= ram[rd_addr][0 +: FLIT_WIDTH];
+            out_flit <= ram[rd_addr][0 +: FLIT_WIDTH]; //0 ~ FLIT_WIDTH - 1
             out_last <= ram[rd_addr][FLIT_WIDTH];
         end else if (fifo_write & write_through) begin
             out_flit <= in_flit;

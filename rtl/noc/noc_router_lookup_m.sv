@@ -35,7 +35,7 @@ module noc_router_lookup_m
     localparam WEST  = 4;
     // We need to track worms and directly encode the output of the
     // current worm.
-    reg [OUTPUTS-1:0]       worm;
+    reg [OUTPUTS-1:0]       worm;   //输出的方向-5个
     logic [OUTPUTS-1:0]     nxt_worm;
     // This is high if we are in a worm
     logic                   wormhole;
@@ -43,7 +43,7 @@ module noc_router_lookup_m
 
     // Extract unicast destination from flit
     logic [ID_WIDTH-1:0]    dest;
-    assign dest = in_flit[0 +: ID_WIDTH];
+    assign dest = in_flit[0 +: ID_WIDTH];//flit中低ID_WIDTH bit是dest
 
     // Extract multicast destination from flit
     logic [ID_WIDTH-1:0] central_node;

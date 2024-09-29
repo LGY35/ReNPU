@@ -4,6 +4,7 @@ module noc_router_input #(
     parameter OUTPUTS = 1,
     parameter X = 2'd0,
     parameter Y = 2'd0,
+    //几个输出方向，以及每个方向有几个DEST节点
     parameter [OUTPUTS*DESTS-1:0] ROUTES = {DESTS*OUTPUTS{1'b0}},
     parameter BUFFER_DEPTH = 4
 )
@@ -11,17 +12,19 @@ module noc_router_input #(
     input                               clk,
     input                               rst_n,
 
+    //输入是一个物理通道，所以只有一个in_flit，但是两个虚拟通道，所以需要两个握手信号
     input   [FLIT_WIDTH-1:0]            in_flit,
     input                               in_last,
     input   [1:0]                       in_valid,
     output  [1:0]                       in_ready,
-
+    //输出是两个虚拟通道，所以两个out_flit
     output  [1:0][OUTPUTS-1:0]          out_valid,
     output  [1:0]                       out_last,
     output  [1:0][FLIT_WIDTH-1:0]       out_flit,
     input   [1:0][OUTPUTS-1:0]          out_ready
 );
 
+//两个虚拟通道的寄存器
 wire [1:0][FLIT_WIDTH-1:0]    buffer_flit;
 wire [1:0]                    buffer_last;
 wire [1:0]                    buffer_valid;

@@ -4,7 +4,7 @@ module noc_router #(
     parameter INPUTS = 'x,      
     parameter OUTPUTS = 'x,     //输入和输出的方向数，即东西南北local 5个
     parameter X = 2'd0,     
-    parameter Y = 2'd0,     //东西南北四个方向的x和y的节点，2bit可以表示4个
+    parameter Y = 2'd0,     //传入的router的坐标x[1:0]，2bit可以表示 00 01 10 11
     parameter BUFFER_SIZE_IN = 4,
     parameter BUFFER_SIZE_OUT = 4,
     parameter DESTS = 'x,   //目的节点数

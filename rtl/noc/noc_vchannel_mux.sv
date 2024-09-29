@@ -35,6 +35,8 @@ module noc_vchannel_mux #(
     assign out_valid = in_valid & select;
     assign in_ready  = out_ready & select;
 
+
+    // 选择哪个虚拟通道
     assign out_flit = select[1] ? in_flit[1] : in_flit[0] ;
     assign out_last = select[1] ? in_last[1] : in_last[0] ;
 
