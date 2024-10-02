@@ -1,7 +1,5 @@
 //
-// 有两部分通道，一部分连接core，一部分连接noc
-
-
+// 有两部分通道，一部分连接core，一部分连接noc。core会配置dma_wr，同样dma_wr也会与NOC进行交互
 
 
 module dnoc_itf_dma_wr(
@@ -11,8 +9,8 @@ module dnoc_itf_dma_wr(
     input                           rst_n,
 
 
-
-    //core cfg cmmu     //core用来配置dma wr通道的端口
+    // memory manage unit
+    //core cfg cmmu     //core用来配置dma wr通道的端口  
 
     input           [1:0][12:0]     c_cfg_d_w_ram_base_addr,
 
@@ -74,13 +72,13 @@ module dnoc_itf_dma_wr(
 
 
 
-    //noc cfg dma,      //
+    //noc cfg dma,      //其他core想要配置本dma节点 ---用于pingpang读写的情况
 
     input           [12:0]          n_cfg_d_w_ram_base_addr,
 
     input           [12:0]          n_cfg_d_w_ram_total_lenth,
 
-    input           [3:0]           n_cfg_d_w_source_id, // 这部分就是复用的noc_mc_scale的最低4bit
+    input           [3:0]           n_cfg_d_w_source_id, // 这部分就是复用的noc_mc_scale的最低4bit ，读通道返回的数据广播的范围，源节点坐标4bit，上下左右传播长度各2bit，单播时设置为0
     input                           n_cfg_d_w_resp_sel, //0: core; 1:dma
 
 
@@ -109,11 +107,11 @@ module dnoc_itf_dma_wr(
 
     //noc req : read out req or write in response
 
-    output  logic                   dma_wr_noc_out_req,
+    output  logic                   dma_wr_noc_out_req, //发送请求req
 
     input                           dma_wr_noc_out_gnt,
 
-    output  logic   [24:0]          d_w_n_o_cfg_base_addr,
+    output  logic   [24:0]          d_w_n_o_cfg_base_addr,  //从DDR读取时数据的地址
 
     output  logic   [12:0]          d_w_n_o_cfg_lenth, //发给c out 每次读的数据长度
 
@@ -325,17 +323,13 @@ always_comb begin
 
     IDLE: begin
 
-        if(core_cmd_dma_wr_req) begin
+        if(core_cmd_dma_wr_req) begin   //core配置了 dma wr req
 
-            core_cmd_dma_wr_gnt = 1'b1;
+            core_cmd_dma_wr_gnt = 1'b1; //受到req之后就给出gnt
 
-
-
-            cfg_d_w_ram_base_addr_ns = c_cfg_d_w_ram_base_addr;
+            cfg_d_w_ram_base_addr_ns = c_cfg_d_w_ram_base_addr;//要写到ram中的地址
 
             // cfg_d_w_ram_total_lenth_ns = c_cfg_d_w_ram_total_lenth; //ram read control signals (source)
-
-            
 
             d_w_n_o_cfg_base_addr_ns = c_cfg_d_w_noc_base_addr; //noc write out control signals (destination)
 
@@ -367,7 +361,7 @@ always_comb begin
 
         end
 
-        else if(noc_cmd_dma_wr_req) begin
+        else if(noc_cmd_dma_wr_req) begin   // noc外部发过来的
 
             noc_cmd_dma_wr_gnt = 1'b1;
 
@@ -375,7 +369,7 @@ always_comb begin
 
             cfg_d_w_ram_base_addr_ns = n_cfg_d_w_ram_base_addr;
 
-            cfg_d_w_ping_lenth_ns = n_cfg_d_w_ram_total_lenth;
+            cfg_d_w_ping_lenth_ns = n_cfg_d_w_ram_total_lenth;      //这是没有pingpang的情况
 
             cfg_d_w_pong_lenth_ns = 'b0;
 
@@ -391,7 +385,7 @@ always_comb begin
 
 
 
-            d_w_n_o_cfg_base_addr_ns = {8'b0, n_cfg_d_w_source_id, 13'b0};
+            d_w_n_o_cfg_base_addr_ns = {8'b0, n_cfg_d_w_source_id, 13'b0};  //destination addr  低13bit是单个ram的地址，相当于与用4bit来索引node
 
             d_w_n_o_cfg_mode_ns = 1'b1;
 

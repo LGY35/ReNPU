@@ -10,7 +10,7 @@ module cu_node #(
 
     // core node 与noc的接口，即core与router之间的接口
     //noc interface    
-        // core给router发送的信号
+        // core node给router发送的信号
     input           [256-1:0]       node_out_flit_local,
     input                           node_out_last_local,
     input           [1:0]           node_out_valid_local,
@@ -23,7 +23,7 @@ module cu_node #(
     input           [1:0]           node_in_ready_local,
 
 
-    //instruction interface
+    //instruction interface //指令时all2all的
     output  logic   [31:0]          fetch_L2cache_info,
     output  logic                   fetch_L2cache_req,
     input                           fetch_L2cache_gnt,

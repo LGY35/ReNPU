@@ -354,7 +354,8 @@ assign write_base_addr   =  ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_0 || noc_wri
 ;
 assign noc_write_addr_256bit = data_in_flit[42:18];
 assign dma_write_req[0] = data_in_hs && (write_cur_state==WRITE_IDLE);
-assign dma_write_addr[0]= write_base_addr + {noc_write_addr_256bit[ADDR_WIDTH-8-1:0], 8'b0};
+// assign dma_write_addr[0]= write_base_addr + {noc_write_addr_256bit[ADDR_WIDTH-8-1:0], 8'b0}; 多补了0，而且没有取全，33bit，截掉了1bit.(noc_write_addr_256bit是25bit)
+assign dma_write_addr[0]= write_base_addr + {2'b0, noc_write_addr_256bit, 5'b0};
 assign dma_write_num[0] = data_in_flit[55:43];
 fwd_pipe#(
     .DATA_W      ( 13 + ADDR_WIDTH )

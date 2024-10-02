@@ -1,5 +1,5 @@
 //  dma wr channel
-
+// 从noc到dma_wr的通道，output连接dma_wr，input连接noc
 
 module dnoc_itf_in_d_channel(
 
@@ -13,7 +13,7 @@ module dnoc_itf_in_d_channel(
     input                           out_valid,
     output  logic                   out_ready,
 
-
+    //从noc到core的数据
     output  logic   [255:0]         noc_in_core_rd_data,
     output  logic                   noc_in_core_rd_valid,
     output  logic                   noc_in_core_rd_last,
