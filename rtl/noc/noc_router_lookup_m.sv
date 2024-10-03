@@ -48,7 +48,7 @@ module noc_router_lookup_m
     // Extract multicast destination from flit
     logic [ID_WIDTH-1:0] central_node;
     assign central_node = dest;
-    //order is n e s w
+    //order is n e s w          广播multicast时的各个方向，低四位为核心坐标，然后以北向顺时针进行赋值
     logic [1:0] north_id, east_id, south_id, west_id;
     assign north_id = in_flit[ID_WIDTH +: 2];
     assign east_id = in_flit[ID_WIDTH+2 +: 2];

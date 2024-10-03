@@ -242,7 +242,7 @@ logic addr_mu_valid;
 
 
 
-logic [10:0] pingpong_cnt, pingpong_cnt_ns;
+logic [11:0] pingpong_cnt, pingpong_cnt_ns;
 
 logic noc_out_gnt_mux;
 
@@ -454,7 +454,7 @@ always_comb begin
 
     PINGPONG_CHECK: begin
 
-        if(pingpong_cnt[10:1] == cfg_d_r_pingpong_num)begin //pingpong pairs number
+        if(pingpong_cnt[11:1] == cfg_d_r_pingpong_num)begin //pingpong pairs number
 
             ns = IDLE;
 
@@ -504,17 +504,17 @@ always_comb begin
 
 
 
-        if(pingpong_cnt[0]) begin
+        // if(pingpong_cnt[0]) begin
 
-            d_r_n_o_cfg_lenth = c_cfg_d_r_pong_lenth;
+        //     d_r_n_o_cfg_lenth = c_cfg_d_r_pong_lenth;
 
-        end
+        // end
 
-        else begin
+        // else begin
 
-            d_r_n_o_cfg_lenth = c_cfg_d_r_ping_lenth;
+        //     d_r_n_o_cfg_lenth = c_cfg_d_r_ping_lenth;
 
-        end
+        // end
 
         
 
@@ -638,7 +638,7 @@ always_comb begin
 
                     ns = PINGPONG_CHECK;
 
-                    dma_rd_noc_out_last = (pingpong_cnt_ns[10:1] == cfg_d_r_pingpong_num);
+                    dma_rd_noc_out_last = (pingpong_cnt_ns[11:1] == cfg_d_r_pingpong_num);
 
                 end
 
@@ -684,6 +684,20 @@ always_comb begin
 
     endcase
 
+
+
+    if(pingpong_cnt[0]) begin
+
+        d_r_n_o_cfg_lenth = c_cfg_d_r_pong_lenth;
+
+    end
+
+    else begin
+
+        d_r_n_o_cfg_lenth = c_cfg_d_r_ping_lenth;
+
+    end
+
 end
 
 
@@ -715,6 +729,8 @@ always_ff @(posedge clk or negedge rst_n) begin
         cfg_d_r_ping_lenth <= 'b0;
 
         cfg_d_r_pong_lenth <= 'b0;
+
+        cfg_d_r_pingpong_en <= 'b0;
 
         cfg_d_r_pingpong_num <= 'b0;
 
@@ -759,6 +775,8 @@ always_ff @(posedge clk or negedge rst_n) begin
         cfg_d_r_ping_lenth <= cfg_d_r_ping_lenth_ns;
 
         cfg_d_r_pong_lenth <= cfg_d_r_pong_lenth_ns;
+
+        cfg_d_r_pingpong_en <= cfg_d_r_pingpong_en_ns;
 
         cfg_d_r_pingpong_num <= cfg_d_r_pingpong_num_ns;
 

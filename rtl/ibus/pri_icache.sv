@@ -414,7 +414,15 @@ assign cache_line_miss_sel = (&cache_line_valid[cache_set_addr]) ? plru_old_oneh
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n)
         cache_line_miss_sel_reg <= 'b0;
-    else if((cs == BOTH_COMPARE) & (~hit | stream_hit)) //如果BOTH_COMPARE，并且 没有hit或者只有stream_hit，此时需要选判断是哪个miss
+    else if((cs == BOTH_COMPARE) & (~hit | stream_hit))
+        cache_line_miss_sel_reg <= cache_line_miss_sel;
+end
+
+always_ff @(posedge clk or negedge rst_n) begin
+    if(!rst_n)
+        cache_line_miss_sel_reg <= 'b0;
+    // else if((cs == BOTH_COMPARE) & (~hit | stream_hit))      // hit = icache_hit | stream_hit;    //如果BOTH_COMPARE，并且 没有hit或者只有stream_hit，此时需要选判断是哪个miss
+    else if((cs == BOTH_COMPARE) & (~icache_hit))   // 只要     // TODO: 更改为：只要icache没有命中即就要更新
         cache_line_miss_sel_reg <= cache_line_miss_sel;
 end
 

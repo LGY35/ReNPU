@@ -52,7 +52,7 @@ logic [7:0][3:0] in_ce_t; //transpose
 
 logic [1:0][7:0] in_we;
 
-logic [7:0][2:0] in_we_t; //transpose
+logic [7:0][1:0] in_we_t; //transpose
 
 logic [1:0][7:0][255:0] in_wr_data;
 

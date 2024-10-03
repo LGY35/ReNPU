@@ -1,5 +1,7 @@
 //
-// 有两部分通道，一部分连接core，一部分连接noc。core会配置dma_wr，同样dma_wr也会与NOC进行交互
+// 有两部分通道，
+// 一部分是本地的core要配置通道，另一部分是其他core要想pingpang传输的时候，会自动的将发送方的core rd转换到其dma rd上，dma wr同理。
+// 所以一部分端口是本地core要配置的，另一部分是其他core要配置
 
 
 module dnoc_itf_dma_wr(
@@ -28,7 +30,7 @@ module dnoc_itf_dma_wr(
 
 
 
-    input           [24:0]          c_cfg_d_w_noc_base_addr, //11 13拼装成
+    input           [24:0]          c_cfg_d_w_noc_base_addr, //12 13拼装成
 
     // input           [3:0]           c_cfg_d_w_noc_target_id, 
 
@@ -50,7 +52,7 @@ module dnoc_itf_dma_wr(
 
     output  logic                   core_cmd_dma_wr_gnt,
 
-    output  logic                   d_w_transaction_done,//to reg 
+    output  logic                   d_w_transaction_done,//to reg   //代表传输完成
 
     // output  logic           core_cmd_L2_ok,
 
@@ -193,7 +195,7 @@ logic   [3:0][12:0] cfg_d_w_loop_gap, cfg_d_w_loop_gap_ns;
 
 
 
-logic cfg_d_w_pingpong_num, cfg_d_w_pingpong_num_ns;
+logic [10:0] cfg_d_w_pingpong_num, cfg_d_w_pingpong_num_ns;
 
 logic cfg_d_w_pingpong_en, cfg_d_w_pingpong_en_ns;
 
@@ -219,7 +221,7 @@ logic addr_mu_valid;
 
 
 
-logic [10:0] pingpong_cnt, pingpong_cnt_ns;
+logic [11:0] pingpong_cnt, pingpong_cnt_ns;
 
 
 
@@ -316,7 +318,7 @@ always_comb begin
 
 
     d_w_transaction_done = 1'b0;
-
+    pingpang_wr_done = 1'b0;
 
 
     case(cs)
@@ -415,7 +417,7 @@ always_comb begin
 
     PINGPONG_CHECK: begin
 
-        if(pingpong_cnt[10:1] == cfg_d_w_pingpong_num)begin //pingpong pairs number
+        if(pingpong_cnt[11:1] == cfg_d_w_pingpong_num)begin //pingpong pairs number
 
             ns = IDLE;
 
@@ -599,6 +601,18 @@ always_comb begin
 
     endcase
 
+    // TODO: 
+    if(pingpong_cnt[0]) begin
+
+        d_w_n_o_cfg_lenth = cfg_d_w_pong_lenth;
+
+    end
+
+    else begin
+
+        d_w_n_o_cfg_lenth = cfg_d_w_ping_lenth;
+
+    end
 end
 
 

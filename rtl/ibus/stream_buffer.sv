@@ -124,7 +124,8 @@ always_comb begin
     prefetch_buffer_addr_ns = prefetch_buffer_addr;
 
 
-    stream_hit = 1'b0;
+    // stream_hit = 1'b0;
+    stream_hit = (stream_buffer_addr == fetch_stream_addr[18:6]) & stream_buffer_valid;
     stream_move_hit = 1'b0;
 
 
@@ -171,7 +172,7 @@ always_comb begin
                 // BOTH_COMPARE 时，或者 ICACHE_STREAM_HIT
             else if(fetch_stream_req) begin
 
-                stream_hit = (stream_buffer_addr == fetch_stream_addr[18:6]) & stream_buffer_valid;
+                // stream_hit = (stream_buffer_addr == fetch_stream_addr[18:6]) & stream_buffer_valid;  // 在上面直接赋值了
 
                 if(stream_hit) begin
 
@@ -179,7 +180,7 @@ always_comb begin
 
                     ns = FETCH_CHECK;
 
-                    fetch_stream_r_valid = 1'b1;    //hit之后就给出valid信号
+                    // fetch_stream_r_valid = 1'b1;    //hit之后就给出valid信号      //TODO: 回环？？
 
                 end
 
