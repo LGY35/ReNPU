@@ -14,6 +14,7 @@ module idma_inoc_rd_ibuffer
     input                  ibuffer_rd_start,
     input [MEM_AW+$clog2(WORD_NUM)-1:0] ibuffer_word_addr, // word start addr
     input [12:0]           ibuffer_word_num, // how many word
+    input                  op_last_or_finish,
 
     // ibuffer port
     output reg             ibuffer_cen,
@@ -72,6 +73,20 @@ wire return_last_pipe [1:0];
 wire return_ready_pipe [1:0];
 wire [WORD_WIDTH-1:0] return_data_pipe [1:0];
 
+reg invalid_ibuffer_reg;
+wire invalid_ibuffer = op_last_or_finish || invalid_ibuffer_reg;
+always @(posedge clk or negedge rst_n) begin
+    if (rst_n==1'b0) begin
+        invalid_ibuffer_reg <= 1'b0;
+    end
+    else if(op_last_or_finish) begin
+        invalid_ibuffer_reg <= 1'b1;
+    end
+    else if(ibuffer_rd_start) begin
+        invalid_ibuffer_reg <= 1'b0;
+    end
+end
+
 // ===================================
 // read ibuffer
 // ===================================
@@ -116,6 +131,9 @@ always @(posedge clk or negedge rst_n) begin
     if (rst_n==1'b0) begin
         ibuffer_outsd_req_num <= 2'd0;
     end
+    else if(ibuffer_rd_start) begin
+        ibuffer_outsd_req_num <= 2'd0;
+    end
     else begin
         ibuffer_outsd_req_num <= ibuffer_outsd_req_num_next;
     end
@@ -123,8 +141,8 @@ end
 
 // access ibuffer
 assign ibuffer_wen = 1'b0;
-assign ibuffer_rready = !full_pingpong;
-assign ibuffer_r_handshake = ibuffer_rready && ibuffer_rvalid;
+assign ibuffer_rready = !full_pingpong || invalid_ibuffer;
+assign ibuffer_r_handshake = ibuffer_rready && (ibuffer_rvalid && !invalid_ibuffer);
 assign ibuffer_pause_req = (ibuffer_outsd_req_num >= space_of_pingpong);
 assign ibuffer_restart_req = (ibuffer_handshake || !ibuffer_cen) 
                           && (ibuffer_outsd_req_num_next < space_of_pingpong_next) 
@@ -228,7 +246,10 @@ assign space_of_pingpong_next = (read_ptr_increase && !ibuffer_r_handshake) ? (s
 
 always @(posedge clk or negedge rst_n) begin
     if (rst_n==1'b0) begin
-        space_of_pingpong  <= 2'd2;
+        space_of_pingpong <= 2'd2;
+    end
+    else if(ibuffer_rd_start) begin
+        space_of_pingpong <= 2'd2;
     end
     else begin
         space_of_pingpong <= space_of_pingpong_next;
@@ -288,7 +309,7 @@ always @(posedge clk or negedge rst_n) begin
     end
 end
 
-assign return_valid_pipe[0] = !empty_pingpong;
+assign return_valid_pipe[0] = !empty_pingpong && !invalid_ibuffer_reg;
 assign return_data_pipe[0] = read_pingpong_word;
 assign return_last_pipe[0] = read_pingpong_done;
 

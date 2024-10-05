@@ -171,130 +171,62 @@ always_comb begin
 
     ns = cs;
 
-
-
     in_flit = core_head_flit;
-
     in_last = 'b0;
-
     in_valid = 'b0;
-
-
-
     core_wr_noc_out_gnt = 'b0;
-
-
-
     core_wr_noc_out_ready = 'b0;
-
-
-
     dma_rd_noc_out_gnt = 'b0;
-
-
-
     dma_rd_noc_out_ready = 'b0;
 
-
-
     case(cs)
-
     IDLE: begin
-
         if(core_wr_noc_out_req) begin
-
             in_valid = 1'b1;
-
-            
-
             if(in_ready) begin
-
                 ns = CORE;
-
                 core_wr_noc_out_gnt = 1'b1;
-
             end
-
         end
-
         else if(dma_rd_noc_out_req) begin
-
             in_valid = 1'b1;
-
             in_flit = d_r_n_o_cfg_mode ? return_head_flit : dma_head_flit;
-
             // if(d_r_n_o_cfg_mode) begin
-
             //     in_flit = return_head_flit;
-
             // end
-
             // else begin
-
             //     in_flit = dma_head_flit;
-
             // end
-
             if(in_ready) begin
-
                 ns = DMA;
-
                 dma_rd_noc_out_gnt = 1'b1;
-
             end
-
         end
-
     end
 
     CORE: begin
-
         in_flit = core_wr_noc_out_data;
-
         in_last = core_wr_noc_out_last;
-
         in_valid = core_wr_noc_out_valid;
 
-
-
         core_wr_noc_out_ready = in_ready;
-
         if(in_last & in_valid & in_ready) begin
-
             ns = IDLE;
-
         end
-
     end
-
     DMA: begin
-
         in_flit = dma_rd_noc_out_data;
-
         in_last = dma_rd_noc_out_last;
-
         in_valid = dma_rd_noc_out_valid;
 
-
-
         dma_rd_noc_out_ready = in_ready;
-
         if(in_last & in_valid & in_ready) begin
-
             ns = IDLE;
-
         end
-
     end
-
     // RETURN: begin
-
-
-
     // end
-
     endcase
-
 end
 
 
@@ -302,124 +234,64 @@ end
 always_ff @(posedge clk or negedge rst_n) begin
 
     if(!rst_n) begin
-
         cs <= IDLE;
-
     end
-
     else begin
-
         cs <= ns;
-
     end
-
 end
-
-
-
 
 
 assign actual_c_w_noc_target_id = c_cfg_c_w_dma_transfer ? DMA_ID : c_cfg_c_w_noc_target_id;
 
 assign actual_d_r_noc_target_id = c_cfg_d_r_dma_transfer ? DMA_ID : d_r_n_o_cfg_base_addr[16:13]; //包含向其他非dma节点发送读请求以及写响应
 
-
-
-
 always_comb begin
 
     core_head_flit[255]     = 1'b0; //标记当前传播状态：单播多播
-
     core_head_flit[254]     = 1'b0; 
 
-
-
     core_head_flit[253:160] = 'b0;
-
-
-
     core_head_flit[159:108] = c_cfg_c_w_loop_lenth;
-
     core_head_flit[107:56]  = c_cfg_c_w_loop_gap;
-
-
-
     core_head_flit[55:43]   = c_cfg_c_w_ping_lenth;
-
     core_head_flit[42:18]   = {12'b0, c_cfg_c_w_base_addr};
-
     core_head_flit[17:14]   = NODE_ID;
-
-    core_head_flit[13]      = 1'b0; //wr from core or dma
-
-    core_head_flit[12]      = 1'b0; //wr data or rd return data
-
+    core_head_flit[13]      = 1'b0; //wr from core or dma   // core wr  dma rd  以及其他core rd需要使用到dma rd
+    core_head_flit[12]      = 1'b0; //wr data or rd return data // 是本地主动的往外写数据还是其他core想要读取，然后本地core 返回给数据
     core_head_flit[11:0]    = {8'b0, actual_c_w_noc_target_id};
-
 end
-
 
 
 always_comb begin
 
     dma_head_flit[255]      = 1'b0;
-
     dma_head_flit[254]      = 1'b0;
-
-
-
     dma_head_flit[253:160]   = 'b0;
-
-
-
     dma_head_flit[159:147]  = d_r_n_o_cfg_lenth;
-
     dma_head_flit[146:108]  = 'b0;
-
     dma_head_flit[107:95]   = 13'd1;
-
     dma_head_flit[94:56]    = 'b0;
 
-
-
     dma_head_flit[55:43]    = d_r_n_o_cfg_lenth;
-
     dma_head_flit[42:18]    = d_r_n_o_cfg_base_addr;
-
     dma_head_flit[17:14]    = NODE_ID;
-
     dma_head_flit[13]       = 1'b1; //wr from core or dma
-
     dma_head_flit[12]       = 1'b0; //wr data or rd return data
-
     dma_head_flit[11:0]     = {8'b0, actual_d_r_noc_target_id};
 
 end
 
 
-
 always_comb begin
-
     return_head_flit[255]   = 1'b0;
-
     // return_head_flit[54:42] = loop;
-
-
-
     // return_head_flit[54:42] = c_cfg_c_w_ping_lenth;
-
     return_head_flit[254:18]= 'b0;
-
     return_head_flit[17:14] = NODE_ID;
-
     return_head_flit[13]    = d_r_n_o_cfg_req_sel; //return data to core or dma
-
     return_head_flit[12]    = 1'b1; //wr data or rd return data
-
     return_head_flit[11:0]  = d_r_n_o_cfg_noc_mc_scale;
-
 end
-
-
 
 endmodule

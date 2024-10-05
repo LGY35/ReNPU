@@ -44,8 +44,8 @@ logic [18:0] ram_addr_cs, ram_addr_ns;
 logic [2:0] tag_ram_addr;
 logic [3:0][31:0] data_ram_out;
 logic [31:0] data_ram_in;
-logic [3:0][15:0] tag_ram_out;  //4路
-logic [15:0] tag_ram_in;
+logic [3:0][9:0] tag_ram_out;  //4路
+logic [9:0] tag_ram_in;
 
 logic [31:0] bit_mask_write;
 
@@ -58,6 +58,7 @@ logic [31:0] bit_mask_write;
 logic icache_hit, hit;
 logic [3:0] hit_state;  //四路
 logic [18:0] fetch_addr_reg;
+logic [18:0] fetch_addr_speculative_reg;    // 时序修正
 logic [9:0] tag_input;
 logic [7:0][3:0] cache_line_valid;   // 8个cacheline，每个4路   
 //logic [2:0][3:0][1:0] cache_line_use;
@@ -133,7 +134,7 @@ always_comb begin
     data_ram_addr = fetch_addr[8:2]; //fetch_addr按照Bytes，所以这里用data_ram_addr = [8:2]来寻址word
     tag_ram_addr = fetch_addr[8:6];  //tag是用来寻址set的，tag是 10bit: [18:9]，但是cacheline内部的tag只有8个，这是用来寻址的地址
     data_ram_in = icache_refill_r_data; //从L2取出的data 31:0
-    tag_ram_in = {6'b0,fetch_addr_reg[18:9]};//从
+    tag_ram_in = fetch_addr_reg[18:9];//从
 
     //use for compare
     tag_input = fetch_addr_reg[18:9];
@@ -170,7 +171,7 @@ always_comb begin
                 if(stream_busy) begin   //如果stream正在取指，那么就需要判断
 					if(~sfetch_miss)begin   // 如果sfetch=0，说明仍在推测执行状态，没有miss(按照icache的下一条继续执行)，就只需要看icache即可       s 是 speculative  
                     	ns = ICACHE_COMPARE;    //此时进入到ICACHE的比较中，先不给gnt，因为如果miss，且icache会
-                    	re = 4'hf;  //读使能 -> 启动sram读取，得到tag 和 data(instr)
+                    	re = 4'hf;   //读使能 -> 启动sram读取，得到tag 和 data(instr)
 					end
 					else begin      // 如果 sfetch = 1，就说明在推测状态下miss，这时候就保持状态不变，继续检测
 						ns = ICACHE;
@@ -184,10 +185,13 @@ always_comb begin
                 end
             end
         end
-        
+        // 推测状态执行：
         ICACHE_COMPARE: begin
-            tag_input = fetch_addr[18:9];   //取指的tag部分
-            cache_set_addr = fetch_addr[8:6];   //取指的set部分(4路组相联) ，icache一共有8个entry，所以是3bit    
+            // tag_input = fetch_addr[18:9];   //取指的tag部分
+            // cache_set_addr = fetch_addr[8:6];   //取指的set部分(4路组相联) ，icache一共有8个entry，所以是3bit 
+            // 为了修正时序。fetch_addr_speculative_reg只有进入到ICACHE_COMPARE状态时才立刻更新，然后给到tag_input
+            tag_input = fetch_addr_speculative_reg[18:9];
+            cache_set_addr = fetch_addr_speculative_reg[8:6];   
             if(icache_hit) begin        
                 plru_hit = 1'b1;
                 ns = ICACHE_COMPARE_HIT;    
@@ -285,7 +289,6 @@ always_comb begin
                     ctr_refill_req = 1'b1;      // refill都是从上一级cache中取
                     ctr_refill_lenth = 1'b0;    //一个cacheline
                     stream_fetch_valid = 1'b1;  //告诉stream buffer，要预取了
-                    
                 end
             end
             else begin
@@ -373,6 +376,15 @@ always_ff @(posedge clk or negedge rst_n) begin
         fetch_addr_reg <= 'b0;
     else if(fetch_gnt)  //只有fetchreq被gnt了之后，才会更新地址
         fetch_addr_reg <= fetch_addr;
+end
+
+always_ff @(posedge clk or negedge rst_n) begin
+    if(!rst_n)
+        fetch_addr_speculative_reg <= 'b0;
+        //两组条件就是把分别在两个状态——ICACHE和ICACHE_COMPARE_HIT下，会进入到ICACHE_COMPARE状态的条件进行了提取
+    else if(((cs == ICACHE) & ~(icache_sleep_en | icache_sleep_en_reg) & (fetch_req & stream_busy & ~sfetch_miss)) |
+            ((cs == ICACHE_COMPARE_HIT) & (fetch_req & stream_busy)))
+        fetch_addr_speculative_reg <= fetch_addr;
 end
 
 always_ff @(posedge clk or negedge rst_n) begin
@@ -481,25 +493,25 @@ cache bank(即1路set)的结构，tag sram只保存tag，而data sram只保存da
 **/
 genvar i;
 generate
-    for(i = 0; i < 4; i = i + 1) begin: pri_icache_sram_bank        
-        sram128x32 U_pri_icache_data(
+    for(i = 0; i < 4; i = i + 1) begin: pri_icache_sram_bank
+        t22_s1pram128x32_wrapper U_pri_icache_data(
             .CLK(clk),
-            .ME(me[i]),
+            .CE(me[i]),
             .WE(we[i]),
-            .A(data_ram_addr),  // 用来寻址单个word
-            .D(data_ram_in),    // 从L2中取出的32bit指令 (sram128x32的输入)
-            .Q(data_ram_out[i]),// 从某一路中选择，然后输出 (sram128x32的输出)
-            .WEM(bit_mask_write)
+            .A(data_ram_addr),
+            .D(data_ram_in),
+            .Q(data_ram_out[i])
+            // .WEM(bit_mask_write)
         );
 
-        sram8x16 U_pri_icache_tag(
+        tag_reg8x10 U_pri_icache_tag(
             .CLK(clk),
             .ME(me[i]),
             .WE(we[i]),
             .A(tag_ram_addr),
             .D(tag_ram_in),
-            .Q(tag_ram_out[i]),
-            .WEM(bit_mask_write[15:0])
+            .Q(tag_ram_out[i])
+            // .WEM(bit_mask_write[15:0])
         );
     end
 endgenerate

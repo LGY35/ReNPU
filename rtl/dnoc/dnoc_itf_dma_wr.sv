@@ -3,6 +3,7 @@
 // 一部分是本地的core要配置通道，另一部分是其他core要想pingpang传输的时候，会自动的将发送方的core rd转换到其dma rd上，dma wr同理。
 // 所以一部分端口是本地core要配置的，另一部分是其他core要配置
 
+// d_w_n_o_ ： dma wr noc out 
 
 module dnoc_itf_dma_wr(
 
@@ -279,7 +280,7 @@ always_comb begin
 
     // dmmu_wr_noc_out_mode_ns = d_w_n_o_cfg_mode;
 
-    d_w_n_o_cfg_mode_ns = d_w_n_o_cfg_mode;
+    d_w_n_o_cfg_mode_ns = d_w_n_o_cfg_mode; //保持上一个clk的值
 
     // d_w_n_o_cfg_mode = 1'b0;
 
@@ -327,7 +328,7 @@ always_comb begin
 
         if(core_cmd_dma_wr_req) begin   //core配置了 dma wr req
 
-            core_cmd_dma_wr_gnt = 1'b1; //受到req之后就给出gnt
+            core_cmd_dma_wr_gnt = 1'b1; //收到req之后就给出gnt
 
             cfg_d_w_ram_base_addr_ns = c_cfg_d_w_ram_base_addr;//要写到ram中的地址
 
@@ -353,7 +354,7 @@ always_comb begin
 
             
 
-            d_w_n_o_cfg_mode_ns = 1'b0; //
+            d_w_n_o_cfg_mode_ns = 1'b0; //当core要配置dma_wr 时，输出mode = 0
 
             // d_w_ram_cnt_ns = 'b0;
 
@@ -365,7 +366,7 @@ always_comb begin
 
         else if(noc_cmd_dma_wr_req) begin   // noc外部发过来的
 
-            noc_cmd_dma_wr_gnt = 1'b1;
+            noc_cmd_dma_wr_gnt = 1'b1;  //接收到core发送的请求之后，返回给core gnt
 
             
 
@@ -389,7 +390,7 @@ always_comb begin
 
             d_w_n_o_cfg_base_addr_ns = {8'b0, n_cfg_d_w_source_id, 13'b0};  //destination addr  低13bit是单个ram的地址，相当于与用4bit来索引node
 
-            d_w_n_o_cfg_mode_ns = 1'b1;
+            d_w_n_o_cfg_mode_ns = 1'b1; //其他节点需要使用本节点dma wr通道
 
             d_w_n_o_cfg_resp_sel_ns = n_cfg_d_w_resp_sel;
 
@@ -416,7 +417,7 @@ always_comb begin
     end
 
     PINGPONG_CHECK: begin
-
+            // 最低bit用来判断ping和pang，前面是pingpang num
         if(pingpong_cnt[11:1] == cfg_d_w_pingpong_num)begin //pingpong pairs number
 
             ns = IDLE;
@@ -443,15 +444,15 @@ always_comb begin
 
     DMA_RD_OUT_REQ: begin
 
-        dma_wr_noc_out_req = 1'b1;
+        dma_wr_noc_out_req = 1'b1;      //对外部发送req————发到了out_c_channel
 
         // d_w_n_o_cfg_mode = 1'b0;
 
 
+        // pingpong_cnt
+        if(pingpong_cnt[0]) begin   //这是一个计数值，所以用0和1来区分现在是在ping还是pang
 
-        if(pingpong_cnt[0]) begin
-
-            d_w_n_o_cfg_lenth = cfg_d_w_pong_lenth;
+            d_w_n_o_cfg_lenth = cfg_d_w_pong_lenth; //是1的时候，代表这是在pang，所以用pang lenth
 
             addr_mu_initial_en = 1'b1;
 
@@ -469,7 +470,7 @@ always_comb begin
 
 
 
-        if(dma_wr_noc_out_gnt) begin
+        if(dma_wr_noc_out_gnt) begin    //如果收到了响应
 
             if(pingpong_cnt[0]) begin
 
@@ -489,7 +490,7 @@ always_comb begin
 
     PING_WR: begin
 
-        L2_dmem_dma_wr_addr = addr_mu_addr;
+        L2_dmem_dma_wr_addr = addr_mu_addr; //得到实际的地址
 
         L2_dmem_dma_wr_en = noc_in_dma_wr_valid;
 
@@ -499,9 +500,7 @@ always_comb begin
 
         noc_in_dma_wr_ready = noc_in_dma_wr_valid;
 
-
-
-        if(noc_in_dma_wr_valid) begin
+        if(noc_in_dma_wr_valid) begin   //从noc得到的数据是有效的
 
             if(d_w_ram_cnt == cfg_d_w_ping_lenth) begin
 
@@ -529,7 +528,7 @@ always_comb begin
 
             end
 
-            else begin
+            else begin  //如果还传输完指定的长度
 
                 d_w_ram_cnt_ns = d_w_ram_cnt + 1'b1;
 
@@ -582,9 +581,9 @@ always_comb begin
     end
 
     NOC_WR_RESP: begin
-
-        dma_wr_noc_out_req = 1'b1;
-
+        //这里是用req来当response
+        dma_wr_noc_out_req = 1'b1;  // 别的节点用 dma wr 是其它节点写一笔数进来，写完之后要返回 response
+                                    // 接口打包模块会根据 req 和 mode 来判断 是读请求还是写 response
         // d_w_n_o_cfg_mode = 1'b1;
 
 
