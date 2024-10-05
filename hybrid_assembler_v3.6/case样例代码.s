@@ -19,7 +19,7 @@ noc_req (comd_type=2, bar=2)
 noc_req (comd_type=4, bar=2)
 
 
-dma rd
+# dma rd
 NOC_cfg (addr=64 , wdata=0 )
 NOC_cfg (addr=65 , wdata=0 )
 NOC_cfg (addr=66 , wdata=0 )
@@ -44,8 +44,8 @@ noc_req (comd_type=3, bar=1)
 noc_req (comd_type=4, bar=1)
 NOC_cfg (addr=81 , wdata=6)
 NOC_cfg (addr=83 , wdata=1 )
-noc_req (comd_type=3, bar=1)
-noc_req (comd_type=4, bar=1)
+noc_req (comd_type=2, bar=2)
+noc_req (comd_type=4, bar=2)
 
 #########################################################################################################################################################
 
