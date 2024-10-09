@@ -1,3 +1,4 @@
+// 管理向L2 RAM的写入和读出
 module addr_mu_ns(
     input                               clk,
     input                               rst_n,
@@ -6,8 +7,8 @@ module addr_mu_ns(
     input               [3:0][12:0]     cfg_gap,
     input               [3:0][12:0]     cfg_lenth,
 
-    input                               addr_mu_initial_en,
-    input                               addr_mu_valid,
+    input                               addr_mu_initial_en, //第一次启动一下，后面就内部自动执行完了
+    input                               addr_mu_valid,  
 
     // output  logic       [17:0]      addr_mu_addr_ns,
     output  logic       [12:0]          addr_mu_addr

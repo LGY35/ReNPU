@@ -1,8 +1,3 @@
-
-//将DMA数据通过NOC（网络芯片）传输，并处理读写请求。
-// 模块使用了一系列的FIFO和流水线结构来管理读写操作，将数据从NOC传输至DMA控制器，
-// 或从DMA控制器传输至NOC，同时通过状态机控制这些操作的顺序。
-
 module idma_data_noc_if #(
   parameter ADDR_WIDTH = 32,
   parameter DATA_WIDTH = 256,
@@ -32,7 +27,7 @@ module idma_data_noc_if #(
   input  [ADDR_WIDTH-1:0]  write_base_addr_4,
   input  [ADDR_WIDTH-1:0]  write_base_addr_5,
 
-  // idma 0 ports 用于向DMA发出读写请求，并通过DMA接口进行数据传输和控制数据的有效性及传输状态。
+  // idma 0 ports
   output                   rd_req           ,
   output [ADDR_WIDTH-1:0]  rd_addr          ,
   output [31:0]            rd_num           ,
@@ -69,11 +64,6 @@ module idma_data_noc_if #(
   output                   ctrl_in_ready    
 );
 
-// 12 13 14 15
-// 8  9  10 11
-// 4  5  6  7
-// 0  1  2  3
-
 localparam LEFT_NOC_ID_0 = 4'd0;
 localparam LEFT_NOC_ID_1 = 4'd1;
 localparam LEFT_NOC_ID_2 = 4'd4;
@@ -88,16 +78,11 @@ localparam RIGHT_NOC_ID_3 = 4'd7;
 localparam RIGHT_NOC_ID_4 = 4'd10;
 localparam RIGHT_NOC_ID_5 = 4'd11;
 
-//读取：从NOC接收数据并将其发送至DMA
-// 在 IDLE 状态下，如果接收到有效的读请求（read_fifo_hs），状态会切换到 SEND_HEAD，开始传输头部数据。
-// 在 SEND_RDATA 状态下，模块将数据发送到DMA，直到传输完成。
 localparam IDLE = 2'd0;
 localparam SEND_HEAD = 2'd1;
 localparam HALT = 2'd2;
 localparam SEND_RDATA = 2'd3;
 
-//写入：从NOC写入到DMA的过程
-// 在 WRITE_IDLE 状态下，等待写请求（dma_write_req[0]），然后在 WRITE_DATA 状态下，发送数据到DMA。
 localparam WRITE_IDLE = 3'd0;
 localparam WRITE_REQ = 3'd1;
 localparam WRITE_DATA = 3'd2;
@@ -163,7 +148,7 @@ wire wr_data_hs = wr_data_valid && wr_data_ready   ;
 // fifo store req num and other useful info
 // =======================================
 assign noc_read_id             = ctrl_in_flit[10:7];
-assign read_num_fifo[0]        = ctrl_in_flit[81:69];
+assign read_num_fifo[0]        = ctrl_in_flit[81:69] + 13'd1;
 assign ctrl_in_flit_bit5[0]    = ctrl_in_flit[5];
 assign ctrl_in_flit_bit18_7[0] = ctrl_in_flit[18:7];
 
@@ -215,7 +200,7 @@ assign read_group_base_addr=  ({ADDR_WIDTH{(noc_read_id==LEFT_NOC_ID_0 || noc_re
                             | ({ADDR_WIDTH{(noc_read_id==LEFT_NOC_ID_5 || noc_read_id==RIGHT_NOC_ID_5)}} & group_base_addr_5)
 ;
 assign read_base_addr_after_sel = noc_read_base_sel ? read_group_base_addr : read_base_addr;
-assign dma_read_addr[0]  = read_base_addr_after_sel + {noc_read_addr_256bit[ADDR_WIDTH-8-1:0], 8'b0};
+assign dma_read_addr[0]  = read_base_addr_after_sel + {2'b0, noc_read_addr_256bit, 5'b0};
 assign dma_read_num[0]   = read_num_fifo[0];
 
 fwd_pipe#(
@@ -335,7 +320,7 @@ always @(posedge clk or negedge rst_n) begin
     data_in_flit_bit17_14 <= 4'b0;
   end
   else if(dma_write_req[0]) begin 
-    write_num_reg <= data_in_flit[55:43];// how many 256bit data to read
+    write_num_reg <= data_in_flit[55:43] + 13'd1;// how many 256bit data to read
     data_in_flit_bit13 <= data_in_flit[13];
     data_in_flit_bit17_14 <= noc_write_id;
   end
@@ -354,9 +339,8 @@ assign write_base_addr   =  ({ADDR_WIDTH{(noc_write_id==LEFT_NOC_ID_0 || noc_wri
 ;
 assign noc_write_addr_256bit = data_in_flit[42:18];
 assign dma_write_req[0] = data_in_hs && (write_cur_state==WRITE_IDLE);
-// assign dma_write_addr[0]= write_base_addr + {noc_write_addr_256bit[ADDR_WIDTH-8-1:0], 8'b0}; 多补了0，而且没有取全，33bit，截掉了1bit.(noc_write_addr_256bit是25bit)
-assign dma_write_addr[0]= write_base_addr + {2'b0, noc_write_addr_256bit, 5'b0};
-assign dma_write_num[0] = data_in_flit[55:43];
+assign dma_write_addr[0]= write_base_addr + {noc_write_addr_256bit[ADDR_WIDTH-8-1:0], 8'b0};
+assign dma_write_num[0] = data_in_flit[55:43] + 13'd1;
 fwd_pipe#(
     .DATA_W      ( 13 + ADDR_WIDTH )
 )u_write_pipe(

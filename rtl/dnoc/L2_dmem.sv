@@ -6,7 +6,7 @@ module L2_dmem(
     input                           rst_n,
 
     input                           L2_dmem_core_rd_en,
-    input           [12:0]          L2_dmem_core_rd_addr,
+    input           [12:0]          L2_dmem_core_rd_addr,   // 地址线13bit, 3bit用于bank选择, 每个bank [9:0]
     output  logic   [255:0]         L2_dmem_core_rd_data,
 
     input                           L2_dmem_core_wr_en,
@@ -22,9 +22,9 @@ module L2_dmem(
     input           [255:0]         L2_dmem_dma_wr_data
 );
 
-logic [3:0][7:0] in_ce;
+logic [3:0][7:0] in_ce; //分别对应于4个通道的8个bank
 logic [7:0][3:0] in_ce_t; //transpose
-logic [1:0][7:0] in_we;
+logic [1:0][7:0] in_we; // 只有两个通道会写
 logic [7:0][1:0] in_we_t; //transpose
 logic [1:0][7:0][255:0] in_wr_data;
 logic [7:0][1:0][255:0] in_wr_data_t;
@@ -50,7 +50,7 @@ always_comb begin
     in_addr = 'b0;
     for(h = 0; h < 8; h = h + 1) begin
         if(in_ce[0][h]) begin
-            in_addr[0][h] = L2_dmem_core_rd_addr[9:0];
+            in_addr[0][h] = L2_dmem_core_rd_addr[9:0];  // bank内地址
         end
         if(in_ce[1][h]) begin
             in_addr[1][h] = L2_dmem_core_wr_addr[9:0];
@@ -81,12 +81,12 @@ integer i,j;
 always_comb begin
     for(i = 0; i < 4; i = i + 1) begin
         for(j = 0; j < 8; j = j + 1) begin
-            in_ce_t[j][i] = in_ce[i][j];
+            in_ce_t[j][i] = in_ce[i][j]; // 将4个通道-8个bank 换成 8个bank-4个通道
         end
     end
 
     for(j = 0; j < 8; j = j + 1) begin
-        ce[j] = | in_ce_t[j];
+        ce[j] = | in_ce_t[j];           // 然后看每个bank 是否有 通道使能
     end
 
     for(i = 0; i < 2; i = i + 1) begin

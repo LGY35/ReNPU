@@ -35,17 +35,17 @@ CC000012 NOC_cfg (addr=102 , wdata=0 )
 CE010012 NOC_cfg (addr=103 , wdata=512 )
 D0000012 NOC_cfg (addr=104 , wdata=0 )
 D2000012 NOC_cfg (addr=105 , wdata=0 )   # gap0
-D4000412 NOC_cfg (addr=106 , wdata=8 )   # gap1
-D6000212 NOC_cfg (addr=107 , wdata=4 )   # gap2
-D8000092 NOC_cfg (addr=108 , wdata=1 )   # gap3
+D4000392 NOC_cfg (addr=106 , wdata=7 )   # gap1
+D6000192 NOC_cfg (addr=107 , wdata=3 )   # gap2
+D8000012 NOC_cfg (addr=108 , wdata=0 )   # gap3
 DA000012 NOC_cfg (addr=109 , wdata=0 )   # lenth0
-DC000212 NOC_cfg (addr=110 , wdata=4)    # lenth1
-DE000112 NOC_cfg (addr=111 , wdata=2)    # lenth2
-E0000212 NOC_cfg (addr=112 , wdata=4)    # lenth3
+DC000192 NOC_cfg (addr=110 , wdata=3)    # lenth1
+DE000092 NOC_cfg (addr=111 , wdata=1)    # lenth2
+E0000192 NOC_cfg (addr=112 , wdata=3)    # lenth3
 E2000012 NOC_cfg (addr=113 , wdata=0)
-E4001012 NOC_cfg (addr=114 , wdata=32)
+E4000F92 NOC_cfg (addr=114 , wdata=31)
 E6000012 NOC_cfg (addr=115 , wdata=0 )
-E802C292 NOC_cfg (addr=116 , wdata=1413 ) # 0101 1000 0101 = 1413
+E8006A92 NOC_cfg (addr=116 , wdata=213 ) # 0000 1101 0101 = 1413
 EA000012 NOC_cfg (addr=117 , wdata=0 )
 EC000012 NOC_cfg (addr=118 , wdata=0 )
 16000017 noc_req (comd_type=3, bar=1)

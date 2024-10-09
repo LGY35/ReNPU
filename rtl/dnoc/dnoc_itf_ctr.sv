@@ -481,7 +481,7 @@ assign c_cfg_d_w_dma_access_mode        = core_cfg_dma_wr_reg[22][0];
 
 //finish status
 
-logic   [2:0]   finish_status, finish_status_set; //2:dma wr; 1:dma rd; 0:core wr;
+logic   [2:0]   finish_status, finish_status_set; //2:dma wr; 1:dma rd; 0:core wr;      // core rd 不会是最后一个
 
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
