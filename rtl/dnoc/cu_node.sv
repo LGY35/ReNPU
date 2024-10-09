@@ -110,6 +110,8 @@ logic         [11:0]    c_cfg_d_w_sync_target;
 logic                   core_cmd_core_rd_req;
 logic                   core_cmd_core_rd_gnt;
 
+logic                   c_r_transaction_done;
+
 logic                   c_cfg_c_r_pingpong_en;
 logic   [10:0]          c_cfg_c_r_pingpong_num;
 logic   [12:0]          c_cfg_c_r_ping_lenth;
@@ -274,6 +276,8 @@ U_dnoc_itf_ctr
     //ctr core read channel
     .core_cmd_core_rd_req       (core_cmd_core_rd_req),
     .core_cmd_core_rd_gnt       (core_cmd_core_rd_gnt),
+
+    .c_r_transaction_done       (c_r_transaction_done),
 
     .c_cfg_c_r_pingpong_en      (c_cfg_c_r_pingpong_en),
     .c_cfg_c_r_pingpong_num     (c_cfg_c_r_pingpong_num),
@@ -639,6 +643,8 @@ dnoc_itf_core_rd U_core_rd
 
     .pingpong_state             (in_pingpong_state),
     .pingpong_rd_done           (in_pingpong_rd_done),
+
+    .c_r_transaction_done       (c_r_transaction_done),
 
     //core input data
     .core_in_data               (core_in_data),

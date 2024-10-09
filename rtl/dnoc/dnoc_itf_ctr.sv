@@ -1,3 +1,5 @@
+// core先发给dnoc_itf_ctr，然后再去配置四个通道
+
 module dnoc_itf_ctr #(
     parameter NODE_ID = 4'd0
 )
@@ -11,7 +13,7 @@ module dnoc_itf_ctr #(
     input                           core_cfg_valid,
 
     input                           core_cmd_req,
-    input           [2:0]           core_cmd_addr,
+    input           [2:0]           core_cmd_addr,  // 对应4个通道
     output  logic                   core_cmd_gnt,
     output  logic                   core_cmd_ok,
     // input           [1:0]           core_cmd_trans_mode,
@@ -75,6 +77,8 @@ module dnoc_itf_ctr #(
     output  logic                   core_cmd_core_rd_req,
     input                           core_cmd_core_rd_gnt,
 
+    input                           c_r_transaction_done,
+
     output  logic                   c_cfg_c_r_pingpong_en,
     output  logic   [10:0]          c_cfg_c_r_pingpong_num,
     output  logic   [12:0]          c_cfg_c_r_ping_lenth,
@@ -128,8 +132,8 @@ module dnoc_itf_ctr #(
 
 
     //----------------itf-------------------------------
-    output  logic                   c_cfg_itf_irq_en,
-    output  logic                   c_cfg_itf_single_fetch
+    output  logic                   c_cfg_itf_irq_en,   //是否接收核的休眠中断；0：不接收；1：接收
+    output  logic                   c_cfg_itf_single_fetch//是否指令同步；0：多核同步；1：单独取指
 
     // output  logic                   core_cmd_itf_req,
     // input                           core_cmd_itf_gnt
@@ -247,8 +251,11 @@ logic   [31:0][12:0]    core_cfg_core_wr_reg;
 logic   [31:0][12:0]    core_cfg_dma_rd_reg;
 logic   [31:0][12:0]    core_cfg_dma_wr_reg;
 
+// frag 段地址 00 core rd; 01 core wr;  10 dma rd;  11 dma wr
 assign core_cfg_addr_frag = core_cfg_addr[6:5];
+// 低4bit为每个通道内的寄存器地址
 assign core_cfg_addr_low = core_cfg_addr[4:0];
+//写入寄存器的数据
 assign core_cfg_data_frag = core_cfg_data[12:0];
 
 
@@ -263,18 +270,21 @@ logic   [4:0]           c_cfg_c_r_relative_addr; // 0: + ; 1 : -
 logic   [3:0]          c_cfg_c_r_noc_target_id_origin; 
 logic   [3:0]          c_cfg_c_r_noc_target_id_cal;
 
+// 目标节点计算
 assign c_cfg_c_r_noc_target_id_cal = c_cfg_c_r_relative_addr[4] ? (NODE_ID - c_cfg_c_r_relative_addr[3:0]) : (NODE_ID + c_cfg_c_r_relative_addr[3:0]) ;
 assign c_cfg_c_r_noc_target_id = c_cfg_c_r_address_mode ? c_cfg_c_r_noc_target_id_cal : c_cfg_c_r_noc_target_id_origin;
 
 integer i;
 
+// 向 core rd 通道的寄存器写入数据
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
+        // 复位时，只有第30个clk接收core休眠中断
         for(i = 0; i < 32; i = i + 1) begin
             if(i == 30)
-                core_cfg_core_rd_reg[i] <= {32{1'b1}};
+                core_cfg_core_rd_reg[i] <= {32{1'b1}};  // 接收核的休眠中断
             else
-                core_cfg_core_rd_reg[i] <= 'b0;
+                core_cfg_core_rd_reg[i] <= 'b0; // 不接收
         end
     end
     else if(core_cfg_valid & (core_cfg_addr_frag == 2'd0)) begin
@@ -282,11 +292,13 @@ always_ff @(posedge clk or negedge rst_n) begin
     end
 end
 
+// 是不是在本地传输数据，走local通道，即core从本地L2 RAM中rd数据
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         c_cfg_c_r_local_access <= 'b0;
     end
     else if(core_cfg_valid & (core_cfg_addr_frag == 2'd0) & (core_cfg_addr_low == 5'd5)) begin
+        // 在没有广播的情况下，如果是绝对寻址，targetid = NODE_ID 或者 相对寻址，相对地址为全0
         if((((core_cfg_data_frag[3:0] == NODE_ID) & ~c_cfg_c_r_address_mode) | (c_cfg_c_r_address_mode & ~|c_cfg_c_r_relative_addr[3:0])) & ~c_cfg_c_r_mc)
             c_cfg_c_r_local_access <= 1'b1;
         else
@@ -294,6 +306,7 @@ always_ff @(posedge clk or negedge rst_n) begin
     end
 end
 
+// 从相应的寄存器中取出有效的字段
 assign c_cfg_c_r_address_mode           = core_cfg_core_rd_reg[0][0];
 assign c_cfg_c_r_relative_addr          = core_cfg_core_rd_reg[1][4:0];
 assign c_cfg_c_r_mc                     = core_cfg_core_rd_reg[2][0];
@@ -396,6 +409,7 @@ logic   [11:0]          d_r_noc_base_addr_high_sel;
 
 assign d_r_noc_base_addr_high_cal = c_cfg_d_r_relative_addr[4] ? (NODE_ID - c_cfg_d_r_relative_addr[3:0]) : (NODE_ID + c_cfg_d_r_relative_addr[3:0]);
 assign d_r_noc_base_addr_high_sel = c_cfg_d_r_address_mode ? {8'b0, d_r_noc_base_addr_high_cal} : c_cfg_d_r_noc_base_addr_high;
+// 高位地址可以根据寻址模式变换
 assign c_cfg_d_r_noc_base_addr = {d_r_noc_base_addr_high_sel, c_cfg_d_r_noc_base_addr_low};
 
 always_ff @(posedge clk or negedge rst_n) begin
@@ -481,26 +495,30 @@ assign c_cfg_d_w_dma_access_mode        = core_cfg_dma_wr_reg[22][0];
 
 //finish status
 
-logic   [2:0]   finish_status, finish_status_set; //2:dma wr; 1:dma rd; 0:core wr;      // core rd 不会是最后一个
+// logic   [2:0]   finish_status, finish_status_set; //2:dma wr; 1:dma rd; 0:core wr;      // core rd 不会是最后一个
+logic   [2:0]   finish_status, finish_status_set; //3:dma wr; 2:dma rd; 1:core wr; 0:core rd;      // core rd 不会是最后一个
+// finish_status_set 是用来参考的，哪个通道配置了，就设置哪个为1，finish status是实时读取当前的状态，当finish_status = finish_status_set时代表已经finish
 
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         finish_status_set <= 'b0;
     end
+    // 读取finish status, 并且
     else if(core_cmd_req & (core_cmd_addr == 3'd4) & (finish_status == finish_status_set)) begin
         finish_status_set <= 'b0;
-    end
+    end // 如果握手成功
     else if(core_cmd_req & core_cmd_gnt) begin
-        case(core_cmd_addr)
-        // 3'd0: 
-        3'd1: finish_status_set[0] <= 1'b1;
-        3'd2: finish_status_set[1] <= 1'b1;
-        3'd3: finish_status_set[2] <= 1'b1;
+        case(core_cmd_addr) // 根据地址判断需要设置哪个为1
+        3'd0: finish_status_set[0] <= 1'b1;
+        3'd1: finish_status_set[1] <= 1'b1;
+        3'd2: finish_status_set[2] <= 1'b1;
+        3'd3: finish_status_set[3] <= 1'b1;
         default: finish_status_set <= finish_status_set;
         endcase
     end
 end
 
+// TODO: 增加core rd
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         finish_status <= 'b0;
@@ -508,14 +526,17 @@ always_ff @(posedge clk or negedge rst_n) begin
     else if(core_cmd_req & (core_cmd_addr == 3'd4) & (finish_status == finish_status_set)) begin
         finish_status <= 'b0;
     end
-    else if(c_w_transaction_done) begin
+    else if(c_r_transaction_done) begin
         finish_status[0] <= 1'b1;
     end
-    else if(d_r_transaction_done) begin
+    else if(c_w_transaction_done) begin
         finish_status[1] <= 1'b1;
     end
-    else if(d_w_transaction_done) begin
+    else if(d_r_transaction_done) begin
         finish_status[2] <= 1'b1;
+    end
+    else if(d_w_transaction_done) begin
+        finish_status[3] <= 1'b1;
     end
 end
 
@@ -539,6 +560,7 @@ assign c_cfg_itf_irq_en = core_cfg_core_rd_reg[30][0];
 
 
 always_comb begin
+    // core配置通道的握手信号
     core_cmd_dma_rd_req = 'b0;
     core_cmd_dma_wr_req = 'b0;
 
@@ -567,7 +589,7 @@ always_comb begin
         core_cmd_dma_wr_req = core_cmd_req;
         core_cmd_gnt = core_cmd_dma_wr_gnt;
     end
-    3'd4: begin //finish status
+    3'd4: begin //finish status     
         core_cmd_gnt = (finish_status == finish_status_set);
     end
     // 3'd5: begin //itf sleep

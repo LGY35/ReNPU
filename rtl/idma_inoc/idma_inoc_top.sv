@@ -42,7 +42,6 @@ module idma_inoc_top
     output  [1:0]                     s_axi_bresp,
     output                            s_axi_bvalid,
     input                             s_axi_bready,
-    //read
     input   [ID_WIDTH-1:0]            s_axi_arid,
     input   [AXI_AW-1:0]              s_axi_araddr,
     input   [7:0]                     s_axi_arlen,
@@ -60,8 +59,7 @@ module idma_inoc_top
     output                            s_axi_rvalid,
     input                             s_axi_rready,
 
-    //dma axi master interface 
-    //  CPU给定idma_inoc取指的地址，idma_inoc中的IDMA模块会通过AXI总线，向上传递地址，然后取出指令——dma_rd_data ，写入IBuffer。
+    //dma axi master interface
     output                            m_arvalid,
     output [ID_WIDTH-1:0]             m_arid   ,
     output [AXI_AW-1:0]               m_araddr ,
@@ -116,7 +114,6 @@ module idma_inoc_top
     // output                            cfg_rvalid,
     // input                             cfg_rready,
 
-    //SoC上的CPU通过APB总线配置Config
     input      [11:0]                 cfg_apb_PADDR,
     input      [0:0]                  cfg_apb_PSEL,
     input                             cfg_apb_PENABLE,
@@ -128,7 +125,6 @@ module idma_inoc_top
     output     [31:0]                 cfg_apb_PRDATA,
     output                            cfg_apb_PSLVERR,
 
-    //与12个节点之间的接口
     // send to noc
     output [11:0]                     send_valid ,
     output [11:0][FLIT_WIDTH-1:0]     send_flit  ,
@@ -157,15 +153,15 @@ module idma_inoc_top
     output [3:0]                      m1_pstrb            ,
     output [31:0]                     m1_pwdata           ,
 
-    // interrupt  FSM中指令执行完之后的中断
+    // interrupt
     output                            interrupt
 );
 
-parameter MEM_AW = 15;
-parameter DATA_FIFO_DEPTH   = 64    ;
-parameter DATA_FIFO_CNT_WID = 6+1   ;
-parameter ADDR_FIFO_DEPTH   = 32    ;
-parameter ADDR_FIFO_CNT_WID = 5+1   ;
+localparam MEM_AW = 15;
+localparam DATA_FIFO_DEPTH   = 64    ;
+localparam DATA_FIFO_CNT_WID = 6+1   ;
+localparam ADDR_FIFO_DEPTH   = 32    ;
+localparam ADDR_FIFO_CNT_WID = 5+1   ;
 
 
 wire                              fsm_start           ;
@@ -311,7 +307,6 @@ wire                              io_apb_PREADY;
 assign cfg_apb_PREADY = io_apb_PREADY & rd_addr_ready;
 
 idma_inoc_regfile u_idma_inoc_regfile(
-    //APB总线reg
     .io_apb_PADDR               ( cfg_apb_PADDR              ),
     .io_apb_PSEL                ( cfg_apb_PSEL               ),
     .io_apb_PENABLE             ( cfg_apb_PENABLE            ),
@@ -322,12 +317,10 @@ idma_inoc_regfile u_idma_inoc_regfile(
     .io_apb_PWDATA              ( cfg_apb_PWDATA             ),
     .io_apb_PRDATA              ( cfg_apb_PRDATA             ),
     .io_apb_PSLVERR             ( cfg_apb_PSLVERR            ),
-    // FSM reg
     .io_fsm_start               ( fsm_start                  ),
     .io_fsm_base_addr           ( fsm_base_addr              ),
     .io_fsm_auto_restart_en     ( fsm_auto_restart_en        ),
     .io_fsm_restart             ( fsm_restart                ),
-    // 读取DDR Config reg
     .io_rd_cfg_ready            ( rd_cfg_ready               ),
     .io_rd_afifo_init           ( rd_afifo_init              ),
     .io_rd_dfifo_init           ( rd_dfifo_init              ),
@@ -345,7 +338,6 @@ idma_inoc_regfile u_idma_inoc_regfile(
     .io_rd_addr                 ( rd_addr                    ),
     .io_rd_num                  ( rd_num                     ),
     .io_rd_done_intr            ( rd_done_intr               ),
-    // 运行status reg
     .io_finish_intr             ( finish_intr                ),
     .io_small_loop_end_int      ( small_loop_end_int         ),
     .io_debug_dma_rd_in_cnt     ( debug_dma_rd_in_cnt        ),

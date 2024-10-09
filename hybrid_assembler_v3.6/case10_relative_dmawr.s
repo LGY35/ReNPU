@@ -26,7 +26,7 @@ imm_wba(0x00000000)
 imm_wba(0x00000000)
 imm_gba(0x00000000)
 imm_cfg(0x00000070)
-finish_group(0x00) # 0101 节点0和2为一组, 然后每个都往下个group发数 
+finish_group(0x005) # 0101 节点0和2为一组, 然后每个都往下个group发数 
 
 #dma wr 用0接收，然后dma rd 写入1
 #

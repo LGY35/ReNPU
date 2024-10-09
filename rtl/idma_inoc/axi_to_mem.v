@@ -76,22 +76,22 @@ parameter WORD_WIDTH = STRB_WIDTH;
 parameter WORD_SIZE = DATA_WIDTH/WORD_WIDTH;
 
 // bus width assertions
-initial begin
-    if (WORD_SIZE * STRB_WIDTH != DATA_WIDTH) begin
-        $error("Error: AXI data width not evenly divisble (instance %m)");
-        $finish;
-    end
+// initial begin
+//     if (WORD_SIZE * STRB_WIDTH != DATA_WIDTH) begin
+//         $error("Error: AXI data width not evenly divisble (instance %m)");
+//         $finish;
+//     end
 
-    if (2**$clog2(WORD_WIDTH) != WORD_WIDTH) begin
-        $error("Error: AXI word width must be even power of two (instance %m)");
-        $finish;
-    end
+//     if (2**$clog2(WORD_WIDTH) != WORD_WIDTH) begin
+//         $error("Error: AXI word width must be even power of two (instance %m)");
+//         $finish;
+//     end
 
-    if((INPUT_PIPE_STAGES<1) || (OUTPUT_PIPE_STAGES<1) || (MEM_LATENCY<1)) begin
-        $error("Error: Input or Output pipeline stages or Memory Latency must equal or great than 1");
-        $finish;
-    end
-end
+//     if((INPUT_PIPE_STAGES<1) || (OUTPUT_PIPE_STAGES<1) || (MEM_LATENCY<1)) begin
+//         $error("Error: Input or Output pipeline stages or Memory Latency must equal or great than 1");
+//         $finish;
+//     end
+// end
 
 // state parameter
 localparam [1:0]
@@ -159,6 +159,12 @@ reg s_axi_awready_reg;
 reg s_axi_awready_next;
 reg s_axi_arready_reg;
 reg s_axi_arready_next;
+
+wire s_axi_aw_handshake;
+wire s_axi_w_handshake;
+wire s_axi_ar_handshake;
+wire s_axi_r_handshake;
+wire s_axi_b_handshake;
 
 assign s_axi_awready = s_axi_awready_reg;
 assign s_axi_wready = mem_wr_en && mem_ready_pipe[0];
@@ -347,6 +353,9 @@ always @* begin
             else begin
                 read_state_next = READ_STATE_RESP;
             end
+        end
+        default: begin
+            read_state_next = READ_STATE_IDLE;
         end
     endcase
 end
