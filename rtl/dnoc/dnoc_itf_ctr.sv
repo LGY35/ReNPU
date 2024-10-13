@@ -13,7 +13,7 @@ module dnoc_itf_ctr #(
     input                           core_cfg_valid,
 
     input                           core_cmd_req,
-    input           [2:0]           core_cmd_addr,  // 对应4个通道
+    input           [2:0]           core_cmd_addr,  // 0-4对应：4个通道和finish
     output  logic                   core_cmd_gnt,
     output  logic                   core_cmd_ok,
     // input           [1:0]           core_cmd_trans_mode,
@@ -87,7 +87,7 @@ module dnoc_itf_ctr #(
     output  logic                   c_cfg_c_r_local_access, //\u8ba1\u7b97\u5f97\u5230\uff0c\u5e76\u975e\u76f4\u63a5\u914d\u7f6e
 
     output  logic   [1:0][12:0]     c_cfg_c_r_base_addr,
-    output  logic   [3:0]           c_cfg_c_r_noc_target_id, //\u76f8\u5f53\u4e8e\u5730\u5740\u7684\u9ad84\u4f4d\uff0c\u51b3\u5b9a\u8282\u70b9\u5730\u5740
+    output  logic   [3:0]           c_cfg_c_r_noc_target_id, //相当于地址的高4bit，决定节点地址
     // output  logic   [23:0]          c_cfg_c_r_noc_base_addr,
     output  logic   [3:0][12:0]     c_cfg_c_r_loop_lenth,
     output  logic   [3:0][12:0]     c_cfg_c_r_loop_gap,
@@ -96,8 +96,8 @@ module dnoc_itf_ctr #(
     output  logic                   c_cfg_c_r_dma_transfer, //
     output  logic                   c_cfg_c_r_dma_access_mode,
 
-    output  logic         [11:0]    c_cfg_c_r_noc_mc_scale, //\u77e9\u5f62\u533a\u57df
-    output  logic         [11:0]    c_cfg_c_r_sync_target,  //12\u4e2a\u8282\u70b9\u540c\u6b65\u76ee\u6807
+    output  logic         [11:0]    c_cfg_c_r_noc_mc_scale, //矩形区域
+    output  logic         [11:0]    c_cfg_c_r_sync_target,  //12个节点同步目标
 
     output  logic         [3:0]     c_cfg_c_r_pad_up_len,
     output  logic         [3:0]     c_cfg_c_r_pad_right_len,
@@ -114,7 +114,7 @@ module dnoc_itf_ctr #(
 
     input                           c_w_transaction_done,
 
-    output  logic                   c_cfg_c_w_local_access, //\u8ba1\u7b97\u5f97\u5230\uff0c\u5e76\u975e\u76f4\u63a5\u914d\u7f6e
+    output  logic                   c_cfg_c_w_local_access, //计算得到，并非直接配置
 
     output  logic                   c_cfg_c_w_pingpong_en,
     output  logic   [10:0]          c_cfg_c_w_pingpong_num,
@@ -299,12 +299,16 @@ always_ff @(posedge clk or negedge rst_n) begin
     end
     else if(core_cfg_valid & (core_cfg_addr_frag == 2'd0) & (core_cfg_addr_low == 5'd5)) begin
         // 在没有广播的情况下，如果是绝对寻址，targetid = NODE_ID 或者 相对寻址，相对地址为全0
+        // 不考虑广播的情况，是因为，如果想要多节点读————即本节点读取好几个节点，包括本节点，那为了统一，读取本节点也要走mc
+        // 节点的core rd先发送请求给router，然后router再返回来配置本地的dma wr通道，然后从本地的sram中读取数据，返回给core rd(饶了一圈)
+        // (所以寄存器也要按照顺序配)
         if((((core_cfg_data_frag[3:0] == NODE_ID) & ~c_cfg_c_r_address_mode) | (c_cfg_c_r_address_mode & ~|c_cfg_c_r_relative_addr[3:0])) & ~c_cfg_c_r_mc)
             c_cfg_c_r_local_access <= 1'b1;
         else
             c_cfg_c_r_local_access <= 1'b0;
     end
 end
+// TODO: 记录： core wr 没有广播，因为广播是被动，收到了好多req，才给那些node发送，而不是主动的要写很多的node
 
 // 从相应的寄存器中取出有效的字段
 assign c_cfg_c_r_address_mode           = core_cfg_core_rd_reg[0][0];
@@ -499,11 +503,13 @@ assign c_cfg_d_w_dma_access_mode        = core_cfg_dma_wr_reg[22][0];
 logic   [2:0]   finish_status, finish_status_set; //3:dma wr; 2:dma rd; 1:core wr; 0:core rd;      // core rd 不会是最后一个
 // finish_status_set 是用来参考的，哪个通道配置了，就设置哪个为1，finish status是实时读取当前的状态，当finish_status = finish_status_set时代表已经finish
 
+// 现在只有主动读取时才会
+
+// 设置finish-status set
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         finish_status_set <= 'b0;
     end
-    // 读取finish status, 并且
     else if(core_cmd_req & (core_cmd_addr == 3'd4) & (finish_status == finish_status_set)) begin
         finish_status_set <= 'b0;
     end // 如果握手成功
@@ -518,13 +524,35 @@ always_ff @(posedge clk or negedge rst_n) begin
     end
 end
 
-// TODO: 增加core rd
+
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         finish_status <= 'b0;
-    end
+    end 
     else if(core_cmd_req & (core_cmd_addr == 3'd4) & (finish_status == finish_status_set)) begin
         finish_status <= 'b0;
+    end
+    else if(core_cmd_req) begin
+        case(core_cmd_addr) 
+            3'd0: begin //core rd
+                
+            end
+            3'd1: begin //core wr
+                core_cmd_core_wr_req = core_cmd_req;
+                core_cmd_gnt = core_cmd_core_wr_gnt;
+            end
+            3'd2: begin //dma rd
+                core_cmd_dma_rd_req = core_cmd_req;
+                core_cmd_gnt = core_cmd_dma_rd_gnt;
+            end
+            3'd3: begin //dma wr
+                core_cmd_dma_wr_req = core_cmd_req;
+                core_cmd_gnt = core_cmd_dma_wr_gnt;
+            end
+            3'd4: begin //finish status     
+                core_cmd_gnt = (finish_status == finish_status_set);
+            end
+        endcase
     end
     else if(c_r_transaction_done) begin
         finish_status[0] <= 1'b1;

@@ -14,7 +14,7 @@ module dnoc_itf_core_rd(
     input                           c_cfg_c_r_pingpong_en,
     input           [10:0]          c_cfg_c_r_pingpong_num,
 
-    input                           c_cfg_c_r_local_access, //\u8ba1\u7b97\u5f97\u5230\uff0c\u5e76\u975e\u76f4\u63a5\u914d\u7f6e
+    input                           c_cfg_c_r_local_access, //在ctr模块中计算得到
 
     input           [3:0][12:0]     c_cfg_c_r_loop_lenth,
     input           [3:0][12:0]     c_cfg_c_r_loop_gap,
@@ -111,6 +111,7 @@ always_comb begin
 
     case(cs)    
     IDLE: begin
+        // core主动配置 core rd
         if(core_cmd_core_rd_req) begin
             if(c_cfg_c_r_local_access)begin
                 core_cmd_core_rd_gnt = 1'b1;
@@ -137,6 +138,7 @@ always_comb begin
         end
     end
     NOC_RD_REQ: begin
+        // noc向外发送请求
         core_rd_noc_out_req = 1'b1;
 
         if(core_rd_noc_out_gnt) begin
@@ -212,7 +214,7 @@ always_comb begin
             pingpong_cnt_ns = 'b0;
             c_r_transaction_done = 1'b1;    //TODO: check
         end
-        else if(pingpong_cnt[0] & pingpong_state[1]) begin
+        else if(pingpong_cnt[0] & pingpong_state[1]) begin // PANG
             pingpong_cnt_ns = pingpong_cnt + 1'b1;
             ns = PONG_RD;
             L2_dmem_core_rd_en = 1'b1;
@@ -220,7 +222,7 @@ always_comb begin
             addr_mu_initial_en = 1'b1;
             addr_mu_initial_addr = c_cfg_c_r_base_addr[1];
         end
-        else if(~pingpong_cnt[0] & pingpong_state[0]) begin
+        else if(~pingpong_cnt[0] & pingpong_state[0]) begin //PING
             pingpong_cnt_ns = pingpong_cnt + 1'b1;
             ns = PING_RD;
             L2_dmem_core_rd_en = 1'b1;
@@ -230,7 +232,7 @@ always_comb begin
     end
     PING_RD: begin
         L2_dmem_core_rd_addr = addr_mu_addr;
-        core_in_valid = 1'b1;
+        core_in_valid = 1'b1;   // 告诉core读取的数据valid
         if(transfer_cnt == c_cfg_c_r_ping_lenth)begin
             ns = PINGPONG_CHECK;
             transfer_cnt_ns = 'b0;
@@ -240,7 +242,7 @@ always_comb begin
         else begin
             L2_dmem_core_rd_en = 1'b1;
             transfer_cnt_ns = transfer_cnt + 1'b1;
-            addr_mu_valid = 1'b1;
+            addr_mu_valid = 1'b1;   //TODO: 为什么第一次不给？
         end
     end
     PONG_RD: begin

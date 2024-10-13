@@ -233,7 +233,7 @@ always @(posedge clk or negedge rst_n) begin
   else if(dma_rd_data_done) begin
     dma_rd_data_cnt <= 13'b0;
   end
-  else if(rd_data_hs) begin
+  else if(rd_data_hs && (read_cur_state==SEND_RDATA)) begin
     dma_rd_data_cnt <= dma_rd_data_cnt + 1;
   end
 end
@@ -360,7 +360,7 @@ assign dma_write_ready[1] = wr_addr_ready;
 // Write FSM
 // ===================================
 // count wdata to dma
-assign dma_wr_data_done =   (write_cur_state==WRITE_DATA) 
+assign dma_wr_data_done =   ((write_cur_state==WRITE_DATA) || (write_cur_state==WRITE_REQ))
                         &&  (dma_wr_data_cnt==write_num_reg-1) 
                         &&  wr_data_hs
                         ;
@@ -371,7 +371,7 @@ always @(posedge clk or negedge rst_n) begin
   else if(dma_wr_data_done) begin
     dma_wr_data_cnt <= 13'b0;
   end
-  else if(wr_data_hs) begin
+  else if(wr_data_hs && ((write_cur_state==WRITE_DATA) || (write_cur_state==WRITE_REQ))) begin
     dma_wr_data_cnt <= dma_wr_data_cnt + 1;
   end
 end
@@ -440,7 +440,7 @@ assign wr_strb       = {STRB_WIDTH{1'b1}};
 assign data_out_valid = send_data_valid[1];
 assign data_out_flit  = send_data_payload[1];
 assign data_out_last  = send_data_last[1];
-assign data_in_ready  = (write_cur_state==WRITE_IDLE || write_cur_state==WRITE_REQ || write_cur_state==WRITE_DATA);
+assign data_in_ready  = ~dma_wr_data_done && (write_cur_state==WRITE_IDLE || write_cur_state==WRITE_REQ || write_cur_state==WRITE_DATA);
 assign ctrl_out_valid = (write_cur_state==SEND_BRESP);
 assign ctrl_out_flit  = {250'b0, data_in_flit[13], 1'b1, data_in_flit_bit17_14};
 assign ctrl_out_last  = 1'b1;

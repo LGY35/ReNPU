@@ -151,8 +151,8 @@ module noc_mesh #(
                     assign node_in_valid[nodenum(x,y)][SOUTH] = node_out_valid[southof(x,y)][NORTH];
                     assign node_out_ready[nodenum(x,y)][SOUTH] = node_in_ready[southof(x,y)][NORTH];
                 end else begin
-                    assign node_in_flit[nodenum(x,y)][SOUTH] = 'x;// 常量，不定值
-                    assign node_in_last[nodenum(x,y)][SOUTH] = 'x;// 常量，不定值
+                    assign node_in_flit[nodenum(x,y)][SOUTH] = '0;
+                    assign node_in_last[nodenum(x,y)][SOUTH] = '0;
                     assign node_in_valid[nodenum(x,y)][SOUTH] = 0;
                     assign node_out_ready[nodenum(x,y)][SOUTH] = 0;
                 end
@@ -163,8 +163,8 @@ module noc_mesh #(
                     assign node_in_valid[nodenum(x,y)][NORTH] = node_out_valid[northof(x,y)][SOUTH];
                     assign node_out_ready[nodenum(x,y)][NORTH] = node_in_ready[northof(x,y)][SOUTH];
                 end else begin
-                    assign node_in_flit[nodenum(x,y)][NORTH] = 'x;
-                    assign node_in_last[nodenum(x,y)][NORTH] = 'x;
+                    assign node_in_flit[nodenum(x,y)][NORTH] = '0;
+                    assign node_in_last[nodenum(x,y)][NORTH] = '0;
                     assign node_in_valid[nodenum(x,y)][NORTH] = 0;
                     assign node_out_ready[nodenum(x,y)][NORTH] = 0;
                 end
@@ -175,8 +175,8 @@ module noc_mesh #(
                     assign node_in_valid[nodenum(x,y)][WEST] = node_out_valid[westof(x,y)][EAST];
                     assign node_out_ready[nodenum(x,y)][WEST] = node_in_ready[westof(x,y)][EAST];
                 end else begin
-                    assign node_in_flit[nodenum(x,y)][WEST] = 'x;
-                    assign node_in_last[nodenum(x,y)][WEST] = 'x;
+                    assign node_in_flit[nodenum(x,y)][WEST] = '0;
+                    assign node_in_last[nodenum(x,y)][WEST] = '0;
                     assign node_in_valid[nodenum(x,y)][WEST] = 0;
                     assign node_out_ready[nodenum(x,y)][WEST] = 0;
                 end
@@ -187,8 +187,8 @@ module noc_mesh #(
                     assign node_in_valid[nodenum(x,y)][EAST] = node_out_valid[eastof(x,y)][WEST];
                     assign node_out_ready[nodenum(x,y)][EAST] = node_in_ready[eastof(x,y)][WEST];
                 end else begin
-                    assign node_in_flit[nodenum(x,y)][EAST] = 'x;
-                    assign node_in_last[nodenum(x,y)][EAST] = 'x;
+                    assign node_in_flit[nodenum(x,y)][EAST] = '0;
+                    assign node_in_last[nodenum(x,y)][EAST] = '0;
                     assign node_in_valid[nodenum(x,y)][EAST] = 0;
                     assign node_out_ready[nodenum(x,y)][EAST] = 0;
                 end

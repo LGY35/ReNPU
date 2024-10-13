@@ -1,8 +1,5 @@
 
 
-
-
-
 module cu_node #(
     parameter NODE_ID       = 4'd0,
     parameter CLUSTER_ID    = 6'd0,

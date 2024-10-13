@@ -11,6 +11,7 @@ module stream_buffer(
     // fetch_stream_req 会连接到core，当streamhit的时候，一边向core搬运数据，一边向icache中也搬运数据
     input                   fetch_stream_req,
     input           [18:0]  fetch_stream_addr,  //预取的地址
+    input           [18:0]  fetch_stream_addr_reg, //both compare
     output  logic           fetch_stream_gnt,
     output  logic           fetch_stream_r_valid,
     output  logic   [31:0]  fetch_stream_r_data,
@@ -92,21 +93,14 @@ logic [2:0] cs, ns;
 always_ff @(posedge clk or negedge rst_n) begin
 
     if(!rst_n) begin
-
         icache_sleep_en_reg <= 'b0;
-
     end
-
     else if((cs == IDLE) & (icache_sleep_en | icache_sleep_en_reg)) begin
-
         icache_sleep_en_reg <= 'b0;
-
     end
 
     else if(icache_sleep_en) begin
-
         icache_sleep_en_reg <= icache_sleep_en;
-
     end
 
 end
@@ -125,7 +119,8 @@ always_comb begin
     prefetch_buffer_addr_ns = prefetch_buffer_addr;
 
     // stream_hit = 1'b0;
-    stream_hit = (stream_buffer_addr == fetch_stream_addr[18:6]) & stream_buffer_valid;
+    // stream_hit = (stream_buffer_addr == fetch_stream_addr[18:6]) & stream_buffer_valid;
+    stream_hit = (stream_buffer_addr == fetch_stream_addr_reg[18:6]) & stream_buffer_valid;
     stream_move_hit = 1'b0;
 
     stream_moving = 1'b1;
@@ -135,7 +130,8 @@ always_comb begin
     stream_to_icache_data = stream_buffer[stream_move_cnt];
 
     fetch_stream_r_valid = 'b0;
-    hit_index = fetch_stream_addr[5:2];
+    // hit_index = fetch_stream_addr[5:2];
+    hit_index = fetch_stream_addr_reg[5:2];
 
     move_hit_index_ns = move_hit_index;
     fetch_stream_r_data = stream_buffer[hit_index];
@@ -195,7 +191,9 @@ always_comb begin
         // MOVE是从stream buffer向ICACHE搬运数据
         STREAM_MOVE: begin
             stream_to_icache_valid = 1'b1;
-            if(stream_move_cnt == 4'hf)begin    //需要搬16次
+            // 在0-14的时候，这前15个每个周期都会处理上级的fetch_stream_req，而15的时候，也就是第16个周期如果也处理上级的req，
+            // 就需要再延迟一拍才能完成操作，就需要再打一拍才能完成。所以这一拍不处理，而先返回，然后再有pri icache处理req
+            if(stream_move_cnt == 4'hf)begin    //需要搬16次    
                 stream_move_cnt_ns = 'b0;
                 ns = IDLE;
                 stream_move_done = 1'b1;
@@ -337,7 +335,8 @@ always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n)
         line_addr_cut <= 'b0;
     else if((cs == IDLE) & fetch_stream_req)    //如果IDLE状态收到了req，就接收预取的cacheline的地址
-        line_addr_cut <= fetch_stream_addr[18:6];   //
+        // line_addr_cut <= fetch_stream_addr[18:6];   //
+        line_addr_cut <= fetch_stream_addr_reg[18:6];
 end
 
 endmodule

@@ -73,6 +73,7 @@ logic stream_fetch_valid;
 logic stream_miss; //
 logic fetch_stream_req;
 logic [18:0] fetch_stream_addr;
+logic [18:0] fetch_stream_addr_reg;
 logic fetch_stream_gnt;
 logic fetch_stream_r_valid;
 logic [31:0] fetch_stream_r_data;
@@ -156,6 +157,7 @@ always_comb begin
     stream_fetch_valid = 1'b0;
     fetch_stream_req = 'b0;
     fetch_stream_addr = fetch_addr;
+    fetch_stream_addr_reg = fetch_addr_reg;
     stream_miss = 'b0;
 
     case(cs)
@@ -288,7 +290,7 @@ always_comb begin
                 if(~icache_hit) begin   //如果icache没有命中，但是stream命中了，就把stream中的搬到icache中，然后icache refill
                     ctr_refill_req = 1'b1;      // refill都是从上一级cache中取
                     ctr_refill_lenth = 1'b0;    //一个cacheline
-                    stream_fetch_valid = 1'b1;  //告诉stream buffer，要预取了
+                    stream_fetch_valid = 1'b1;  //告诉stream buffer，要预取了，就是icache没有
                 end
             end
             else begin
@@ -524,6 +526,7 @@ stream_buffer U_stream_buffer(
 
     .fetch_stream_req               (fetch_stream_req       ),
     .fetch_stream_addr              (fetch_stream_addr      ),
+    .fetch_stream_addr_reg          (fetch_stream_addr_reg  ),
     .fetch_stream_gnt               (fetch_stream_gnt       ),
     .fetch_stream_r_valid           (fetch_stream_r_valid   ),
     .fetch_stream_r_data            (fetch_stream_r_data    ),
