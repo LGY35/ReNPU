@@ -524,49 +524,113 @@ always_ff @(posedge clk or negedge rst_n) begin
     end
 end
 
+// 原来是四个一起写的，现在分开写，简化逻辑
+always_ff @(posedge clk or negedge rst_n) begin
+    if(!rst_n) begin
+        finish_status[0] <= 'b0;
+    end
+    //这是正常的finish status
+    else if(core_cmd_req & (core_cmd_addr == 3'd4) & (finish_status == finish_status_set)) begin
+        finish_status[0] <= 'b0;
+    end
+    // 如果不配置要读取finish status，直接开始新的配置，比如由读weight改为读feature
+    else if(core_cmd_req & (core_cmd_addr == 3'd0)) begin
+        finish_status[0] <= 'b0;
+    end
+    // 用于给上面第一种对比的
+    else if(c_r_transaction_done) begin
+        finish_status[0] <= 1'b1;
+    end
+end
 
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
-        finish_status <= 'b0;
-    end 
+        finish_status[1] <= 'b0;
+    end
     else if(core_cmd_req & (core_cmd_addr == 3'd4) & (finish_status == finish_status_set)) begin
-        finish_status <= 'b0;
+        finish_status[1] <= 'b0;
     end
-    else if(core_cmd_req) begin
-        case(core_cmd_addr) 
-            3'd0: begin //core rd
-                
-            end
-            3'd1: begin //core wr
-                core_cmd_core_wr_req = core_cmd_req;
-                core_cmd_gnt = core_cmd_core_wr_gnt;
-            end
-            3'd2: begin //dma rd
-                core_cmd_dma_rd_req = core_cmd_req;
-                core_cmd_gnt = core_cmd_dma_rd_gnt;
-            end
-            3'd3: begin //dma wr
-                core_cmd_dma_wr_req = core_cmd_req;
-                core_cmd_gnt = core_cmd_dma_wr_gnt;
-            end
-            3'd4: begin //finish status     
-                core_cmd_gnt = (finish_status == finish_status_set);
-            end
-        endcase
-    end
-    else if(c_r_transaction_done) begin
-        finish_status[0] <= 1'b1;
+    else if(core_cmd_req & (core_cmd_addr == 3'd1)) begin
+        finish_status[1] <= 'b0;
     end
     else if(c_w_transaction_done) begin
         finish_status[1] <= 1'b1;
     end
+end
+
+
+always_ff @(posedge clk or negedge rst_n) begin
+    if(!rst_n) begin
+        finish_status[2] <= 'b0;
+    end
+    else if(core_cmd_req & (core_cmd_addr == 3'd4) & (finish_status == finish_status_set)) begin
+        finish_status[2] <= 'b0;
+    end
+    else if(core_cmd_req & (core_cmd_addr == 3'd2)) begin
+        finish_status[2] <= 'b0;
+    end
     else if(d_r_transaction_done) begin
         finish_status[2] <= 1'b1;
+    end
+end
+
+
+always_ff @(posedge clk or negedge rst_n) begin
+    if(!rst_n) begin
+        finish_status[3] <= 'b0;
+    end
+    else if(core_cmd_req & (core_cmd_addr == 3'd4) & (finish_status == finish_status_set)) begin
+        finish_status[3] <= 'b0;
+    end
+    else if(core_cmd_req & (core_cmd_addr == 3'd3)) begin
+        finish_status[3] <= 'b0;
     end
     else if(d_w_transaction_done) begin
         finish_status[3] <= 1'b1;
     end
 end
+// always_ff @(posedge clk or negedge rst_n) begin
+//     if(!rst_n) begin
+//         finish_status <= 'b0;
+//     end 
+//     else if(core_cmd_req & (core_cmd_addr == 3'd4) & (finish_status == finish_status_set)) begin
+//         finish_status <= 'b0;
+//     end
+//     else if(core_cmd_req) begin
+//         case(core_cmd_addr) 
+//             3'd0: begin //core rd
+                
+//             end
+//             3'd1: begin //core wr
+//                 core_cmd_core_wr_req = core_cmd_req;
+//                 core_cmd_gnt = core_cmd_core_wr_gnt;
+//             end
+//             3'd2: begin //dma rd
+//                 core_cmd_dma_rd_req = core_cmd_req;
+//                 core_cmd_gnt = core_cmd_dma_rd_gnt;
+//             end
+//             3'd3: begin //dma wr
+//                 core_cmd_dma_wr_req = core_cmd_req;
+//                 core_cmd_gnt = core_cmd_dma_wr_gnt;
+//             end
+//             3'd4: begin //finish status     
+//                 core_cmd_gnt = (finish_status == finish_status_set);
+//             end
+//         endcase
+//     end
+//     else if(c_r_transaction_done) begin
+//         finish_status[0] <= 1'b1;
+//     end
+//     else if(c_w_transaction_done) begin
+//         finish_status[1] <= 1'b1;
+//     end
+//     else if(d_r_transaction_done) begin
+//         finish_status[2] <= 1'b1;
+//     end
+//     else if(d_w_transaction_done) begin
+//         finish_status[3] <= 1'b1;
+//     end
+// end
 
 //------------------------itf----------------------
 

@@ -30,7 +30,7 @@ extract: $(OUT_EXTRACT)
 
 $(OUT_DIR)/%.txt: $(INSTR_DIR)/%.s
 	mkdir -p $(OUT_DIR)
-	./hybrid_assembler_v3.8 -i $< -o $@ -t $(OUT_TYPE)
+	./hybrid_assembler_v3.8 -i $< -o $@ -t $(OUT_TYPE) -mv 2
 
 $(OUT_EXTRACT_DIR)/%_extract.txt: $(OUT_DIR)/%.txt
 	mkdir -p $(OUT_EXTRACT_DIR)

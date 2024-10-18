@@ -16,6 +16,7 @@ def extract_hex_instructions(input_filename, output_filename):
             if parts:
                 hex_instruction = parts[0]
                 # Check if the instruction is finish_group
+                hex_instructions.append(hex_instruction)
                 if 'finish_group' in line:
                     finish_group_found = True
                     num_instructions = len(hex_instructions)
@@ -24,7 +25,6 @@ def extract_hex_instructions(input_filename, output_filename):
                         # Add a zero instruction to make it divisible by 4
                         zero_instruction = '00000000'  # Assuming the instruction length is 8 hex digits
                         hex_instructions.append(zero_instruction)
-                hex_instructions.append(hex_instruction)
 
         # Write all instructions to the output file
         with open(output_filename, 'w') as output_file:

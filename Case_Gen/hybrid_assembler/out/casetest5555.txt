@@ -1,4 +1,3 @@
-00000073 next_fetch_is_cpu
     4401 c.li x8, 0
     0426 c.slli x8, 9
 01040413 addi x8, x8, 16
@@ -38,14 +37,45 @@
 0000005B next_fetch_is_npu
 40012022 CVEC_cfg2                      (cal_mode=norm_conv,wreg_wr_cnt=0,fprec=INT8,wprec=INT8,v_tq=0)
 00028210 MQ_cfg0                        (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=40,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+C0000012 NOC_cfg (addr=96  , wdata=0 )
+C2000012 NOC_cfg (addr=97  , wdata=0 )
+C4000012 NOC_cfg (addr=98  , wdata=0 )
+C6000012 NOC_cfg (addr=99  , wdata=0 )
+C8000092 NOC_cfg (addr=100 , wdata=1 )   # pingpang 使能
+CA000012 NOC_cfg (addr=101 , wdata=0 )   # 本地ram ping基地址    bank0
+CC080012 NOC_cfg (addr=102 , wdata=4096 )   # 本地ram pang基地址    bank4
+CE010012 NOC_cfg (addr=103 , wdata=512 )
+D0000012 NOC_cfg (addr=104 , wdata=0 )
+D2000012 NOC_cfg (addr=105 , wdata=0 )
+D4000012 NOC_cfg (addr=106 , wdata=0 )
+D6000012 NOC_cfg (addr=107 , wdata=0 )
+D8000092 NOC_cfg (addr=108 , wdata=1 )
+DA000012 NOC_cfg (addr=109 , wdata=0 )
+DC000012 NOC_cfg (addr=110 , wdata=0 )
+DE000012 NOC_cfg (addr=111 , wdata=0)
+E0000892 NOC_cfg (addr=112 , wdata=17)   # loop lenth
+E2000192 NOC_cfg (addr=113 , wdata=3)    # pingpangnum = 24/4*2 = 3
+E4000192 NOC_cfg (addr=114 , wdata=3)    # ping lenth  # 一次取4个数
+E6000192 NOC_cfg (addr=115 , wdata=3 )   # pang lenth
+E8000012 NOC_cfg (addr=116 , wdata=0 )
+EA000012 NOC_cfg (addr=117 , wdata=0 )
+EC000012 NOC_cfg (addr=118 , wdata=0 )
+16000017 noc_req (comd_type=3, bar=1)
+18000017 noc_req (comd_type=4, bar=1)
+CE010912 NOC_cfg (addr=103 , wdata=530 )
+E4000092 NOC_cfg (addr=114 , wdata=1)    # ping lenth 一次取2两个数 一共6个
+E6000092 NOC_cfg (addr=115 , wdata=1 )   # pang lenth
+EC000092 NOC_cfg (addr=118 , wdata=1)
+16000017 noc_req (comd_type=3, bar=1)
+18000017 noc_req (comd_type=4, bar=1)
 00000012 NOC_cfg (addr=0 , wdata=0 )
 02000012 NOC_cfg (addr=1 , wdata=0 )
 04000012 NOC_cfg (addr=2 , wdata=0 )
-06000012 NOC_cfg (addr=3 , wdata=0 )    # 0片外读取
-08000012 NOC_cfg (addr=4 , wdata=0 )
+06000092 NOC_cfg (addr=3 , wdata=1 )    # 1片上读取
+08000092 NOC_cfg (addr=4 , wdata=1 )    # 打开pingpang
 0A000012 NOC_cfg (addr=5 , wdata=0 )
-0C010012 NOC_cfg (addr=6 , wdata=512 )    # ping基地址 4096/8
-0E000012 NOC_cfg (addr=7 , wdata=0 )
+0C000012 NOC_cfg (addr=6 , wdata=0 )  # ping基地址
+0E080012 NOC_cfg (addr=7 , wdata=4096 ) # pang基地址
 10000012 NOC_cfg (addr=8 , wdata=0 )  # gap0
 12000012 NOC_cfg (addr=9 , wdata=0 )  # gap1
 14000012 NOC_cfg (addr=10 , wdata=0 )  # gap2
@@ -53,22 +83,22 @@
 18000012 NOC_cfg (addr=12 , wdata=0 )  # lenth0
 1A000012 NOC_cfg (addr=13 , wdata=0 )  # lenth1
 1C000012 NOC_cfg (addr=14 , wdata=0)   # lenth2
-1E000892 NOC_cfg (addr=15 , wdata=17)   # lenth3
-20000012 NOC_cfg (addr=16 , wdata=0)
-22000892 NOC_cfg (addr=17 , wdata=17)
-24000012 NOC_cfg (addr=18 , wdata=0)
+1E000892 NOC_cfg (addr=15 , wdata=17)  # lenth3
+20000192 NOC_cfg (addr=16 , wdata=3)   # pingpangnum = 24/4*2 = 3
+22000192 NOC_cfg (addr=17 , wdata=3)
+24000192 NOC_cfg (addr=18 , wdata=3)
 26000012 NOC_cfg (addr=19 , wdata=0)
 28000012 NOC_cfg (addr=20 , wdata=0)
-2A000012 NOC_cfg (addr=21 , wdata=0)
+2A000012 NOC_cfg (addr=21 , wdata=0)   # 取权重
 2C000112 NOC_cfg (addr=22 , wdata=2)
 2E000112 NOC_cfg (addr=23 , wdata=2)
 30000212 NOC_cfg (addr=24 , wdata=4)
 32000212 NOC_cfg (addr=25 , wdata=4)
-34000112 NOC_cfg (addr=26 , wdata=2) #有效行数
-36000192 NOC_cfg (addr=27 , wdata=3) #有效列数
-38000012 NOC_cfg (addr=28 , wdata=0) #pad mode
+34000112 NOC_cfg (addr=26 , wdata=2)   #有效行数
+36000192 NOC_cfg (addr=27 , wdata=3)   #有效列数
+38000012 NOC_cfg (addr=28 , wdata=0)   #pad mode
 3A000012 NOC_cfg (addr=29 , wdata=0)
-3C000092 NOC_cfg (addr=30 , wdata=1) #单核取指
+3C000092 NOC_cfg (addr=30 , wdata=1)   #单核取指
 40000090 MQ_cfg1(sub_gap=1, sys_gap_ext=0b00000)
 81237591 npu_load                       (we=wr,l1b_mode=norm ,tcache_bank_num=0,sys_gap=221,sub_gap=1,sub_len=36,addr=0,sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight
 8023F591 npu_load                       (we=wr,l1b_mode=norm ,tcache_bank_num=0,sys_gap=253,sub_gap=1,sub_len=4,addr=36,sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_scale_param
@@ -1227,7 +1257,7 @@ A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_inde
 02340413 addi x8, x8, 35
 00200937 lui x18, 0x200
 0a090913 addi x18, x18, 0x0A0
-02500993 addi x19, x0, 37
+02400993 addi x19, x0, 36
 0080105B storec x8, MQ; 
 4120105B storec x18, VQ; 
 4130105B storec x19, VQ; 
@@ -1237,14 +1267,7 @@ A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_inde
 08000021 VQ_NOP(bar=0) //100_000000000000000000_010_0001
 08000021 VQ_NOP(bar=0) //100_000000000000000000_010_0001
 08000021 VQ_NOP(bar=0) //100_000000000000000000_010_0001
-86800EA1 psum_rd(rd_num=29,rd_ch_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=37,cfifo_en=1,bar=0)
-
-00000073 next_fetch_is_cpu
-02400913 addi x18, x0, 36
-00f00993 addi x19, x0, 15
-4120105B storec x18, VQ; 
-4130105B storec x19, VQ; 
-0000005B next_fetch_is_npu
+0681EEA1 psum_rd(rd_num=29,rd_ch_sel=0,scache_wr_addr=15,scache_wr_size=byte,run_cycle_num=37,cfifo_en=0,bar=0)
 0001A020 VQ_alu_csrw(csr_addr=0,csr_wdata=0b1101) //alu_flow_cfg0: cflow_mode,scache_dout_flow_sel,alu_din_flow_sel
 00000120 VQ_alu_csrw(csr_addr=2,csr_wdata=0b000000000000000) //crossbar_cfg0
 000601A0 VQ_alu_csrw(csr_addr=3,csr_wdata=0b0000110000) //crossbar_cfg1
@@ -1255,13 +1278,18 @@ A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_inde
 007E4620 VQ_alu_csrw(csr_addr=12,csr_wdata=0b1111110010) //scache_rd2 (sys_gap=-14)
 04028023 VQ_scache_wr_en(addr=256,size=byte,wr_cycle_num=36,wait_type=0,cfifo_en=0,bar=0)
 880E0023 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=36,wait_type=1,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+
+10500073 wfi
+
+00000073 next_fetch_is_cpu
+00f00913 addi x18, x0, 15
+4120105B storec x18, VQ; 
+0000005B next_fetch_is_npu
 00010020 VQ_alu_csrw(csr_addr=0,csr_wdata=0b1000) //alu_flow_cfg0: cflow_mode,scache_dout_flow_sel,alu_din_flow_sel
 0021E520 VQ_alu_csrw(csr_addr=10,csr_wdata=0b100001111) //scache_rd0 (sub_len=1,sys_len=15)
 000025A0 VQ_alu_csrw(csr_addr=11,csr_wdata=0b1) //scache_rd1 (sub_gap=1)
 00000620 VQ_alu_csrw(csr_addr=12,csr_wdata=0b0) //scache_rd2 (sys_gap=0)
 880E8023 VQ_scache_rd_en(addr=256,size=byte,sign_ext=1,rd_cycle_num=15,wait_type=1,cfifo_en=1,bar=0)
-
-00000073 next_fetch_is_cpu
-
-10500073 wfi
 
