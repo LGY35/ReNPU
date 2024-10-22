@@ -30,7 +30,7 @@ def process_file(input_file, output_file):
                 f_out.write(item)
                 f_out.write('\n')
                 line_count = 0
-            elif line_count > 16:
+            elif line_count > 16:   # 大于16的情况是为了处理半字指令，所以下面对其进行了拆分
                 f_out.write(item[0:4])
                 f_out.write('\n')
                 f_out.write(item[4:8])
