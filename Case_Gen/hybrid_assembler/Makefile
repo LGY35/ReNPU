@@ -13,8 +13,9 @@ INSTR := $(wildcard $(INSTR_DIR)/case*.s)
 # 将每个源文件的路径转换为目标.bc的文件路径——用于将源文件映射到输出文件，自动获得输出文件的名称
 OBJECTS := $(patsubst $(INSTR_DIR)/%.s, $(OUT_DIR)/%.txt, $(INSTR))
 
+EX_SRC += $(wildcard $(OUT_DIR)/case*.txt) 
 # 将每个源文件的路径转换为提取后的文件路径
-OUT_EXTRACT := $(patsubst $(INSTR_DIR)/%.s, $(OUT_EXTRACT_DIR)/%_extract.txt, $(INSTR))
+OUT_EXTRACT := $(patsubst $(OUT_DIR)/%.txt, $(OUT_EXTRACT_DIR)/%_extract.txt, $(EX_SRC))
 
 
 # 参数
