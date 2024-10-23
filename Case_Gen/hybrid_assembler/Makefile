@@ -25,7 +25,7 @@ OUT_TYPE ?= hex # 默认输出hex
 all: $(OBJECTS) $(OUT_EXTRACT)
 # all: $(OBJECTS)	# $(OUT_DIR)/%.txt 都是OBJECTS的一员，所以这是直接运行全部的
 
-compile: $(OBJECTS) 
+out: $(OBJECTS) 
 
 extract: $(OUT_EXTRACT)
 

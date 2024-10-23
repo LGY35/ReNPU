@@ -50,7 +50,7 @@ NOC_cfg (addr=113 , wdata=0)
 NOC_cfg (addr=114 , wdata=18)
 NOC_cfg (addr=114 , wdata=17)   # 测试
 NOC_cfg (addr=115 , wdata=0 )
-NOC_cfg (addr=116 , wdata=1413 ) # 0101 1000 0101 = 1413
+NOC_cfg (addr=116 , wdata=1413 ) # 0101 1000 0101 = 1413   中心节点0101 北
 NOC_cfg (addr=117 , wdata=0 )   
 NOC_cfg (addr=118 , wdata=0 )
 noc_req (comd_type=3, bar=1)

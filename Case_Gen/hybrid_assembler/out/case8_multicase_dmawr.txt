@@ -47,7 +47,7 @@ E2000012 NOC_cfg (addr=113 , wdata=0)
 E4000912 NOC_cfg (addr=114 , wdata=18)
 E4000892 NOC_cfg (addr=114 , wdata=17)   # 测试
 E6000012 NOC_cfg (addr=115 , wdata=0 )
-E802C292 NOC_cfg (addr=116 , wdata=1413 ) # 0101 1000 0101 = 1413
+E802C292 NOC_cfg (addr=116 , wdata=1413 ) # 0101 1000 0101 = 1413   中心节点0101 北
 EA000012 NOC_cfg (addr=117 , wdata=0 )
 EC000012 NOC_cfg (addr=118 , wdata=0 )
 16000017 noc_req (comd_type=3, bar=1)
