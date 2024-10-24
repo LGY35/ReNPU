@@ -3,7 +3,7 @@
 # 向addr1写出去
 
 #第二个loop再从刚才写出去的地址读回来
-
+next_fetch_is_npu
 # dma wr
 NOC_cfg (addr=96  , wdata=0 )
 NOC_cfg (addr=97  , wdata=0 )
@@ -84,4 +84,5 @@ NOC_cfg (addr=117 , wdata=0 )
 NOC_cfg (addr=118 , wdata=0 )
 noc_req (comd_type=3, bar=0 )
 noc_req (comd_type=4, bar=0 )
-
+next_fetch_is_cpu
+wfi

@@ -52,5 +52,5 @@ imm_wba(0x80000000)
 imm_wba(0x80000000)
 imm_wba(0x80000000)
 imm_gba(0x80000000)
-imm_cfg(0x80003000) # base addr
-finish_group(0x022) # 启动节点15
+imm_cfg(0x80003004) # base addr
+finish_group(0x011) # 启动节点15
