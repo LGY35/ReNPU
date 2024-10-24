@@ -1,0 +1,28 @@
+0000005B next_fetch_is_npu
+
+C0000012 NOC_cfg (addr=96  , wdata=0 )
+C2000012 NOC_cfg (addr=97  , wdata=0 )
+C4000092 NOC_cfg (addr=98  , wdata=1 )
+C6000012 NOC_cfg (addr=99  , wdata=0 )
+C8000012 NOC_cfg (addr=100 , wdata=0 )
+CA000012 NOC_cfg (addr=101 , wdata=0 )
+CC000012 NOC_cfg (addr=102 , wdata=0 )
+CE010012 NOC_cfg (addr=103 , wdata=512 )
+D0000012 NOC_cfg (addr=104 , wdata=0 )
+D2000012 NOC_cfg (addr=105 , wdata=0 )   # gap0
+D4000392 NOC_cfg (addr=106 , wdata=7 )   # gap1 8-1
+D6000192 NOC_cfg (addr=107 , wdata=3 )   # gap2 4-1
+D8000012 NOC_cfg (addr=108 , wdata=0 )   # gap3 1-1
+DA000012 NOC_cfg (addr=109 , wdata=0 )   # lenth0
+DC000192 NOC_cfg (addr=110 , wdata=3)    # lenth1 4 -1
+DE000092 NOC_cfg (addr=111 , wdata=1)    # lenth2 2 -1
+E0000192 NOC_cfg (addr=112 , wdata=3)    # lenth3 4 -1
+E2000012 NOC_cfg (addr=113 , wdata=0)
+E4000F92 NOC_cfg (addr=114 , wdata=31)
+E6000012 NOC_cfg (addr=115 , wdata=0 )
+E8006A92 NOC_cfg (addr=116 , wdata=213 ) # 0000 1101 0101 = 1413
+EA000012 NOC_cfg (addr=117 , wdata=0 )
+EC000012 NOC_cfg (addr=118 , wdata=0 )
+16000017 noc_req (comd_type=3, bar=1)
+18000017 noc_req (comd_type=4, bar=1)
+

@@ -1,0 +1,34 @@
+0000005B next_fetch_is_npu
+
+00000012 NOC_cfg (addr=0 , wdata=0 )
+02000012 NOC_cfg (addr=1 , wdata=0 )
+04000012 NOC_cfg (addr=2 , wdata=0 )
+06000012 NOC_cfg (addr=3 , wdata=0 )    # 0片外读取
+08000012 NOC_cfg (addr=4 , wdata=0 )
+0A000012 NOC_cfg (addr=5 , wdata=0 )
+0C010012 NOC_cfg (addr=6 , wdata=512 )    # ping基地址 4096/8
+0E000012 NOC_cfg (addr=7 , wdata=0 )
+10000012 NOC_cfg (addr=8 , wdata=0 )  # gap0
+12000012 NOC_cfg (addr=9 , wdata=0 )  # gap1
+14000012 NOC_cfg (addr=10 , wdata=0 )  # gap2
+16000092 NOC_cfg (addr=11 , wdata=1 )  # gap3
+18000012 NOC_cfg (addr=12 , wdata=0 )  # lenth0
+1A000012 NOC_cfg (addr=13 , wdata=0 )  # lenth1
+1C000012 NOC_cfg (addr=14 , wdata=0)   # lenth2
+1E000892 NOC_cfg (addr=15 , wdata=17)   # lenth3
+20000012 NOC_cfg (addr=16 , wdata=0)
+22000892 NOC_cfg (addr=17 , wdata=17)
+24000012 NOC_cfg (addr=18 , wdata=0)
+26000012 NOC_cfg (addr=19 , wdata=0)
+28000012 NOC_cfg (addr=20 , wdata=0)
+2A000012 NOC_cfg (addr=21 , wdata=0)
+2C000112 NOC_cfg (addr=22 , wdata=2)
+2E000112 NOC_cfg (addr=23 , wdata=2)
+30000212 NOC_cfg (addr=24 , wdata=4)
+32000212 NOC_cfg (addr=25 , wdata=4)
+34000112 NOC_cfg (addr=26 , wdata=2) #有效行数
+36000192 NOC_cfg (addr=27 , wdata=3) #有效列数
+38000012 NOC_cfg (addr=28 , wdata=0) #pad mode
+3A000012 NOC_cfg (addr=29 , wdata=0)
+3C000092 NOC_cfg (addr=30 , wdata=1) #单核取指
+

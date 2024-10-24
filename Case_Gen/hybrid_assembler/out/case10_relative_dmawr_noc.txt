@@ -1,0 +1,72 @@
+0000005B next_fetch_is_npu
+
+C0000012 NOC_cfg (addr=96  , wdata=0 )
+C2000012 NOC_cfg (addr=97  , wdata=0 )
+C4000092 NOC_cfg (addr=98  , wdata=1 )
+C6000012 NOC_cfg (addr=99  , wdata=0 )
+C8000012 NOC_cfg (addr=100 , wdata=0 )
+CA000012 NOC_cfg (addr=101 , wdata=0 )
+CC000012 NOC_cfg (addr=102 , wdata=0 )
+CE010012 NOC_cfg (addr=103 , wdata=512 )
+D0000012 NOC_cfg (addr=104 , wdata=0 )
+D2000012 NOC_cfg (addr=105 , wdata=0 )
+D4000012 NOC_cfg (addr=106 , wdata=0 )
+D6000012 NOC_cfg (addr=107 , wdata=0 )
+D8000092 NOC_cfg (addr=108 , wdata=1 )
+DA000012 NOC_cfg (addr=109 , wdata=0 )
+DC000012 NOC_cfg (addr=110 , wdata=0 )
+DE000012 NOC_cfg (addr=111 , wdata=0)
+E0000912 NOC_cfg (addr=112 , wdata=18)
+C0000012 NOC_cfg (addr=96  , wdata=0 )
+C2000012 NOC_cfg (addr=97  , wdata=0 )
+C4000092 NOC_cfg (addr=98  , wdata=1 )   # 广播开
+C6000012 NOC_cfg (addr=99  , wdata=0 )
+C8000012 NOC_cfg (addr=100 , wdata=0 )
+CA000012 NOC_cfg (addr=101 , wdata=0 )
+CC000012 NOC_cfg (addr=102 , wdata=0 )
+CE010012 NOC_cfg (addr=103 , wdata=512 )
+D0000012 NOC_cfg (addr=104 , wdata=0 )
+D2000012 NOC_cfg (addr=105 , wdata=0 )
+D4000012 NOC_cfg (addr=106 , wdata=0 )
+D6000012 NOC_cfg (addr=107 , wdata=0 )
+D8000092 NOC_cfg (addr=108 , wdata=1 )
+DA000012 NOC_cfg (addr=109 , wdata=0 )
+DC000012 NOC_cfg (addr=110 , wdata=0 )
+DE000012 NOC_cfg (addr=111 , wdata=0)
+E0000892 NOC_cfg (addr=112 , wdata=17)   # 测试
+E2000012 NOC_cfg (addr=113 , wdata=0)
+E4000892 NOC_cfg (addr=114 , wdata=17)   # 测试
+E6000012 NOC_cfg (addr=115 , wdata=0 )
+E8004012 NOC_cfg (addr=116 , wdata=128 ) # 0000 1000 0000 = 1413
+EA000012 NOC_cfg (addr=117 , wdata=0 )
+EC000012 NOC_cfg (addr=118 , wdata=0 )
+16000017 noc_req (comd_type=3, bar=1)
+18000017 noc_req (comd_type=4, bar=1)
+CE010912 NOC_cfg (addr=103 , wdata=530 )
+E4000292 NOC_cfg (addr=114 , wdata=5)    # 测试
+EC000092 NOC_cfg (addr=118 , wdata=1)
+16000017 noc_req (comd_type=3, bar=1)
+18000017 noc_req (comd_type=4, bar=1)
+80000092 NOC_cfg (addr=64 , wdata=1 )    # 相对寻址开
+82000092 NOC_cfg (addr=65 , wdata=1 )    # 每个节点都给下一个节点传递 0给1传, 1给2传   00001
+84000092 NOC_cfg (addr=66 , wdata=1 )    # 片上
+86000012 NOC_cfg (addr=67 , wdata=0 )
+88000012 NOC_cfg (addr=68 , wdata=0 )
+8A000012 NOC_cfg (addr=69 , wdata=0 )
+8C060012 NOC_cfg (addr=70 , wdata=3072 )    # ram ping基地址 bank3 0 1100 0000 0000  = 3072
+8E000012 NOC_cfg (addr=71 , wdata=0 )
+90000012 NOC_cfg (addr=72 , wdata=0 )
+92000012 NOC_cfg (addr=73 , wdata=0 )
+94000012 NOC_cfg (addr=74 , wdata=0 )
+96000092 NOC_cfg (addr=75 , wdata=1 )
+98000012 NOC_cfg (addr=76 , wdata=0 )
+9A000012 NOC_cfg (addr=77 , wdata=0 )
+9C000012 NOC_cfg (addr=78 , wdata=0 )
+9E000B92 NOC_cfg (addr=79 , wdata=23)    //是不是可以直接23呢?顺着地址取即可
+A0000012 NOC_cfg (addr=80 , wdata=0)
+A2000B92 NOC_cfg (addr=81 , wdata=23)
+A4000012 NOC_cfg (addr=82 , wdata=0)
+A6000012 NOC_cfg (addr=83 , wdata=0)
+14000017 noc_req (comd_type=2, bar=1)
+18000017 noc_req (comd_type=4, bar=1)
+
