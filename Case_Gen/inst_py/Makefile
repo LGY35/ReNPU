@@ -22,6 +22,11 @@ $(OUT_DIR)/%.txt: $(SRC_DIR)/%_extract.txt
 
 
 ############################# hex_gen #############################
+
+# 指令示例：
+# python3 hex_gen.py -i ./out/case5_idma.txt ./out/case5_dwcr_noc.txt ../../DVcase/case9_nestloop/case9_data.txt -o ./case5_merge_inst.txt ./case5_out_hex.txt
+# 目的： 通过hex_gen.py 把out文件夹下的 带idma后缀的和带noc后缀的文件与SRC_DATA文件拼接在一起，并输出两个文件，一个是idma和noc拼接的指令文件，一个是指令+数据并把空行补零的文件
+
 # 输入
 SRC_IDMA := $(wildcard $(OUT_DIR)/*idma.txt) 
 SRC_NOC := $(wildcard $(OUT_DIR)/*noc.txt) 
@@ -33,7 +38,7 @@ CASES := $(sort $(patsubst $(OUT_DIR)/case%_idma.txt, %, $(SRC_IDMA)))
 # 输出
 HEX_GEN_DIR = ./hex_gen
 # 把noc的替换为目标文件名
-# 定义目标文件 (merge_inst 和 outp_hex)
+# 定义目标文件 (merge_inst 和 out_hex)
 HEX_OBJS1 := $(patsubst %, $(HEX_GEN_DIR)/case%_merge_inst.txt, $(CASES))
 HEX_OBJS2 := $(patsubst %, $(HEX_GEN_DIR)/case%_out_hex.txt,   $(CASES))
 
@@ -56,9 +61,12 @@ clean:
 	rm -f $(OUT_DIR)/*.txt
 
 
+
+#=====================================================================================================
+
 # python3 hex_gen.py -i ./out/case5_idma.txt ./out/case5_dwcr_noc.txt ../../DVcase/case9_nestloop/case9_data.txt -o ./case5_merge_inst.txt ./case5_out_hex.txt
-# python3 hex_gen.py -i ./out/case5_dw_only.txt ./out/case5_dw_only_feishu.txt ../../DVcase/case9_nestloop/case9_data.txt -o ./merge_inst.txt ./output_hex.txt
-# python3 hex_gen.py -i ./out/case13_twoloop_only.txt ./out/case13_twoloop.txt ../../DVcase/case9_nestloop/case9_data.txt -o ./merge_inst.txt ./output_hex.txt
+# python3 hex_gen.py -i ./out/case5_dw_only.txt ./out/case5_dw_only_feishu.txt ../../DVcase/case9_nestloop/case9_data.txt -o ./merge_inst.txt ./outut_hex.txt
+# python3 hex_gen.py -i ./out/case13_twoloop_only.txt ./out/case13_twoloop.txt ../../DVcase/case9_nestloop/case9_data.txt -o ./merge_inst.txt ./outut_hex.txt
 
 
 
