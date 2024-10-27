@@ -25,5 +25,5 @@ NOC_cfg (addr=115 , wdata=0 )
 NOC_cfg (addr=116 , wdata=213 ) # 0000 1101 0101 = 1413
 NOC_cfg (addr=117 , wdata=0 )   
 NOC_cfg (addr=118 , wdata=0 )
-noc_req (comd_type=3, bar=1)
-noc_req (comd_type=4, bar=1)
+noc_req (comd_type=3, bar=0)
+noc_req (comd_type=4, bar=0)

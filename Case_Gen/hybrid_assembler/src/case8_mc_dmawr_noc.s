@@ -29,6 +29,6 @@ noc_req (comd_type=4, bar=1)
 NOC_cfg (addr=114 , wdata=6)
 NOC_cfg (addr=114 , wdata=5)    # 测试
 NOC_cfg (addr=118 , wdata=1)
-noc_req (comd_type=3, bar=1)
-noc_req (comd_type=4, bar=1)
-# dma rd 
+noc_req (comd_type=3, bar=0)
+noc_req (comd_type=4, bar=0)
+

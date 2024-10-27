@@ -32,4 +32,11 @@ E4000292 NOC_cfg (addr=114 , wdata=5)    # 测试
 EC000092 NOC_cfg (addr=118 , wdata=1)
 16000017 noc_req (comd_type=3, bar=1)
 18000017 noc_req (comd_type=4, bar=1)
-
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000073 next_fetch_is_cpu
+10500073 wfi

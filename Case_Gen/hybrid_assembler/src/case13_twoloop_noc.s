@@ -84,5 +84,11 @@ NOC_cfg (addr=117 , wdata=0 )
 NOC_cfg (addr=118 , wdata=0 )
 noc_req (comd_type=3, bar=0 )
 noc_req (comd_type=4, bar=0 )
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
 next_fetch_is_cpu
 wfi

@@ -23,6 +23,13 @@ E6000012 NOC_cfg (addr=115 , wdata=0 )
 E8006A92 NOC_cfg (addr=116 , wdata=213 ) # 0000 1101 0101 = 1413
 EA000012 NOC_cfg (addr=117 , wdata=0 )
 EC000012 NOC_cfg (addr=118 , wdata=0 )
-16000017 noc_req (comd_type=3, bar=1)
-18000017 noc_req (comd_type=4, bar=1)
-
+06000017 noc_req (comd_type=3, bar=0)
+08000017 noc_req (comd_type=4, bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000073 next_fetch_is_cpu
+10500073 wfi

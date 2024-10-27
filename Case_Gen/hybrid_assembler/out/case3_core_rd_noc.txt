@@ -1,5 +1,7 @@
 0000005B next_fetch_is_npu
 
+
+
 00000012 NOC_cfg (addr=0 , wdata=0 )
 02000012 NOC_cfg (addr=1 , wdata=0 )
 04000012 NOC_cfg (addr=2 , wdata=0 )
@@ -31,4 +33,11 @@
 38000012 NOC_cfg (addr=28 , wdata=0) #pad mode
 3A000012 NOC_cfg (addr=29 , wdata=0)
 3C000092 NOC_cfg (addr=30 , wdata=1) #单核取指
-
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000073 next_fetch_is_cpu
+10500073 wfi

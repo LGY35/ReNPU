@@ -52,8 +52,8 @@ noc_req (comd_type=4, bar=1)
 NOC_cfg (addr=103 , wdata=530 )
 NOC_cfg (addr=114 , wdata=5)    # 测试
 NOC_cfg (addr=118 , wdata=1)
-noc_req (comd_type=3, bar=1)
-noc_req (comd_type=4, bar=1)
+noc_req (comd_type=3, bar=0)
+noc_req (comd_type=4, bar=0)
 # dma rd 
 NOC_cfg (addr=64 , wdata=1 )    # 相对寻址开
 NOC_cfg (addr=65 , wdata=1 )    # 每个节点都给下一个节点传递 0给1传, 1给2传   00001
@@ -75,11 +75,11 @@ NOC_cfg (addr=80 , wdata=0)
 NOC_cfg (addr=81 , wdata=23)
 NOC_cfg (addr=82 , wdata=0)
 NOC_cfg (addr=83 , wdata=0)
-noc_req (comd_type=2, bar=1)
-noc_req (comd_type=4, bar=1)
+noc_req (comd_type=2, bar=0)
+noc_req (comd_type=4, bar=0)
 
 #NOC_cfg (addr=70 , wdata=530 )
 #NOC_cfg (addr=81 , wdata=5)
 #NOC_cfg (addr=83 , wdata=1 )
-#noc_req (comd_type=2, bar=1)    # 先设置成相同的barrier,这样上面的不执行完下面的不会执行
-#noc_req (comd_type=4, bar=1)    # 先设置成相同的barrier,这样上面的不执行完下面的不会执行
+#noc_req (comd_type=2, bar=0)    # 先设置成相同的barrier,这样上面的不执行完下面的不会执行
+#noc_req (comd_type=4, bar=0)    # 先设置成相同的barrier,这样上面的不执行完下面的不会执行

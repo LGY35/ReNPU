@@ -30,3 +30,11 @@ NOC_cfg (addr=27 , wdata=3) #有效列数
 NOC_cfg (addr=28 , wdata=0) #pad mode
 NOC_cfg (addr=29 , wdata=0) 
 NOC_cfg (addr=30 , wdata=1) #单核取指
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+next_fetch_is_cpu
+wfi

@@ -1,68 +1,71 @@
-
-#############################  inst_remake  #############################
+# 变量赋值，文件构建命令，系统命令 
+#############################  变量定义  #############################
 SRC_DIR = ../hybrid_assembler/out_extract
 OUT_DIR = ./out
+HEX_GEN_DIR = ./hex_gen
 
-# 源文件
+############################# 文件构建  #############################
+
 SRC := $(wildcard $(SRC_DIR)/case*_extract.txt) 
-
-# 将每个源文件的路径转换为目标.bc的文件路径——用于将源文件映射到输出文件，自动获得输出文件的名称
 OBJECTS := $(patsubst $(SRC_DIR)/%_extract.txt, $(OUT_DIR)/%.txt, $(SRC))
 
-
-all:  $(OBJECTS)  $(HEX_OBJS) 
-
-inst_remake: $(OBJECTS) 
-
+###### inst_remake规则 
 $(OUT_DIR)/%.txt: $(SRC_DIR)/%_extract.txt
-# $(OUT_DIR)/%.txt: $(SRC_DIR)/%.txt
 	mkdir -p $(OUT_DIR)
 	@echo $(OBJECTS)
 	python3 inst_remake22.py -i $< -o $@
 
+SRC_IDMA := $(wildcard $(OUT_DIR)/*_idma.txt) 
+SRC_NOC := $(wildcard $(OUT_DIR)/*_noc.txt) 
+SRC_DATA := ../../DVcase/case9_nestloop/case9_data.txt
 
-############################# hex_gen #############################
+# 提取case号
+CASES := $(sort $(patsubst $(OUT_DIR)/case%_idma.txt, %, $(SRC_IDMA)))
+
+HEX_OBJS1 := $(patsubst %, $(HEX_GEN_DIR)/case%_merge_inst.txt, $(CASES))
+HEX_OBJS2 := $(patsubst %, $(HEX_GEN_DIR)/case%_out_hex.txt,   $(CASES))
+# HEX_OBJS1 := $(patsubst $(OUT_DIR)/case%_idma.txt, $(HEX_GEN_DIR)/case%_merge_inst.txt, $(SRC_IDMA))
+# HEX_OBJS2 := $(patsubst $(OUT_DIR)/case%_idma.txt, $(HEX_GEN_DIR)/case%_out_hex.txt,   $(SRC_IDMA))
+HEX_OBJS :=  $(HEX_OBJS2)   $(HEX_OBJS1)
+
+############################# 构建命令 #############################
+# # %必须相同才能匹配上
+# # $(HEX_GEN_DIR)/%_out_hex.txt: $(OUT_DIR)/%_idma.txt | $(OUT_DIR)/%_noc.txt | $(SRC_DATA)
+# $(HEX_OBJS2): $(SRC_IDMA)  $(SRC_NOC)  $(SRC_DATA)
+# 	mkdir -p $(HEX_GEN_DIR)
+# 	python3 hex_gen.py -i $^ -o $@ $(HEX_GEN_DIR)/$*_merge_inst.txt
+# #	python3 hex_gen.py -i $(OUT_DIR)/case$*_idma.txt $(OUT_DIR)/case$*_noc.txt $(SRC_DATA) -o $(HEX_GEN_DIR)/$*_merge_inst.txt $(HEX_GEN_DIR)/$*_out_hex.txt
+
+############################# PHONY目标 #############################
+.PHONY: all  inst_remake hex_gen clean
+
+all:  $(OBJECTS)  $(HEX_OBJS)
+
+inst_remake: $(OBJECTS)
+
+# hex_gen: $(HEX_OBJS2)
+
+hex_gen:
+	mkdir -p $(HEX_GEN_DIR)
+	python3 hex_gen.py -i ./out/case3_idma.txt  ./out/case3_core_rd_noc.txt          ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case3_merge_inst.txt  ./hex_gen/case3_out_hex.txt
+	python3 hex_gen.py -i ./out/case5_idma.txt  ./out/case5_dwcr_noc.txt             ./input_data0.txt							-o ./hex_gen/case5_merge_inst.txt  ./hex_gen/case5_out_hex.txt
+	python3 hex_gen.py -i ./out/case8_idma.txt  ./out/case8_mc_dmawr_noc.txt         ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case8_merge_inst.txt  ./hex_gen/case8_out_hex.txt
+	python3 hex_gen.py -i ./out/case9_idma.txt  ./out/case9_nestloop_dmawr_noc.txt   ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case9_merge_inst.txt  ./hex_gen/case9_out_hex.txt
+	python3 hex_gen.py -i ./out/case10_idma.txt ./out/case10_relative_dmawr_noc.txt  ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case10_merge_inst.txt ./hex_gen/case10_out_hex.txt
+	python3 hex_gen.py -i ./out/case11_idma.txt ./out/case11_multi_filter_noc.txt    ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case11_merge_inst.txt ./hex_gen/case11_out_hex.txt
+	python3 hex_gen.py -i ./out/case12_idma.txt ./out/case12_dmawrrd_noc.txt         ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case12_merge_inst.txt ./hex_gen/case12_out_hex.txt
+	python3 hex_gen.py -i ./out/case13_idma.txt ./out/case13_twoloop_noc.txt         ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case13_merge_inst.txt ./hex_gen/case13_out_hex.txt
+
+clean:
+	rm -rf $(HEX_GEN_DIR)
+	rm -rf $(OUT_DIR)
+
+#=====================================================================================================
+
 
 # 指令示例：
 # python3 hex_gen.py -i ./out/case5_idma.txt ./out/case5_dwcr_noc.txt ../../DVcase/case9_nestloop/case9_data.txt -o ./case5_merge_inst.txt ./case5_out_hex.txt
 # 目的： 通过hex_gen.py 把out文件夹下的 带idma后缀的和带noc后缀的文件与SRC_DATA文件拼接在一起，并输出两个文件，一个是idma和noc拼接的指令文件，一个是指令+数据并把空行补零的文件
-
-# 输入
-SRC_IDMA := $(wildcard $(OUT_DIR)/*idma.txt) 
-SRC_NOC := $(wildcard $(OUT_DIR)/*noc.txt) 
-SRC_DATA := ../../DVcase/case9_nestloop/case9_data.txt
-
-# 自动提取case号
-CASES := $(sort $(patsubst $(OUT_DIR)/case%_idma.txt, %, $(SRC_IDMA)))
-
-# 输出
-HEX_GEN_DIR = ./hex_gen
-# 把noc的替换为目标文件名
-# 定义目标文件 (merge_inst 和 out_hex)
-HEX_OBJS1 := $(patsubst %, $(HEX_GEN_DIR)/case%_merge_inst.txt, $(CASES))
-HEX_OBJS2 := $(patsubst %, $(HEX_GEN_DIR)/case%_out_hex.txt,   $(CASES))
-
-HEX_OBJS = $(HEX_OBJS1) $(HEX_OBJS2)  
-
-#  不能加上 $(HEX_GEN_DIR)/case%_merge_inst.txt ，因为不能多个目标文件一起
-$(HEX_GEN_DIR)/%.txt: $(OUT_DIR)/%_idma.txt $(OUT_DIR)/%_noc.txt $(SRC_DATA)
-	mkdir -p $(HEX_GEN_DIR)
-#	python3 hex_gen.py -i $^ -o $@ $(HEX_GEN_DIR)/$*_merge_inst.txt
-	python3 hex_gen.py -i $(OUT_DIR)/case$*_idma.txt $(OUT_DIR)/case$*_noc.txt $(SRC_DATA) -o $(HEX_GEN_DIR)/$*_merge_inst.txt $(HEX_GEN_DIR)/$*_out_hex.txt
-#	python3 hex_gen.py -i $(filter %.txt,$^) -o $(HEX_GEN_DIR)/$*_merge_inst.txt $(HEX_GEN_DIR)/$*_out_hex.txt
-
-.PHONY: hex_gen
-hex_gen: $(HEX_OBJS2)
-#	@echo $(HEX_OBJS2)
-#	@echo $(HEX_GEN_DIR)
-
-clean:
-	rm -f $(HEX_GEN_DIR)/*.txt
-	rm -f $(OUT_DIR)/*.txt
-
-
-
-#=====================================================================================================
 
 # python3 hex_gen.py -i ./out/case5_idma.txt ./out/case5_dwcr_noc.txt ../../DVcase/case9_nestloop/case9_data.txt -o ./case5_merge_inst.txt ./case5_out_hex.txt
 # python3 hex_gen.py -i ./out/case5_dw_only.txt ./out/case5_dw_only_feishu.txt ../../DVcase/case9_nestloop/case9_data.txt -o ./merge_inst.txt ./outut_hex.txt

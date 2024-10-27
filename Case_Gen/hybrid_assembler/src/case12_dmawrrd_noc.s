@@ -23,13 +23,13 @@ NOC_cfg (addr=115 , wdata=0 )
 NOC_cfg (addr=116 , wdata=0 ) 
 NOC_cfg (addr=117 , wdata=0 )   
 NOC_cfg (addr=118 , wdata=0 )
-noc_req (comd_type=3, bar=1)
-noc_req (comd_type=4, bar=1)
+noc_req (comd_type=3, bar=0)
+noc_req (comd_type=4, bar=0)
 NOC_cfg (addr=103 , wdata=530 )
 NOC_cfg (addr=114 , wdata=5)    # ping lenth
 NOC_cfg (addr=118 , wdata=1)
-noc_req (comd_type=3, bar=1)
-noc_req (comd_type=4, bar=1)
+noc_req (comd_type=3, bar=0)
+noc_req (comd_type=4, bar=0)
 
 # dma rd 
 NOC_cfg (addr=64 , wdata=0 )
@@ -52,10 +52,10 @@ NOC_cfg (addr=80 , wdata=0)
 NOC_cfg (addr=81 , wdata=17)
 NOC_cfg (addr=82 , wdata=0)
 NOC_cfg (addr=83 , wdata=0 )
-noc_req (comd_type=2, bar=1)
-noc_req (comd_type=4, bar=1)
+noc_req (comd_type=2, bar=0)
+noc_req (comd_type=4, bar=0)
 NOC_cfg (addr=70 , wdata=530 )
 NOC_cfg (addr=81 , wdata=5)
 NOC_cfg (addr=83 , wdata=1 )
-noc_req (comd_type=2, bar=1)    # 先设置成相同的barrier,这样上面的不执行完下面的不会执行
-noc_req (comd_type=4, bar=1)    # 先设置成相同的barrier,这样上面的不执行完下面的不会执行
+noc_req (comd_type=2, bar=0)    # 先设置成相同的barrier,这样上面的不执行完下面的不会执行
+noc_req (comd_type=4, bar=0)    # 先设置成相同的barrier,这样上面的不执行完下面的不会执行

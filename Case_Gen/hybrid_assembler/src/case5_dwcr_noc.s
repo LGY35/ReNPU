@@ -25,7 +25,7 @@ NOC_cfg (addr=115 , wdata=0)    # pang lenth
 NOC_cfg (addr=116 , wdata=0 ) 
 NOC_cfg (addr=117 , wdata=0 )   
 NOC_cfg (addr=118 , wdata=0 )
-noc_req (comd_type=3, bar=1)
+noc_req (comd_type=3, bar=0)
 
 NOC_cfg (addr=112 , wdata=64)   # loop lenth
 NOC_cfg (addr=114 , wdata=64)    # ping lenth  
@@ -65,10 +65,18 @@ NOC_cfg (addr=27 , wdata=3)   #有效列数
 NOC_cfg (addr=28 , wdata=0)   #pad mode
 NOC_cfg (addr=29 , wdata=0)   
 NOC_cfg (addr=30 , wdata=1)   #单核取指
-noc_req (comd_type=4, bar=1)
+noc_req (comd_type=4, bar=0)
 
 NOC_cfg (addr=15 , wdata=64)  # lenth3
 NOC_cfg (addr=17 , wdata=64)
 
 NOC_cfg (addr=15 , wdata=2048)  # lenth3
 NOC_cfg (addr=17 , wdata=2048)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+next_fetch_is_cpu
+wfi

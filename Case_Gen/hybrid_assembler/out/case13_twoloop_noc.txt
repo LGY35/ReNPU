@@ -1,9 +1,5 @@
 0000005B next_fetch_is_npu
 
-00000073 next_fetch_is_cpu
-
-10500073 wfi
-
 C0000012 NOC_cfg (addr=96  , wdata=0 )
 C2000012 NOC_cfg (addr=97  , wdata=0 )
 C4000012 NOC_cfg (addr=98  , wdata=0 ) #广播
@@ -76,4 +72,12 @@ EA000012 NOC_cfg (addr=117 , wdata=0 )
 EC000012 NOC_cfg (addr=118 , wdata=0 )
 06000017 noc_req (comd_type=3, bar=0 )
 08000017 noc_req (comd_type=4, bar=0 )
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000073 next_fetch_is_cpu
+10500073 wfi
 

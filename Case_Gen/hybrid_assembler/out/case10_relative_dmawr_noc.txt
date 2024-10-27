@@ -45,8 +45,8 @@ EC000012 NOC_cfg (addr=118 , wdata=0 )
 CE010912 NOC_cfg (addr=103 , wdata=530 )
 E4000292 NOC_cfg (addr=114 , wdata=5)    # 测试
 EC000092 NOC_cfg (addr=118 , wdata=1)
-16000017 noc_req (comd_type=3, bar=1)
-18000017 noc_req (comd_type=4, bar=1)
+06000017 noc_req (comd_type=3, bar=0)
+08000017 noc_req (comd_type=4, bar=0)
 80000092 NOC_cfg (addr=64 , wdata=1 )    # 相对寻址开
 82000092 NOC_cfg (addr=65 , wdata=1 )    # 每个节点都给下一个节点传递 0给1传, 1给2传   00001
 84000092 NOC_cfg (addr=66 , wdata=1 )    # 片上
@@ -67,6 +67,13 @@ A0000012 NOC_cfg (addr=80 , wdata=0)
 A2000B92 NOC_cfg (addr=81 , wdata=23)
 A4000012 NOC_cfg (addr=82 , wdata=0)
 A6000012 NOC_cfg (addr=83 , wdata=0)
-14000017 noc_req (comd_type=2, bar=1)
-18000017 noc_req (comd_type=4, bar=1)
-
+04000017 noc_req (comd_type=2, bar=0)
+08000017 noc_req (comd_type=4, bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000073 next_fetch_is_cpu
+10500073 wfi
