@@ -1,5 +1,7 @@
 0000005B next_fetch_is_npu
 
+00000013 nop
+
 C0000012 NOC_cfg (addr=96  , wdata=0 )
 C2000012 NOC_cfg (addr=97  , wdata=0 )
 C4000012 NOC_cfg (addr=98  , wdata=0 )

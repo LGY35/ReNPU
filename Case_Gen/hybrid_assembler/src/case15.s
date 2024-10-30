@@ -1,6 +1,5 @@
 # 取数数量: 576  56  2048
 
-
 next_fetch_is_npu
 # dma wr 第一次直接传进来2048个数即可
 NOC_cfg (addr=96  , wdata=0 )
@@ -159,3 +158,5 @@ MQ_NOP(bar=0)
 MQ_NOP(bar=0)
 MQ_NOP(bar=0)
 MQ_NOP(bar=0)
+
+nop

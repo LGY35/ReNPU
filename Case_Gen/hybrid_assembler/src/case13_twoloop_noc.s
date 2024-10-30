@@ -64,10 +64,10 @@ MQ_NOP(bar=0)
 MQ_NOP(bar=0)
 next_fetch_is_cpu
 wfi
-VQ_NOP (bar=0)
-VQ_NOP (bar=0)
-VQ_NOP (bar=0)
-VQ_NOP (bar=0)
+nop
+nop
+nop
+nop
 # VQ_NOP (bar=0)
 # VQ_NOP (bar=0)
 

@@ -147,7 +147,7 @@ EC000012 NOC_cfg (addr=118 , wdata=0 )
 00A0105B storec x10, m_cfifo
 00B0105B storec x11, m_cfifo
 4120105B storec x18, v_cfifo
-00C0105B storec x12, m_cfifo
+00C0105B storec x12, m_cfifo  
 4130105B storec x19, v_cfifo
 0000005B next_fetch_is_npu
 80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=2,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
@@ -508,7 +508,7 @@ B0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_inde
 26C0264D cub.lw.l1b x12, 620(x0)
 270026CD cub.lw.l1b x13, 624(x0)
 2740274D cub.lw.l1b x14, 628(x0) //0_010 0111 0100_00000_010_01110_100_1101
-00000242 cub.event_finish        //fill end
+00001044 cub.event_finish        //fill end
 30000019 MQ_NOP(bar=3) //11_000000000000000000000_001_1001
 00028290 MQ_cfg0(gpu_mode=1,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=40,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
 00000023 VQ_alu_event_call(event_addr=0,bar=0)
@@ -928,3 +928,9 @@ A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_inde
 880E8023 VQ_scache_rd_en(addr=64*4,size=byte,sign_ext=1,rd_cycle_num=15,wait_type=1,cfifo_en=1,bar=0)
 00000073 next_fetch_is_cpu
 10500073 wfi
+00000013 nop
+00000013 nop
+00000013 nop
+00000013 nop
+00000013 nop
+00000013 nop

@@ -50,15 +50,15 @@ A6000012 NOC_cfg (addr=83 , wdata=0 )
 00000019 MQ_NOP(bar=0)
 00000019 MQ_NOP(bar=0)
 00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0) 
 00000019 MQ_NOP(bar=0)
 00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000073 next_fetch_is_cpu
-10500073 wfi
-08000021 VQ_NOP (bar=0)
-08000021 VQ_NOP (bar=0)
-08000021 VQ_NOP (bar=0)
-08000021 VQ_NOP (bar=0)
+00000073 next_fetch_is_cpu  
+10500073 wfi ##  
+00000013 nop
+00000013 nop        
+00000013 nop  
+00000013 nop
 0000005B next_fetch_is_npu
 C0000012 NOC_cfg (addr=96  , wdata=0 )
 C2000012 NOC_cfg (addr=97  , wdata=0 )
@@ -122,4 +122,4 @@ A6000012 NOC_cfg (addr=83 , wdata=0 )
 00000019 MQ_NOP(bar=0)
 00000019 MQ_NOP(bar=0)
 00000073 next_fetch_is_cpu
-10500073 wfi
+10500073 wfi #test
