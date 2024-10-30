@@ -50,6 +50,6 @@
 80000000 imm_wba(0x80000000)
 80000000 imm_wba(0x80000000)
 80000000 imm_gba(0x80000000)
-80003004 imm_cfg(0x80003004) # base addr
+8000303C imm_cfg(0x8000303C) # base addr
 00110003 finish_group(0x011) # 启动节点15
 

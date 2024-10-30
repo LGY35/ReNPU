@@ -7,24 +7,40 @@ def extract_hex_instructions(input_filename, output_filename):
             lines = file.readlines()
 
         hex_instructions = []
-        finish_group_found = False
-        zero_padding_needed = False
-
+        # finish_group_found = False
+        # zero_padding_needed = False
+        wfi_found = False
+        addr_compute = '80002F48'
+        current_addr = int(addr_compute, 16)
+        # 初始化 updated_addr
+        updated_addr = current_addr
         for line in lines:
             line = line.strip()
             parts = line.split()
             if parts:
                 hex_instruction = parts[0]
+                num_instructions = len(hex_instructions)
+                if len(parts[0]) == 8:
+                    updated_addr += 4  # 一条指令是4B
+                elif len(parts[0]) == 4:
+                    updated_addr += 2  # 一条指令是2B
                 # Check if the instruction is finish_group
                 hex_instructions.append(hex_instruction)
-                if 'finish_group' in line:
-                    finish_group_found = True
-                    num_instructions = len(hex_instructions)
-                    # Check if the number of instructions is divisible by 4
-                    if num_instructions % 4 != 0:
-                        # Add a zero instruction to make it divisible by 4
-                        zero_instruction = '00000000'  # Assuming the instruction length is 8 hex digits
-                        hex_instructions.append(zero_instruction)
+
+                if 'wfi' in line:
+                    wfi_found = True
+                    # 将结果转换回十六进制字符串格式，并保持与初始格式一致
+                    addr_compute = f"{updated_addr:X}"  # 转换为大写十六进制，不带 `0x` 前缀
+                    print(f"Updated Address: {addr_compute}")  # 输出更新后的十六进制地址
+                
+                # 用于idma指令在finish group 之后补零指令，最初用于对齐，后面更新脚本之后不再需要
+                # if 'finish_group' in line:
+                #     finish_group_found = True
+                #     # Check if the number of instructions is divisible by 4
+                #     if num_instructions % 4 != 0:
+                #         # Add a zero instruction to make it divisible by 4
+                #         zero_instruction = '00000000'  # Assuming the instruction length is 8 hex digits
+                #         hex_instructions.append(zero_instruction)
 
         # Write all instructions to the output file
         with open(output_filename, 'w') as output_file:

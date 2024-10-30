@@ -55,7 +55,23 @@ NOC_cfg (addr=83 , wdata=0 )
 noc_req (comd_type=2, bar=0)
 noc_req (comd_type=4, bar=0)
 
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+next_fetch_is_cpu
+wfi
+VQ_NOP (bar=0)
+VQ_NOP (bar=0)
+VQ_NOP (bar=0)
+VQ_NOP (bar=0)
+# VQ_NOP (bar=0)
+# VQ_NOP (bar=0)
 
+next_fetch_is_npu
 NOC_cfg (addr=96  , wdata=0 )
 NOC_cfg (addr=97  , wdata=0 )
 NOC_cfg (addr=98  , wdata=0 ) #广播
@@ -119,7 +135,8 @@ MQ_NOP(bar=0)
 MQ_NOP(bar=0)
 MQ_NOP(bar=0)
 MQ_NOP(bar=0)
-
+next_fetch_is_cpu
+wfi
 ###################################################################################
 
 # dma wr
