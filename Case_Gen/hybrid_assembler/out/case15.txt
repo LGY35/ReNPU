@@ -18,9 +18,9 @@ D8000092 NOC_cfg (addr=108 , wdata=1 )
 DA000012 NOC_cfg (addr=109 , wdata=0 )
 DC000012 NOC_cfg (addr=110 , wdata=0 )
 DE000012 NOC_cfg (addr=111 , wdata=0)
-E003FF92 NOC_cfg (addr=112 , wdata=2047)   # loop lenth
+E0053F92 NOC_cfg (addr=112 , wdata=2687)   # loop lenth
 E2000012 NOC_cfg (addr=113 , wdata=0)
-E403FF92 NOC_cfg (addr=114 , wdata=2047)   # ping lenth
+E4053F92 NOC_cfg (addr=114 , wdata=2687)   # ping lenth
 E6000012 NOC_cfg (addr=115 , wdata=0 )
 E8000012 NOC_cfg (addr=116 , wdata=0 )
 EA000012 NOC_cfg (addr=117 , wdata=0 )
@@ -66,7 +66,7 @@ EC000012 NOC_cfg (addr=118 , wdata=0 )
 06000092 NOC_cfg (addr=3 , wdata=1 )    # 1片上读取
 08000012 NOC_cfg (addr=4 , wdata=0 )
 0A000012 NOC_cfg (addr=5 , wdata=0 )
-0C000012 NOC_cfg (addr=6 , wdata=0 )    # ping基地址 0
+0C012012 NOC_cfg (addr=6 , wdata=576 )    # ping基地址 0
 0E000012 NOC_cfg (addr=7 , wdata=0 )
 10000012 NOC_cfg (addr=8 , wdata=0 )  # gap0
 12000012 NOC_cfg (addr=9 , wdata=0 )  # gap1
@@ -99,7 +99,7 @@ EC000012 NOC_cfg (addr=118 , wdata=0 )
 06000092 NOC_cfg (addr=3 , wdata=1 )    # 1片上读取
 08000012 NOC_cfg (addr=4 , wdata=0 )
 0A000012 NOC_cfg (addr=5 , wdata=0 )
-0C000012 NOC_cfg (addr=6 , wdata=0 )    # ping基地址 0
+0C014012 NOC_cfg (addr=6 , wdata=640 )    # ping基地址 0
 0E000012 NOC_cfg (addr=7 , wdata=0 )
 10000012 NOC_cfg (addr=8 , wdata=0 )  # gap0
 12000012 NOC_cfg (addr=9 , wdata=0 )  # gap1

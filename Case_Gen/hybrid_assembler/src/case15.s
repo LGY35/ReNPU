@@ -1,4 +1,5 @@
 # 取数数量: 576  56  2048
+# 2048 + 576 + 64 =  2688
 
 next_fetch_is_npu
 # dma wr 第一次直接传进来2048个数即可
@@ -18,9 +19,9 @@ NOC_cfg (addr=108 , wdata=1 )
 NOC_cfg (addr=109 , wdata=0 )
 NOC_cfg (addr=110 , wdata=0 )
 NOC_cfg (addr=111 , wdata=0)
-NOC_cfg (addr=112 , wdata=2047)   # loop lenth
+NOC_cfg (addr=112 , wdata=2687)   # loop lenth
 NOC_cfg (addr=113 , wdata=0)
-NOC_cfg (addr=114 , wdata=2047)   # ping lenth
+NOC_cfg (addr=114 , wdata=2687)   # ping lenth
 NOC_cfg (addr=115 , wdata=0 )
 NOC_cfg (addr=116 , wdata=0 ) 
 NOC_cfg (addr=117 , wdata=0 )   
@@ -84,7 +85,7 @@ NOC_cfg (addr=2 , wdata=0 )
 NOC_cfg (addr=3 , wdata=1 )    # 1片上读取
 NOC_cfg (addr=4 , wdata=0 )
 NOC_cfg (addr=5 , wdata=0 )
-NOC_cfg (addr=6 , wdata=0 )    # ping基地址 0
+NOC_cfg (addr=6 , wdata=576 )    # ping基地址 0
 NOC_cfg (addr=7 , wdata=0 )
 NOC_cfg (addr=8 , wdata=0 )  # gap0
 NOC_cfg (addr=9 , wdata=0 )  # gap1
@@ -125,7 +126,7 @@ NOC_cfg (addr=2 , wdata=0 )
 NOC_cfg (addr=3 , wdata=1 )    # 1片上读取
 NOC_cfg (addr=4 , wdata=0 )
 NOC_cfg (addr=5 , wdata=0 )
-NOC_cfg (addr=6 , wdata=0 )    # ping基地址 0
+NOC_cfg (addr=6 , wdata=640 )    # ping基地址 0
 NOC_cfg (addr=7 , wdata=0 )
 NOC_cfg (addr=8 , wdata=0 )  # gap0
 NOC_cfg (addr=9 , wdata=0 )  # gap1
