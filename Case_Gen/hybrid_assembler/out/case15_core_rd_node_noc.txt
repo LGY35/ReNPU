@@ -23,21 +23,92 @@
 40012022 CVEC_cfg2                      (cal_mode=norm_conv,wreg_wr_cnt=0,fprec=INT8,wprec=INT8,v_tq=0)
 00028210 MQ_cfg0                        (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=40,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
 40000090 MQ_cfg1                        (sub_gap=1,sys_gap_ext=0)
-00000012 NOC_cfg (addr=0 , wdata=0 )
+C0000012 NOC_cfg (addr=96  , wdata=0 )
+C2000012 NOC_cfg (addr=97  , wdata=0 )
+C4000012 NOC_cfg (addr=98  , wdata=0 )
+C6000012 NOC_cfg (addr=99  , wdata=0 )
+C8000012 NOC_cfg (addr=100 , wdata=0 )
+CA000012 NOC_cfg (addr=101 , wdata=0 )
+CC000012 NOC_cfg (addr=102 , wdata=0 )
+CE010012 NOC_cfg (addr=103 , wdata=512 )
+D0000012 NOC_cfg (addr=104 , wdata=0 )
+D2000012 NOC_cfg (addr=105 , wdata=0 )
+D4000012 NOC_cfg (addr=106 , wdata=0 )
+D6000012 NOC_cfg (addr=107 , wdata=0 )
+D8000092 NOC_cfg (addr=108 , wdata=1 )
+DA000012 NOC_cfg (addr=109 , wdata=0 )
+DC000012 NOC_cfg (addr=110 , wdata=0 )
+DE000012 NOC_cfg (addr=111 , wdata=0)
+E0053F92 NOC_cfg (addr=112 , wdata=2687)   # loop lenth
+E2000012 NOC_cfg (addr=113 , wdata=0)
+E4053F92 NOC_cfg (addr=114 , wdata=2687)   # ping lenth
+E6000012 NOC_cfg (addr=115 , wdata=0 )
+E8000012 NOC_cfg (addr=116 , wdata=0 )
+EA000012 NOC_cfg (addr=117 , wdata=0 )
+EC000012 NOC_cfg (addr=118 , wdata=0 )
+06000017 noc_req (comd_type=3, bar=0)
+08000017 noc_req (comd_type=4, bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000073 next_fetch_is_cpu
+10500073 wfi
+00000013 nop
+00000013 nop
+00000013 nop  
+00000013 nop
+00000013 nop
+00000013 nop   ##前面是第一个core的指令
+    4441 c.li             x8, 16
+    0436 c.slli           x8, 13
+02440393 addi             x7, x8, 36
+    44a1 c.li             x9, 8
+    04b6 c.slli           x9, 13
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+00200937 lui              x18, 0x200
+03C90913 addi             x18, x18, 0x03C
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0605 c.addi           x12, 1
+002009b7 lui              x19, 0x200
+0bc98993 addi             x19, x19, 0x0BC
+0080105b storec           x8, m_cfifo
+0070105B storec           x7, m_cfifo
+0090105b storec           x9, m_cfifo
+00a0105b storec           x10, m_cfifo
+4120105b storec           x18, v_cfifo
+00c0105b storec           x12, m_cfifo
+4130105b storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+40012022 CVEC_cfg2                      (cal_mode=norm_conv,wreg_wr_cnt=0,fprec=INT8,wprec=INT8,v_tq=0)
+00028210 MQ_cfg0                        (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=40,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+40000090 MQ_cfg1                        (sub_gap=1,sys_gap_ext=0)
+00000012 NOC_cfg (addr=0 , wdata=0 )     # 0 绝对寻址
 02000012 NOC_cfg (addr=1 , wdata=0 )
 04000012 NOC_cfg (addr=2 , wdata=0 )
-06000012 NOC_cfg (addr=3 , wdata=0 )    # 0片外读取
+06000092 NOC_cfg (addr=3 , wdata=1 )     # 1片上读取
 08000012 NOC_cfg (addr=4 , wdata=0 )
-0A000012 NOC_cfg (addr=5 , wdata=0 )
-0C010012 NOC_cfg (addr=6 , wdata=512 )    # ping基地址 4096/8
+0A000092 NOC_cfg (addr=5 , wdata=1 )     # 目的节点坐标，相当于地址的最高4位---节点1，所以是1
+0C000012 NOC_cfg (addr=6 , wdata=0 )     # ping基地址 0
 0E000012 NOC_cfg (addr=7 , wdata=0 )
-10000012 NOC_cfg (addr=8 , wdata=0 )  # gap0
-12000012 NOC_cfg (addr=9 , wdata=0 )  # gap1
-14000012 NOC_cfg (addr=10 , wdata=0 )  # gap2
-16000092 NOC_cfg (addr=11 , wdata=1 )  # gap3
-18000012 NOC_cfg (addr=12 , wdata=0 )  # lenth0
-1A000012 NOC_cfg (addr=13 , wdata=0 )  # lenth1
-1C000012 NOC_cfg (addr=14 , wdata=0)   # lenth2
+10000012 NOC_cfg (addr=8 , wdata=0 )     # gap0
+12000012 NOC_cfg (addr=9 , wdata=0 )     # gap1
+14000012 NOC_cfg (addr=10 , wdata=0 )    # gap2
+16000092 NOC_cfg (addr=11 , wdata=1 )    # gap3
+18000012 NOC_cfg (addr=12 , wdata=0 )    # lenth0
+1A000012 NOC_cfg (addr=13 , wdata=0 )    # lenth1
+1C000012 NOC_cfg (addr=14 , wdata=0)     # lenth2
 1E011F92 NOC_cfg (addr=15 , wdata=575)   # lenth3
 20000012 NOC_cfg (addr=16 , wdata=0)
 22011F92 NOC_cfg (addr=17 , wdata=575)
@@ -45,17 +116,38 @@
 26000012 NOC_cfg (addr=19 , wdata=0)
 28000012 NOC_cfg (addr=20 , wdata=0)
 2A000012 NOC_cfg (addr=21 , wdata=0)
+38000012 NOC_cfg (addr=28 , wdata=0) #pad mode
 3A000012 NOC_cfg (addr=29 , wdata=0)
 3C000092 NOC_cfg (addr=30 , wdata=1) #单核取指
 81237591 npu_load                       (we=wr,l1b_mode=norm ,tcache_bank_num=0,sys_gap=221,sub_gap=1,sub_len=36,addr=0,sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight
 08000017 noc_req (comd_type=4, bar=0)
-0C022012 NOC_cfg (addr=6 , wdata=1088 )    # ping基地址 512+576
+00000092 NOC_cfg (addr=0 , wdata=1 )     # 1 相对寻址
+02000A12 NOC_cfg (addr=1 , wdata=20 )     # bit4 = 1，比当前节点小  bit 3:0=  5-1=4= 0100   10100
+04000012 NOC_cfg (addr=2 , wdata=0 )
+06000092 NOC_cfg (addr=3 , wdata=1 )     # 1片上读取
+08000012 NOC_cfg (addr=4 , wdata=0 )
+0A000092 NOC_cfg (addr=5 , wdata=1 )     # 目的节点坐标，相当于地址的最高4位---节点1，所以是1
+0C012012 NOC_cfg (addr=6 , wdata=576 )     # ping基地址 0
+18000012 NOC_cfg (addr=12 , wdata=0 )  # lenth0
+1A000012 NOC_cfg (addr=13 , wdata=0 )  # lenth1
+1C000012 NOC_cfg (addr=14 , wdata=0)   # lenth2
 1E001F92 NOC_cfg (addr=15 , wdata=63)   # lenth3
+20000012 NOC_cfg (addr=16 , wdata=0)
 22001F92 NOC_cfg (addr=17 , wdata=63)
 8023F591 npu_load                       (we=wr,l1b_mode=norm ,tcache_bank_num=0,sys_gap=253,sub_gap=1,sub_len=4,addr=36,sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_scale_param
 08000017 noc_req (comd_type=4, bar=0)
-0C024012 NOC_cfg (addr=6 , wdata=1152 )    # ping基地址 1088+64
+00000012 NOC_cfg (addr=0 , wdata=0 )     # 0 绝对寻址
+02000012 NOC_cfg (addr=1 , wdata=0 )
+04000012 NOC_cfg (addr=2 , wdata=0 )
+06000092 NOC_cfg (addr=3 , wdata=1 )     # 1片上读取
+08000012 NOC_cfg (addr=4 , wdata=0 )
+0A000092 NOC_cfg (addr=5 , wdata=1 )     # 目的节点坐标，相当于地址的最高4位---节点1，所以是1
+0C014012 NOC_cfg (addr=6 , wdata=640 )     # ping基地址 0
+18000012 NOC_cfg (addr=12 , wdata=0 )  # lenth0
+1A000012 NOC_cfg (addr=13 , wdata=0 )  # lenth1
+1C000012 NOC_cfg (addr=14 , wdata=0)   # lenth2
 1E03FF92 NOC_cfg (addr=15 , wdata=2047)   # lenth3
+20000012 NOC_cfg (addr=16 , wdata=0)
 2203FF92 NOC_cfg (addr=17 , wdata=2047)
 80000491 npu_load                       (we=wr,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1  ,sub_len=0 ,addr=0,sys_len=8,mv_last_dis=0,cfifo_en=1,bar=0) //load_fmap
 08000017 noc_req (comd_type=4, bar=0)

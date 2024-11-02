@@ -48,7 +48,7 @@ inst_remake: $(OBJECTS)
 
 hex_gen:
 	mkdir -p $(HEX_GEN_DIR)
-	python3 hex_gen.py -i ./out/case3_idma.txt  ./out/case3_core_rd_noc.txt          ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case3_merge_inst.txt  ./hex_gen/case3_out_hex.txt
+	python3 hex_gen.py -i ./out/case3_idma.txt  ./out/case3_core_rd_noc.txt          ./input_data0.txt 						    -o ./hex_gen/case3_merge_inst.txt  ./hex_gen/case3_out_hex.txt
 	python3 hex_gen.py -i ./out/case5_idma.txt  ./out/case5_dwcr_noc.txt             ./input_data0.txt							-o ./hex_gen/case5_merge_inst.txt  ./hex_gen/case5_out_hex.txt
 	python3 hex_gen.py -i ./out/case8_idma.txt  ./out/case8_mc_dmawr_noc.txt         ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case8_merge_inst.txt  ./hex_gen/case8_out_hex.txt
 	python3 hex_gen.py -i ./out/case9_idma.txt  ./out/case9_nestloop_dmawr_noc.txt   ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case9_merge_inst.txt  ./hex_gen/case9_out_hex.txt
@@ -57,6 +57,7 @@ hex_gen:
 	python3 hex_gen.py -i ./out/case12_idma.txt ./out/case12_dmawrrd_noc.txt         ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case12_merge_inst.txt ./hex_gen/case12_out_hex.txt
 	python3 hex_gen.py -i ./out/case13_idma.txt ./out/case13_twoloop_noc.txt         ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case13_merge_inst.txt ./hex_gen/case13_out_hex.txt
 	python3 hex_gen.py -i ./out/case14_idma.txt ./out/case14_feishu.txt         	 ./input_data0.txt 							-o ./hex_gen/case14_merge_inst.txt ./hex_gen/case14_out_hex.txt
+	python3 hex_gen.py -i ./out/case15_idma.txt ./out/case15_core_rd_node_noc.txt    ./input_data0.txt 							-o ./hex_gen/case15_merge_inst.txt ./hex_gen/case15_out_hex.txt
 
 clean:
 	rm -rf $(HEX_GEN_DIR)

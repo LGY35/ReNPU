@@ -28,17 +28,25 @@ def extract_hex_instructions(input_filename, output_filename):
                 elif len(parts[0]) == 4:
                     updated_addr += 2  # 一条指令是2B
 
+                if wfi_found:
+                    if parts[1] != 'nop':
+                        wfi_found = False
+                        addr_compute = f"{updated_addr:X}" # 转换为大写十六进制，不带 `0x` 前缀
+                        print(f"Updated Address: {addr_compute}") 
+                    else:
+                        print("nop found") 
+                        wfi_found = True   
+                        
                 if 'wfi' in line:
                     wfi_found = True
                     print("wfi found")
                     
-                if wfi_found:
-                    if 'next_fetch_is_npu' in line:
-                        print("next_fetch_is_npu found")
-                        wfi_found = False
-                        # 将结果转换回十六进制字符串格式，并保持与初始格式一致
-                        addr_compute = f"{updated_addr:X}"  # 转换为大写十六进制，不带 `0x` 前缀
-                        print(f"Updated Address: {addr_compute}")  # 输出更新后的十六进制地址
+                    # if 'next_fetch_is_npu' in line:
+                    #     print("next_fetch_is_npu found")
+                    #     wfi_found = False
+                    #     # 将结果转换回十六进制字符串格式，并保持与初始格式一致
+                    #     addr_compute = f"{updated_addr:X}"  # 转换为大写十六进制，不带 `0x` 前缀
+                    #     print(f"Updated Address: {addr_compute}")  # 输出更新后的十六进制地址
                 
                 # 用于idma指令在finish group 之后补零指令，最初用于对齐，后面更新脚本之后不再需要
                 # if 'finish_group' in line:
