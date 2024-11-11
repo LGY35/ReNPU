@@ -71,21 +71,64 @@ def middle():
         byte_cnt = byte_cnt + 1
 
 
+# def data_proc(input_file, output_file):
+#     global byte_cnt, data  # 需要在函数中修改全局变量
+#     with open(input_file,"r") as fdata:
+#             for line in fdata.readlines():
+#                 line = line.strip("\n")
+#                 for i in range(32): # 32是一行的Bytes数
+#                     if(byte_cnt%16 == 15):
+#                         data.append(line[i*2:i*2+2] + '\n')
+#                         # data.append('\n')
+#                     else:   # 一次放2个Byte
+#                         data.append(line[i*2:i*2+2] + ' ')
+#                     byte_cnt = byte_cnt + 1
+#     # 将处理后的数据写入到输出文件
+#     with open(output_file, 'w') as f_out:
+#         f_out.writelines(data)       
+
 def data_proc(input_file, output_file):
     global byte_cnt, data  # 需要在函数中修改全局变量
-    with open(input_file,"r") as fdata:
-            for line in fdata.readlines():
-                line = line.strip("\n")
-                for i in range(32): # 32是一行的Bytes数
-                    if(byte_cnt%16 == 15):
-                        data.append(line[i*2:i*2+2] + '\n')
-                        # data.append('\n')
-                    else:   # 一次放2个Byte
-                        data.append(line[i*2:i*2+2] + ' ')
-                    byte_cnt = byte_cnt + 1
+    with open(input_file, "r") as fdata:
+        for line in fdata.readlines():
+            line = line.strip("\n")
+
+            # # 分成两部分，每部分 128 位（16 字节）
+            # first_half = line[:32]  # 前 16 字节（32 个字符）
+            # second_half = line[32:] # 后 16 字节（32 个字符）
+            
+            # # 处理第一部分
+            # processed_line = ""
+            # for i in range(0, len(first_half), 2):  # 每 2 个字符为 1 个字节
+            #     processed_line += first_half[i:i+2] + " "  # 插入空格
+            # processed_line = processed_line.strip()  # 去除最后一个空格
+
+            # # 将处理后的第一部分数据添加到 data 列表中
+            # data.append(processed_line + '\n')
+            # byte_cnt += 16
+
+            # # 处理第二部分
+            # processed_line = ""
+            # for i in range(0, len(second_half), 2):  # 每 2 个字符为 1 个字节
+            #     processed_line += second_half[i:i+2] + " "  # 插入空格
+            # processed_line = processed_line.strip()  # 去除最后一个空格
+
+            # # 将处理后的第二部分数据添加到 data 列表中
+            # data.append(processed_line + '\n')
+            # byte_cnt += 16
+            
+            for i in range(32):
+                if(byte_cnt%16 == 15):
+                    data.append(line[2*(31-i):2*(31-i)+2]+'\n')
+                else:
+                    data.append(line[2*(31-i):2*(31-i)+2]+' ')
+                byte_cnt += 1
+
     # 将处理后的数据写入到输出文件
     with open(output_file, 'w') as f_out:
-        f_out.writelines(data)       
+        f_out.writelines(data)
+
+
 
 # fout = open('hex_all.txt','+w')
 # # for i in range(byte_cnt):
