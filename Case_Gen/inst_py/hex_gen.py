@@ -156,16 +156,16 @@ def main():
     param1 = args.inputs[0] # idma_inoc
     param2 = args.inputs[1] # instr
     param3 = args.inputs[2] # data
-    para_jmp = "./jmp.txt"
+    # para_jmp = "./jmp.txt"
     
-    files_to_merge = [param1, para_jmp, param2]  # 指令文件列表
+    files_to_merge = [param1, param2]  # 指令文件列表
     
     # 输出文件
     merge_inst = args.output[0]  
     hex_file   = args.output[1]  
     
     # 分界符列表
-    address_list = ["@00002080", "@00002F48", "@00004000"]  #"@00004000"
+    address_list = ["@00002000",  "@00004000"]  # "@00002F48" "@00004000"
     
     # 拼接文件
     append_files_with_marker(files_to_merge, address_list, merge_inst)
