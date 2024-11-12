@@ -1,5 +1,28 @@
-0000005B next_fetch_is_npu
-
+    4441 c.li             x8, 16
+    0436 c.slli           x8, 13
+02440393 addi             x7, x8, 36
+    44a1 c.li             x9, 8
+    04b6 c.slli           x9, 13
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+00200937 lui              x18, 0x200
+03C90913 addi             x18, x18, 0x03C
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0605 c.addi           x12, 1
+002009b7 lui              x19, 0x200
+0bc98993 addi             x19, x19, 0x0BC
+0080105b storec           x8, m_cfifo
+0070105B storec           x7, m_cfifo
+0090105b storec           x9, m_cfifo
+00a0105b storec           x10, m_cfifo
+4120105b storec           x18, v_cfifo
+00c0105b storec           x12, m_cfifo
+4130105b storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+40012022 CVEC_cfg2                      (cal_mode=norm_conv,wreg_wr_cnt=0,fprec=INT8,wprec=INT8,v_tq=0)
+00028210 MQ_cfg0                        (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=40,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+40000090 MQ_cfg1                        (sub_gap=1,sys_gap_ext=0)
 C0000012 NOC_cfg (addr=96  , wdata=0 )
 C2000012 NOC_cfg (addr=97  , wdata=0 )
 C4000012 NOC_cfg (addr=98  , wdata=0 )
@@ -16,9 +39,9 @@ D8000092 NOC_cfg (addr=108 , wdata=1 )
 DA000012 NOC_cfg (addr=109 , wdata=0 )
 DC000012 NOC_cfg (addr=110 , wdata=0 )
 DE000012 NOC_cfg (addr=111 , wdata=0)
-E003FF92 NOC_cfg (addr=112 , wdata=2047)   # loop lenth
+E0053F92 NOC_cfg (addr=112 , wdata=2687)   # loop lenth
 E2000012 NOC_cfg (addr=113 , wdata=0)
-E403FF92 NOC_cfg (addr=114 , wdata=2047)   # ping lenth
+E4053F92 NOC_cfg (addr=114 , wdata=2687)   # ping lenth
 E6000012 NOC_cfg (addr=115 , wdata=0 )
 E8000012 NOC_cfg (addr=116 , wdata=0 )
 EA000012 NOC_cfg (addr=117 , wdata=0 )
@@ -50,21 +73,15 @@ EC000012 NOC_cfg (addr=118 , wdata=0 )
 38000012 NOC_cfg (addr=28 , wdata=0) #pad mode
 3A000012 NOC_cfg (addr=29 , wdata=0)
 3C000092 NOC_cfg (addr=30 , wdata=1) #单核取指
+81237591 npu_load                       (we=wr,l1b_mode=norm ,tcache_bank_num=0,sys_gap=221,sub_gap=1,sub_len=36,addr=0,sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight
 08000017 noc_req (comd_type=4, bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
 00000012 NOC_cfg (addr=0 , wdata=0 )
 02000012 NOC_cfg (addr=1 , wdata=0 )
 04000012 NOC_cfg (addr=2 , wdata=0 )
 06000092 NOC_cfg (addr=3 , wdata=1 )    # 1片上读取
 08000012 NOC_cfg (addr=4 , wdata=0 )
 0A000012 NOC_cfg (addr=5 , wdata=0 )
-0C000012 NOC_cfg (addr=6 , wdata=0 )    # ping基地址 0
+0C012012 NOC_cfg (addr=6 , wdata=576 )    # ping基地址 0
 0E000012 NOC_cfg (addr=7 , wdata=0 )
 10000012 NOC_cfg (addr=8 , wdata=0 )  # gap0
 12000012 NOC_cfg (addr=9 , wdata=0 )  # gap1
@@ -83,21 +100,15 @@ EC000012 NOC_cfg (addr=118 , wdata=0 )
 38000012 NOC_cfg (addr=28 , wdata=0) #pad mode
 3A000012 NOC_cfg (addr=29 , wdata=0)
 3C000092 NOC_cfg (addr=30 , wdata=1) #单核取指
+8023F591 npu_load                       (we=wr,l1b_mode=norm ,tcache_bank_num=0,sys_gap=253,sub_gap=1,sub_len=4,addr=36,sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_scale_param
 08000017 noc_req (comd_type=4, bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
 00000012 NOC_cfg (addr=0 , wdata=0 )
 02000012 NOC_cfg (addr=1 , wdata=0 )
 04000012 NOC_cfg (addr=2 , wdata=0 )
 06000092 NOC_cfg (addr=3 , wdata=1 )    # 1片上读取
 08000012 NOC_cfg (addr=4 , wdata=0 )
 0A000012 NOC_cfg (addr=5 , wdata=0 )
-0C000012 NOC_cfg (addr=6 , wdata=0 )    # ping基地址 0
+0C014012 NOC_cfg (addr=6 , wdata=640 )    # ping基地址 0
 0E000012 NOC_cfg (addr=7 , wdata=0 )
 10000012 NOC_cfg (addr=8 , wdata=0 )  # gap0
 12000012 NOC_cfg (addr=9 , wdata=0 )  # gap1
@@ -116,12 +127,810 @@ EC000012 NOC_cfg (addr=118 , wdata=0 )
 38000012 NOC_cfg (addr=28 , wdata=0) #pad mode
 3A000012 NOC_cfg (addr=29 , wdata=0)
 3C000092 NOC_cfg (addr=30 , wdata=1) #单核取指
+80000491 npu_load                       (we=wr,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1  ,sub_len=0 ,addr=0,sys_len=8,mv_last_dis=0,cfifo_en=1,bar=0) //load_fmap
 08000017 noc_req (comd_type=4, bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-00000019 MQ_NOP(bar=0)
-
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+10F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=0,sys_len=1,mv_last_dis=0,cfifo_en=0,bar=1)
+90020EA1 conv3d_start                   (first_sub_flag=1,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1) //100000_00000_000_0_011110_0=0x20003C
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=1,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0) //100000_00000_000_1_011110_0=0x2000BC
+00000073 next_fetch_is_cpu
+    4505 c.li x10, 1
+    0536 c.slli x10, 13
+    0509 c.addi x10, 2
+    4585 c.li x11, 1
+    05B6 c.slli x11, 13
+40058593 addi x11, x11, 1024
+    4605 c.li x12, 1
+    0636 c.slli x12, 13
+    060D c.addi x12, 3
+00A0105B storec x10, m_cfifo
+00B0105B storec x11, m_cfifo
+4120105B storec x18, v_cfifo
+00C0105B storec x12, m_cfifo  
+4130105B storec x19, v_cfifo
+0000005B next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=2,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1024,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=3,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0511 c.addi           x10, 4
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+00158593 addi             x11, x11, 1
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0615 c.addi           x12, 5
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo 
+0000005b next_fetch_is_npu  
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=4,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=5,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0519 c.addi           x10, 6
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+40158593 addi             x11, x11, 1025
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    061D c.addi           x12, 7
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo 
+0000005b next_fetch_is_npu 
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=6,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1025,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=7,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0521 c.addi           x10, 8
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+00258593 addi             x11, x11, 2
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0625 c.addi           x12, 9
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=8,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=2,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=9,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1 
+    0536 c.slli           x10, 13
+    0529 c.addi           x10, 10
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+40258593 addi             x11, x11, 1026
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    062D c.addi           x12, 11
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=10,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1026,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=11,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0531 c.addi           x10, 12
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+02058593 addi             x11, x11, 32
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0635 c.addi           x12, 13
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu                   
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=12,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=32,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=13,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0539 c.addi           x10, 14
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+42058593 addi             x11, x11, 1056//1024+32
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    063D c.addi           x12, 15
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=14,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1056,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=15,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0541 c.addi           x10, 16
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+02158593 addi             x11, x11, 33
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0645 c.addi           x12, 17
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=16,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=33,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=17,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0549 c.addi           x10, 18
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+42158593 addi             x11, x11, 1057
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    064D c.addi           x12, 19
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=18,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1057,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=19,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0551 c.addi           x10, 20
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+02258593 addi             x11, x11, 34
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0655 c.addi           x12, 21
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=20,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=34,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=21,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0559 c.addi           x10, 22
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+42258593 addi             x11, x11, 1058
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    065D c.addi           x12, 23
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=22,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1058,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=23,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0561 c.addi           x10, 24
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+04058593 addi             x11, x11, 64
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0665 c.addi           x12, 25
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=24,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=64,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=25,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0569 c.addi           x10, 26
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+44058593 addi             x11, x11, 1088
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    066D c.addi           x12, 27
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=26,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1088,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=27,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0571 c.addi           x10, 28
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+04158593 addi             x11, x11, 65
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0675 c.addi           x12, 29
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=28,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=65,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=29,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0579 c.addi           x10, 30
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+44158593 addi             x11, x11, 1089
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    067D c.addi           x12, 31
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=30,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1089,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=31,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+02050513 addi             x10, x10, 32
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+04258593 addi             x11, x11, 66
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+02160613 addi             x12, x12, 33
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=32,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=66,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=33,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+02250513 addi             x10, x10, 34
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+44258593 addi             x11, x11, 1090
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+02360613 addi             x12, x12, 35
+02500693 addi             x13, 37    
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+40D0105B storec           x13, v_cfifo //psum rd
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=34,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1090,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=35,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+B0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=3)
+0000F040 cub_alu_insn_fill(addr=0,num=15) //post-processing
+240020CD cub.lw.l1b x1, 576(x0)  //fill start 
+2440214D cub.lw.l1b x2, 580(x0)
+248021CD cub.lw.l1b x3, 584(x0) 
+24C0224D cub.lw.l1b x4, 588(x0)
+250022CD cub.lw.l1b x5, 592(x0)
+2540234D cub.lw.l1b x6, 596(x0)
+258023CD cub.lw.l1b x7, 600(x0)
+25C0244D cub.lw.l1b x8, 604(x0)
+260024CD cub.lw.l1b x9, 608(x0)
+2640254D cub.lw.l1b x10, 612(x0)
+268025CD cub.lw.l1b x11, 616(x0)
+26C0264D cub.lw.l1b x12, 620(x0)
+270026CD cub.lw.l1b x13, 624(x0)
+2740274D cub.lw.l1b x14, 628(x0) //0_010 0111 0100_00000_010_01110_100_1101
+00001044 cub.event_finish        //fill end
+30000019 MQ_NOP(bar=3) //11_000000000000000000000_001_1001
+00028290 MQ_cfg0(gpu_mode=1,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=40,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+00000023 VQ_alu_event_call(event_addr=0,bar=0)
+00018020 VQ_alu_csrw(csr_addr=0,csr_wdata=0b1_1_00) //alu_flow_cfg0: cflow_mode,scache_dout_flow_sel,alu_din_flow_sel
+02220120 VQ_alu_csrw(csr_addr=2,csr_wdata=0b00100_01000_10000) //crossbar cfg
+000441A0 VQ_alu_csrw(csr_addr=3,csr_wdata=0b00001_00010) //crossbar cfg
+00000220 VQ_alu_csrw(csr_addr=4,csr_wdata=0b00_00_0_00) //acti_work_mode 
+001182A0 VQ_alu_csrw(csr_addr=5,csr_wdata=0b00_00000010_0_01_10_0) //pool_cfg
+0003C320 VQ_alu_csrw(csr_addr=6,csr_wdata=0b111100) //pool_cfg（pool_cflow_data_len=30）
+0021E3A0 VQ_alu_csrw(csr_addr=7,csr_wdata=0b1_0000_1111) //scache wr0
+00002420 VQ_alu_csrw(csr_addr=8,csr_wdata=0b1) //scache wr1
+86800EA1 psum_rd(rd_num=29,rd_ch_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=37,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1 //start to cal 2rd row
+    0536 c.slli           x10, 13
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+02058593 addi             x11, x11, 32
+00200937 lui              x18, 0x200
+03C90913 addi             x18, x18, 0x03C
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0605 c.addi           x12, 1
+002009b7 lui              x19, 0x200
+0bc98993 addi             x19, x19, 0x0BC
+00a0105b storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105b storec           x18, v_cfifo
+00c0105b storec           x12, m_cfifo
+4130105b storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+00028210 MQ_cfg0                        (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=40,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=32,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90020EA1 conv3d_start                   (first_sub_flag=1,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1) //100000_00000_000_0_011110_0=0x20003C
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=1,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0) //100000_00000_000_1_011110_0=0x2000BC
+00000073 next_fetch_is_cpu
+    4505 c.li x10, 1
+    0536 c.slli x10, 13
+    0509 c.addi x10, 2                                                                                                                     
+    4585 c.li x11, 1
+    05B6 c.slli x11, 13
+42058593 addi x11, x11, 1056
+    4605 c.li x12, 1
+    0636 c.slli x12, 13
+    060D c.addi x12, 3
+00A0105B storec x10, m_cfifo
+00B0105B storec x11, m_cfifo
+4120105B storec x18, v_cfifo
+00C0105B storec x12, m_cfifo
+4130105B storec x19, v_cfifo
+0000005B next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=2,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1056,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=3,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0511 c.addi           x10, 4
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+02158593 addi             x11, x11, 33
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0615 c.addi           x12, 5
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo 
+0000005b next_fetch_is_npu  
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=4,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=33,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=5,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0519 c.addi           x10, 6
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+42158593 addi             x11, x11, 1057
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    061D c.addi           x12, 7
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo 
+0000005b next_fetch_is_npu 
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=6,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1057,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=7,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0521 c.addi           x10, 8
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+02258593 addi             x11, x11, 34
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0625 c.addi           x12, 9
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=8,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=34,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=9,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1 
+    0536 c.slli           x10, 13
+    0529 c.addi           x10, 10
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+42258593 addi             x11, x11, 1058
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    062D c.addi           x12, 11
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=10,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1058,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=11,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0531 c.addi           x10, 12
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+04058593 addi             x11, x11, 64
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0635 c.addi           x12, 13
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu                   
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=12,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=64,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=13,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0539 c.addi           x10, 14
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+44058593 addi             x11, x11, 1088//1056+32
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    063D c.addi           x12, 15
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=14,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1088,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=15,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0541 c.addi           x10, 16
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+04158593 addi             x11, x11, 65
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0645 c.addi           x12, 17
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=16,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=65,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=17,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0549 c.addi           x10, 18
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+44158593 addi             x11, x11, 1089
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    064D c.addi           x12, 19
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=18,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1089,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=19,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0551 c.addi           x10, 20
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+04258593 addi             x11, x11, 66
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0655 c.addi           x12, 21
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=20,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=66,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=21,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0559 c.addi           x10, 22
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+44258593 addi             x11, x11, 1090
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    065D c.addi           x12, 23
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=22,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1090,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=23,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0561 c.addi           x10, 24
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+06058593 addi             x11, x11, 96
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0665 c.addi           x12, 25
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=24,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=96,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=25,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0569 c.addi           x10, 26
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+46058593 addi             x11, x11, 1120
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    066D c.addi           x12, 27
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=26,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1120,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=27,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0571 c.addi           x10, 28
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+06158593 addi             x11, x11, 97
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    0675 c.addi           x12, 29
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=28,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=97,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=29,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+    0579 c.addi           x10, 30
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+46158593 addi             x11, x11, 1121
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+    067D c.addi           x12, 31
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=30,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1121,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=31,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+02050513 addi             x10, x10, 32
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+06258593 addi             x11, x11, 98
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+02160613 addi             x12, x12, 33
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=32,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+90F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=98,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=1)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=33,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+    4505 c.li             x10, 1
+    0536 c.slli           x10, 13
+02250513 addi             x10, x10, 34
+    4585 c.li             x11, 1
+    05B6 c.slli           x11, 13
+46258593 addi             x11, x11, 1122
+    4605 c.li             x12, 1
+    0636 c.slli           x12, 13
+02360613 addi             x12, x12, 35
+02400713 addi             x14, x0, 36
+00f00793 addi             x15, x0, 15    
+00A0105B storec           x10, m_cfifo
+00B0105B storec           x11, m_cfifo
+4120105B storec           x18, v_cfifo
+00C0105B storec           x12, m_cfifo
+4130105B storec           x19, v_cfifo
+40E0105B storec           x14, v_cfifo //VQ_scache_rd_en
+40F0105B storec           x15, v_cfifo //VQ_scache_rd_en
+0000005b next_fetch_is_npu
+80080515 npu_mv                         (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=34,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+A0F00415 npu_mv                         (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1122,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+A0000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=2)
+80080515 npu_mv                         (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=35,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+80000EA1 conv3d_start                   (first_sub_flag=0,start_index=0,end_index=29,bc_mode=0,bc_len=16,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,run_cycle_num=32,cfifo_en=1,bar=0)
+08000021 VQ_NOP(bar=0) //100_000000000000000000_010_0001
+08000021 VQ_NOP(bar=0) //100_000000000000000000_010_0001
+08000021 VQ_NOP(bar=0) //100_000000000000000000_010_0001
+0681EEA1 psum_rd(rd_num=29,rd_ch_sel=0,scache_wr_addr=15,scache_wr_size=byte,run_cycle_num=37,cfifo_en=0,bar=0)
+0001A020 VQ_alu_csrw(csr_addr=0,csr_wdata=0b1_1_01) //alu_flow_cfg0: cflow_mode,scache_dout_flow_sel,alu_din_flow_sel
+00000120 VQ_alu_csrw(csr_addr=2,csr_wdata=0b00000_00000_00000) //crossbar_cfg0
+000601A0 VQ_alu_csrw(csr_addr=3,csr_wdata=0b00001_10000) //crossbar_cfg1
+0021E3A0 VQ_alu_csrw(csr_addr=7,csr_wdata=0b0000_0001_0000_1111) //scache_wr0
+00002420 VQ_alu_csrw(csr_addr=8,csr_wdata=0b1) //scache_wr1
+01E04520 VQ_alu_csrw(csr_addr=10,csr_wdata=0b0000_1111_0000_0010) //scache_rd0 (sub_len=2,sys_len=15)
+0001E5A0 VQ_alu_csrw(csr_addr=11,csr_wdata=0b1111) //scache_rd1 (sub_gap=15)
+007E4620 VQ_alu_csrw(csr_addr=12,csr_wdata=0b1_11111_0010) //scache_rd2 (sys_gap=-14)
+04028023 VQ_scache_wr_en(addr=64*4,size=byte,wr_cycle_num=36,wait_type=0,cfifo_en=0,bar=0)
+880E0023 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=36,wait_type=1,cfifo_en=1,bar=0)
+00010020 VQ_alu_csrw(csr_addr=0,csr_wdata=0b1_0_00) //alu_flow_cfg0: cflow_mode,scache_dout_flow_sel,alu_din_flow_sel
+0021E520 VQ_alu_csrw(csr_addr=10,csr_wdata=0b1_00001111) //scache_rd0 (sub_len=1,sys_len=15)
+000025A0 VQ_alu_csrw(csr_addr=11,csr_wdata=0b1) //scache_rd1 (sub_gap=1)
+00000620 VQ_alu_csrw(csr_addr=12,csr_wdata=0b0) //scache_rd2 (sys_gap=0)
+880E8023 VQ_scache_rd_en(addr=64*4,size=byte,sign_ext=1,rd_cycle_num=15,wait_type=1,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+10500073 wfi
+00000013 nop
+00000013 nop
+00000013 nop
+00000013 nop
+00000013 nop
+00000013 nop

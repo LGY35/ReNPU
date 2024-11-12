@@ -42,7 +42,7 @@ NOC_cfg (addr=2 , wdata=1 )     # 1 多节点读合并开
 NOC_cfg (addr=6 , wdata=0 )     # ping基地址 第一部分激活直接用基地址==============
 NOC_cfg (addr=7 , wdata=80 )    # 比上一个地址+80==============
 NOC_cfg (addr=17 , wdata=39  )  # ping length   一行有：640*32/256 = 80；一次取40  十进制数80 40
-NOC_cfg (addr=19 , wdata=3512)  # 广播的范围 north_id, east_id, south_id, west_id centernode 1101 1011 1000
+NOC_cfg (addr=19 , wdata=926)  # 广播的范围 north_id, east_id, south_id, west_id centernode  1110 0111 1000
 NOC_cfg (addr=20 , wdata=768)   # 同步的目标 12bit中选取对应bit 0011 0000 0000
 NOC_cfg (addr=21 , wdata=1)     # feature 
 NOC_cfg (addr=29 , wdata=1)     # loop enable
@@ -101,7 +101,7 @@ NOC_cfg (addr=15 , wdata=575)   # lenth3 取权重576个 ==============
 NOC_cfg (addr=16 , wdata=0)   
 NOC_cfg (addr=17 , wdata=575)   # ping length ==============
 NOC_cfg (addr=18 , wdata=0)     # 
-NOC_cfg (addr=19 , wdata=1540)     # 广播的范围 north_id, east_id, south_id, west_id centernode 0110 0000 0100 ==============
+NOC_cfg (addr=19 , wdata=148)     # 广播的范围 north_id, east_id, south_id, west_id centernode  0000 1001 0100 ==============
 NOC_cfg (addr=20 , wdata=85)     # 同步的目标 0000 0101 0101==============
 NOC_cfg (addr=21 , wdata=0)     # weight ==============
 NOC_cfg (addr=29 , wdata=0)     # loop disable ==============
@@ -169,7 +169,7 @@ NOC_cfg (addr=15 , wdata=575)   # lenth3 取权重576个 ==============
 NOC_cfg (addr=16 , wdata=0)   
 NOC_cfg (addr=17 , wdata=575)   # ping length ==============
 NOC_cfg (addr=18 , wdata=0)     # 
-NOC_cfg (addr=19 , wdata=1877)     # 广播的范围 north_id, east_id, south_id, west_id centernode 0111 0101 0101 ==============
+NOC_cfg (addr=19 , wdata=1493)     # 广播的范围 north_id, east_id, south_id, west_id centernode  0101 1101 0101 ==============
 NOC_cfg (addr=20 , wdata=170)     # 同步的目标 0000 1010 1010==============
 NOC_cfg (addr=21 , wdata=0)     # weight ==============
 NOC_cfg (addr=29 , wdata=0)     # loop disable ==============
@@ -248,7 +248,7 @@ NOC_cfg (addr=2 , wdata=1 )     # 1 多节点读合并开
 NOC_cfg (addr=6 , wdata=0 )     # ping基地址 第一部分激活直接用基地址==============
 NOC_cfg (addr=7 , wdata=80 )    # 比上一个地址+80==============
 NOC_cfg (addr=17 , wdata=39  )  # ping length   一行有：640*32/256 = 80；一次取40  十进制数80 40
-NOC_cfg (addr=19 , wdata=3512)  # 广播的范围 north_id, east_id, south_id, west_id centernode 1101 1011 1000
+NOC_cfg (addr=19 , wdata=3704)  # 广播的范围 north_id, east_id, south_id, west_id centernode  1110 0111 1000
 NOC_cfg (addr=20 , wdata=768)   # 同步的目标 12bit中选取对应bit 0011 0000 0000
 NOC_cfg (addr=21 , wdata=1)     # feature 
 NOC_cfg (addr=29 , wdata=1)     # loop enable

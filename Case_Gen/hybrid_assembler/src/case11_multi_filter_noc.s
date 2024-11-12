@@ -21,7 +21,7 @@ NOC_cfg (addr=113 , wdata=0)
 NOC_cfg (addr=114 , wdata=17)   # ping lenth
 NOC_cfg (addr=115 , wdata=0 )
 NOC_cfg (addr=116 , wdata=80 )   # 0000 0101 0000  中心节点0000 
-NOC_cfg (addr=117 , wdata=0 )   
+NOC_cfg (addr=117 , wdata=33 )   # sync target  0000 0010 0001 
 NOC_cfg (addr=118 , wdata=0 )
 noc_req (comd_type=3, bar=0)
 noc_req (comd_type=4, bar=0)
