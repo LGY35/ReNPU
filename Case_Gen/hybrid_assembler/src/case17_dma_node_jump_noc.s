@@ -56,7 +56,7 @@ NOC_cfg (addr=110 , wdata=0 )
 NOC_cfg (addr=111 , wdata=0 )
 NOC_cfg (addr=112 , wdata=39)   # loop lenth 640/8 = 80, 取一半40
 NOC_cfg (addr=113 , wdata=0 )
-NOC_cfg (addr=114 , wdata=800)   # ping lenth = 总长度
+NOC_cfg (addr=114 , wdata=799)   # ping lenth = 总长度
 NOC_cfg (addr=115 , wdata=0 )
 NOC_cfg (addr=116 , wdata=0 )   
 NOC_cfg (addr=117 , wdata=0 )   

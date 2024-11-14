@@ -173,7 +173,7 @@ NOC_cfg (addr=15 , wdata=575)   # lenth3 取权重576个 ==============
 NOC_cfg (addr=16 , wdata=0)   
 NOC_cfg (addr=17 , wdata=575)   # ping length ==============
 NOC_cfg (addr=18 , wdata=0)     # 
-NOC_cfg (addr=19 , wdata=1493)     # 广播的范围 north_id, east_id, south_id, west_id centernode  0101 1101 0101 ==============
+NOC_cfg (addr=19 , wdata=1495)     # 广播的范围 north_id, east_id, south_id, west_id centernode  0101 1101 0111 ==============
 NOC_cfg (addr=20 , wdata=170)     # 同步的目标 0000 1010 1010==============
 NOC_cfg (addr=21 , wdata=0)     # weight ==============
 NOC_cfg (addr=29 , wdata=0)     # loop disable ==============
@@ -242,8 +242,8 @@ NOC_cfg (addr=15 , wdata=575)   # lenth3 取权重576个 ==============
 NOC_cfg (addr=16 , wdata=0)   
 NOC_cfg (addr=17 , wdata=575)   # ping length ==============
 NOC_cfg (addr=18 , wdata=0)     # 
-NOC_cfg (addr=19 , wdata=0)     # 广播的范围 north_id, east_id, south_id, west_id centernode==============
-NOC_cfg (addr=20 , wdata=0)     # 同步的目标 ==============
+NOC_cfg (addr=19 , wdata=155)     # 广播的范围 north_id, east_id, south_id, west_id centernode  0000 1001 1011 ==============
+NOC_cfg (addr=20 , wdata=3072)     # 同步的目标 1100 0000 0000==============
 NOC_cfg (addr=21 , wdata=0)     # weight ==============
 NOC_cfg (addr=29 , wdata=0)     # loop disable ==============
 #npu_load
