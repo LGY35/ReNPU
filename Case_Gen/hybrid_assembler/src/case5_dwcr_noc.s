@@ -2,29 +2,29 @@
 # 无法pingpang, 因为????
 # dma wr
 next_fetch_is_npu
-NOC_cfg (addr=96  , wdata=0 )
-NOC_cfg (addr=97  , wdata=0 )
-NOC_cfg (addr=98  , wdata=0 )
-NOC_cfg (addr=99  , wdata=0 )
-NOC_cfg (addr=100 , wdata=0 )   # pingpang 使能
-NOC_cfg (addr=101 , wdata=0 )   # 本地ram ping基地址    bank0
-NOC_cfg (addr=102 , wdata=0 )   # 本地ram pang基地址    bank4
-NOC_cfg (addr=103 , wdata=512 ) # noc_base_addr  256bit为单位 低位补5bit0
-NOC_cfg (addr=104 , wdata=0 )   # noc_base_addr 
-NOC_cfg (addr=105 , wdata=0 )
-NOC_cfg (addr=106 , wdata=0 )
-NOC_cfg (addr=107 , wdata=0 )
-NOC_cfg (addr=108 , wdata=1 )   # loopgap3
-NOC_cfg (addr=109 , wdata=0 )
-NOC_cfg (addr=110 , wdata=0 )
-NOC_cfg (addr=111 , wdata=0)
-NOC_cfg (addr=112 , wdata=576)   # loop lenth
-NOC_cfg (addr=113 , wdata=0)    # pingpangnum = 0
-NOC_cfg (addr=114 , wdata=576)    # ping lenth  
-NOC_cfg (addr=115 , wdata=0)    # pang lenth
-NOC_cfg (addr=116 , wdata=0 ) 
-NOC_cfg (addr=117 , wdata=0 )   
-NOC_cfg (addr=118 , wdata=0 )
+NOC_cfg (cfifo_en=0, addr=96  , wdata=0 )
+NOC_cfg (cfifo_en=0, addr=97  , wdata=0 )
+NOC_cfg (cfifo_en=0, addr=98  , wdata=0 )
+NOC_cfg (cfifo_en=0, addr=99  , wdata=0 )
+NOC_cfg (cfifo_en=0, addr=100 , wdata=0 )   # pingpang 使能
+NOC_cfg (cfifo_en=0, addr=101 , wdata=0 )   # 本地ram ping基地址    bank0
+NOC_cfg (cfifo_en=0, addr=102 , wdata=0 )   # 本地ram pang基地址    bank4
+NOC_cfg (cfifo_en=0, addr=103 , wdata=512 ) # noc_base_addr  256bit为单位 低位补5bit0
+NOC_cfg (cfifo_en=0, addr=104 , wdata=0 )   # noc_base_addr 
+NOC_cfg (cfifo_en=0, addr=105 , wdata=0 )
+NOC_cfg (cfifo_en=0, addr=106 , wdata=0 )
+NOC_cfg (cfifo_en=0, addr=107 , wdata=0 )
+NOC_cfg (cfifo_en=0, addr=108 , wdata=1 )   # loopgap3
+NOC_cfg (cfifo_en=0, addr=109 , wdata=0 )
+NOC_cfg (cfifo_en=0, addr=110 , wdata=0 )
+NOC_cfg (cfifo_en=0, addr=111 , wdata=0)
+NOC_cfg (cfifo_en=0, addr=112 , wdata=576)   # loop lenth
+NOC_cfg (cfifo_en=0, addr=113 , wdata=0)    # pingpangnum = 0
+NOC_cfg (cfifo_en=0, addr=114 , wdata=576)    # ping lenth  
+NOC_cfg (cfifo_en=0, addr=115 , wdata=0)    # pang lenth
+NOC_cfg (cfifo_en=0, addr=116 , wdata=0 ) 
+NOC_cfg (cfifo_en=0, addr=117 , wdata=0 )   
+NOC_cfg (cfifo_en=0, addr=118 , wdata=0 )
 noc_req (comd_type=3, bar=0)
 
 NOC_cfg (addr=112 , wdata=64)   # loop lenth
