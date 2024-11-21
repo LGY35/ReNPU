@@ -60,6 +60,7 @@ hex_gen:
 	python3 hex_gen.py -i ./out/case15_idma.txt ./out/case15_core_rd_node_noc.txt    ./input_data0.txt 							-o ./hex_gen/case15_merge_inst.txt ./hex_gen/case15_out_hex.txt
 	python3 hex_gen.py -i ./out/case16_idma.txt ./out/case16_yolo_1_noc.txt    		 ./input_data0.txt 							-o ./hex_gen/case16_merge_inst.txt ./hex_gen/case16_out_hex.txt
 	python3 hex_gen.py -i ./out/case17_idma.txt ./out/case17_dma_node_jump_noc.txt   ./input_data0.txt 							-o ./hex_gen/case17_merge_inst.txt ./hex_gen/case17_out_hex.txt
+	python3 hex_gen.py -i ./out/case18_idma.txt ./out/case18_cr_dma_node_jump_noc.txt ./input_data0.txt 						-o ./hex_gen/case18_merge_inst.txt ./hex_gen/case18_out_hex.txt
 	python3 hex_gen.py -i ./out/case99_idma.txt ./out/case99_noc.txt    		 	 ./input_data0.txt 							-o ./hex_gen/case99_merge_inst.txt ./hex_gen/case99_out_hex.txt
 
 clean:

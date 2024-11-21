@@ -1,32 +1,34 @@
 0000005B next_fetch_is_npu
 
-C0000012 NOC_cfg (addr=96  , wdata=0 )
-C2000012 NOC_cfg (addr=97  , wdata=0 )
-C4000012 NOC_cfg (addr=98  , wdata=0 ) #广播
-C6000012 NOC_cfg (addr=99  , wdata=0 )
-C8000012 NOC_cfg (addr=100 , wdata=0 )
-CA000012 NOC_cfg (addr=101 , wdata=0 )   # ram base addr
-CC000012 NOC_cfg (addr=102 , wdata=0 )   # ram base addr
-CE000012 NOC_cfg (addr=103 , wdata=0 )   # noc_base addr     # Aaddr
-D0000012 NOC_cfg (addr=104 , wdata=0 )   # noc_base addr
-D2000012 NOC_cfg (addr=105 , wdata=0 )
-D4000012 NOC_cfg (addr=106 , wdata=0 )
-D6000012 NOC_cfg (addr=107 , wdata=0 )
-D8000092 NOC_cfg (addr=108 , wdata=1 )
-DA000012 NOC_cfg (addr=109 , wdata=0 )
-DC000012 NOC_cfg (addr=110 , wdata=0 )
-DE000012 NOC_cfg (addr=111 , wdata=0 )
-E0001392 NOC_cfg (addr=112 , wdata=39)   # loop lenth 640/8 = 80, 取一半40
-E2000012 NOC_cfg (addr=113 , wdata=0 )
-E4018F92 NOC_cfg (addr=114 , wdata=799)   # ping lenth = 总长度20*40=800
-E6000012 NOC_cfg (addr=115 , wdata=0 )
-E8000012 NOC_cfg (addr=116 , wdata=0 )
-EA000012 NOC_cfg (addr=117 , wdata=0 )
-EC000012 NOC_cfg (addr=118 , wdata=0 )
-EE001392 NOC_cfg (addr=119 , wdata=39 )   # 单行长度
-F000A092 NOC_cfg (addr=120 , wdata=321 )  # dmaloop gap # gap2整行，也就是160  然后最低位是enable为1，所以160*2+1=321
-F2000512 NOC_cfg (addr=121 , wdata=10 )   # dmaloop num    20/2
-F4002812 NOC_cfg (addr=122 , wdata=80 )  # dmaloop Baddr
+00000073 next_fetch_is_cpu
+
+60000012 NOC_cfg ( addr=96  , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+61000012 NOC_cfg ( addr=97  , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+62000012 NOC_cfg ( addr=98  , wdata=0, cfifo_wdata=0,cfifo_en=0 ) #广播
+63000012 NOC_cfg ( addr=99  , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+64000012 NOC_cfg ( addr=100 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+65000012 NOC_cfg ( addr=101 , wdata=0, cfifo_wdata=0,cfifo_en=0 )   # ram base addr
+66000012 NOC_cfg ( addr=102 , wdata=0, cfifo_wdata=0,cfifo_en=0 )   # ram base addr
+67000012 NOC_cfg ( addr=103 , wdata=0, cfifo_wdata=0,cfifo_en=0 )   # noc_base addr     # Aaddr
+68000012 NOC_cfg ( addr=104 , wdata=0, cfifo_wdata=0,cfifo_en=0 )   # noc_base addr
+69000012 NOC_cfg ( addr=105 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6A000012 NOC_cfg ( addr=106 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6B000012 NOC_cfg ( addr=107 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6C000112 NOC_cfg ( addr=108 , wdata=1, cfifo_wdata=0,cfifo_en=0 )
+6D000012 NOC_cfg ( addr=109 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6E000012 NOC_cfg ( addr=110 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6F000012 NOC_cfg ( addr=111 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+70002712 NOC_cfg ( addr=112 , wdata=39, cfifo_wdata=0,cfifo_en=0)   # loop lenth 640/8 = 80, 取一半40
+71000012 NOC_cfg ( addr=113 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+72031F12 NOC_cfg ( addr=114 , wdata=799, cfifo_wdata=0,cfifo_en=0)   # ping lenth = 总长度20*40=800
+73000012 NOC_cfg ( addr=115 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+74000012 NOC_cfg ( addr=116 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+75000012 NOC_cfg ( addr=117 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+76000012 NOC_cfg ( addr=118 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+77002712 NOC_cfg ( addr=119 , wdata=39, cfifo_wdata=0,cfifo_en=0 )   # 单行长度
+78014112 NOC_cfg ( addr=120 , wdata=321, cfifo_wdata=0,cfifo_en=0 )  # dmaloop gap # gap2整行，也就是160  然后最低位是enable为1，所以160*2+1=321
+79000A12 NOC_cfg ( addr=121 , wdata=10, cfifo_wdata=0,cfifo_en=0 )   # dmaloop num    20/2
+7A005012 NOC_cfg ( addr=122 , wdata=80, cfifo_wdata=0,cfifo_en=0 )  # dmaloop Baddr
 06000017 noc_req (comd_type=3, bar=0 )
 08000017 noc_req (comd_type=4, bar=0 )
 00000119 MQ_NOP (bar=0, nop_cycle_num=1)
@@ -36,33 +38,33 @@ F4002812 NOC_cfg (addr=122 , wdata=80 )  # dmaloop Baddr
 00000119 MQ_NOP (bar=0, nop_cycle_num=1)
 00000119 MQ_NOP (bar=0, nop_cycle_num=1)
 00000119 MQ_NOP (bar=0, nop_cycle_num=1)
-C0000012 NOC_cfg (addr=96  , wdata=0 )
-C2000012 NOC_cfg (addr=97  , wdata=0 )
-C4000012 NOC_cfg (addr=98  , wdata=0 )   #广播
-C6000012 NOC_cfg (addr=99  , wdata=0 )
-C8000012 NOC_cfg (addr=100 , wdata=0 )
-CA018F92 NOC_cfg (addr=101 , wdata=799 )   # ram base addr       # 取另一半的数据
-CC000012 NOC_cfg (addr=102 , wdata=0 )   # ram base addr
-CE001412 NOC_cfg (addr=103 , wdata=40 )   # noc_base addr     # Aaddr
-D0000012 NOC_cfg (addr=104 , wdata=0 )   # noc_base addr
-D2000012 NOC_cfg (addr=105 , wdata=0 )
-D4000012 NOC_cfg (addr=106 , wdata=0 )
-D6000012 NOC_cfg (addr=107 , wdata=0 )
-D8000092 NOC_cfg (addr=108 , wdata=1 )
-DA000012 NOC_cfg (addr=109 , wdata=0 )
-DC000012 NOC_cfg (addr=110 , wdata=0 )
-DE000012 NOC_cfg (addr=111 , wdata=0 )
-E0001392 NOC_cfg (addr=112 , wdata=39)   # loop lenth 640/8 = 80, 取一半40
-E2000012 NOC_cfg (addr=113 , wdata=0 )
-E4018F92 NOC_cfg (addr=114 , wdata=799)   # ping lenth = 总长度
-E6000012 NOC_cfg (addr=115 , wdata=0 )
-E8000012 NOC_cfg (addr=116 , wdata=0 )
-EA000012 NOC_cfg (addr=117 , wdata=0 )
-EC000012 NOC_cfg (addr=118 , wdata=0 )
-EE001392 NOC_cfg (addr=119 , wdata=39 )   # 单行长度
-F000A092 NOC_cfg (addr=120 , wdata=321 )  # dmaloop gap # gap2整行，也就是160  然后最低位是enable为1，所以160*2+1=321
-F2000512 NOC_cfg (addr=121 , wdata=10 )   # dmaloop num    20/2
-F4002812 NOC_cfg (addr=122 , wdata=80 )  # dmaloop Baddr
+60000012 NOC_cfg ( addr=96  , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+61000012 NOC_cfg ( addr=97  , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+62000012 NOC_cfg ( addr=98  , wdata=0, cfifo_wdata=0,cfifo_en=0 )   #广播
+63000012 NOC_cfg ( addr=99  , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+64000012 NOC_cfg ( addr=100 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+65031F12 NOC_cfg ( addr=101 , wdata=799, cfifo_wdata=0,cfifo_en=0 )   # ram base addr       # 取另一半的数据
+66000012 NOC_cfg ( addr=102 , wdata=0, cfifo_wdata=0,cfifo_en=0 )   # ram base addr
+67002812 NOC_cfg ( addr=103 , wdata=40, cfifo_wdata=0,cfifo_en=0 )   # noc_base addr     # Aaddr
+68000012 NOC_cfg ( addr=104 , wdata=0, cfifo_wdata=0,cfifo_en=0 )   # noc_base addr
+69000012 NOC_cfg ( addr=105 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6A000012 NOC_cfg ( addr=106 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6B000012 NOC_cfg ( addr=107 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6C000112 NOC_cfg ( addr=108 , wdata=1, cfifo_wdata=0,cfifo_en=0 )
+6D000012 NOC_cfg ( addr=109 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6E000012 NOC_cfg ( addr=110 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6F000012 NOC_cfg ( addr=111 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+70002712 NOC_cfg ( addr=112 , wdata=39, cfifo_wdata=0,cfifo_en=0)   # loop lenth 640/8 = 80, 取一半40
+71000012 NOC_cfg ( addr=113 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+72031F12 NOC_cfg ( addr=114 , wdata=799, cfifo_wdata=0,cfifo_en=0)   # ping lenth = 总长度
+73000012 NOC_cfg ( addr=115 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+74000012 NOC_cfg ( addr=116 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+75000012 NOC_cfg ( addr=117 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+76000012 NOC_cfg ( addr=118 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+77002712 NOC_cfg ( addr=119 , wdata=39, cfifo_wdata=0,cfifo_en=0 )   # 单行长度
+78014112 NOC_cfg ( addr=120 , wdata=321, cfifo_wdata=0,cfifo_en=0 )  # dmaloop gap # gap2整行，也就是160  然后最低位是enable为1，所以160*2+1=321
+79000A12 NOC_cfg ( addr=121 , wdata=10, cfifo_wdata=0,cfifo_en=0 )   # dmaloop num    20/2
+7A007812 NOC_cfg ( addr=122 , wdata=120, cfifo_wdata=0,cfifo_en=0 )  # dmaloop Baddr
 06000017 noc_req (comd_type=3, bar=0 )
 08000017 noc_req (comd_type=4, bar=0 )
 00000119 MQ_NOP (bar=0, nop_cycle_num=1)

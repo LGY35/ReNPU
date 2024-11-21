@@ -6,202 +6,202 @@
 
 0000005B next_fetch_is_npu
 
-00000012 NOC_cfg (addr=0 , wdata=0 )     # 0 绝对寻址
-02000012 NOC_cfg (addr=1 , wdata=0 )     #
-04000012 NOC_cfg (addr=2 , wdata=0 )     # 0 多节点读合并关 当一起读的时候开，不一起读的时候关 ==============
-06000012 NOC_cfg (addr=3 , wdata=0 )     # 0 片外读取
-08000012 NOC_cfg (addr=4 , wdata=0 )     # 0 pingpang 关
-0A000012 NOC_cfg (addr=5 , wdata=0 )     # 目标节点
-0C000012 NOC_cfg (addr=6 , wdata=0 )     # ping基地址 ==============
-0E000012 NOC_cfg (addr=7 , wdata=0 )
-10000012 NOC_cfg (addr=8 , wdata=0 )     # gap0
-12000012 NOC_cfg (addr=9 , wdata=0 )     # gap1
-14000012 NOC_cfg (addr=10 , wdata=0 )    # gap2
-16000092 NOC_cfg (addr=11 , wdata=1 )    # gap3
-18000012 NOC_cfg (addr=12 , wdata=0 )    # lenth0
-1A000012 NOC_cfg (addr=13 , wdata=0 )    # lenth1
-1C000012 NOC_cfg (addr=14 , wdata=0)     # lenth2
-1E011F92 NOC_cfg (addr=15 , wdata=575)   # lenth3 取权重576个 ==============
-20000012 NOC_cfg (addr=16 , wdata=0)
-22011F92 NOC_cfg (addr=17 , wdata=575)   # ping length ==============
-24000012 NOC_cfg (addr=18 , wdata=0)     #
-26000012 NOC_cfg (addr=19 , wdata=0)     # 广播的范围 north_id, east_id, south_id, west_id centernode==============
-28000012 NOC_cfg (addr=20 , wdata=0)     # 同步的目标 ==============
-2A000012 NOC_cfg (addr=21 , wdata=0)     # weight ==============
-3A000012 NOC_cfg (addr=29 , wdata=0)     # loop disable ==============
-0C012012 NOC_cfg (addr=6 , wdata=576)    # ping基地址 取参数在weight的基础上加576==============
-1E002012 NOC_cfg (addr=15 , wdata=64)    # lenth3 取数据 ==============
-22002012 NOC_cfg (addr=17 , wdata=64)    # ping length ==============
-04000092 NOC_cfg (addr=2 , wdata=1 )     # 1 多节点读合并开
-0C000012 NOC_cfg (addr=6 , wdata=0 )     # ping基地址 第一部分激活直接用基地址==============
-0E002812 NOC_cfg (addr=7 , wdata=80 )    # 比上一个地址+80==============
-1E001392 NOC_cfg (addr=15 , wdata=39)   # lenth3 设置为单行要取的长度
-2202A792 NOC_cfg (addr=17 , wdata=1359  )  # ping length   34*40=1360
-2601CF12 NOC_cfg (addr=19 , wdata=926)  # 广播的范围 north_id, east_id, south_id, west_id centernode  1110 0111 1000
-28018012 NOC_cfg (addr=20 , wdata=768)   # 同步的目标 12bit中选取对应bit 0011 0000 0000
-2A000092 NOC_cfg (addr=21 , wdata=1)     # feature
-3A001392 NOC_cfg (addr=29 , wdata=39)     #  一行有：640*32/256 = 80；一次取40  十进制数80 40
-3C00A092 NOC_cfg (addr=30 , wdata=321)   # dmaloop gap # gap2整行，也就是160  然后最低位是enable为1，所以160*2+1=321
-3E000892 NOC_cfg (addr=31 , wdata=17)    # loop num 取多少行 34/2 = 17==============
-0C04B012 NOC_cfg (addr=6 , wdata= 2400)  # ping基地址 ============== 2720 - 160*2
-0E04D812 NOC_cfg (addr=7 , wdata= 2480)    # 比上一个地址+80==============
-22018F92 NOC_cfg (addr=17 , wdata=799 )  # ping length   20*40=800
-3E000512 NOC_cfg (addr=31 , wdata=10)    # loop num 取多少行 20/2 = 10==============
-0C073012 NOC_cfg (addr=6 , wdata= 3680)  # ping基地址 ============== 2560 + 1600-160*2 - 160
-0E075812 NOC_cfg (addr=7 , wdata= 3760)    # 比上一个地址+80==============
-0C09B012 NOC_cfg (addr=6 , wdata= 4960)  # ping基地址 ==============
-0E09D812 NOC_cfg (addr=7 , wdata= 5040)    # 比上一个地址+80==============
-0C0C3012 NOC_cfg (addr=6 , wdata= 6240)  # ping基地址 ==============
-0E0C5812 NOC_cfg (addr=7 , wdata= 6320)    # 比上一个地址+80==============
-0C0EB012 NOC_cfg (addr=6 , wdata= 7520)  # ping基地址 ==============
-0E0ED812 NOC_cfg (addr=7 , wdata= 7600)    # 比上一个地址+80==============
-3C000492 NOC_cfg (addr=30 , wdata=9)    # loop num 取多少行 18/2 = 9==============
+00000012 NOC_cfg ( addr=0 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 绝对寻址
+01000012 NOC_cfg ( addr=1 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     #
+02000012 NOC_cfg ( addr=2 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 多节点读合并关 当一起读的时候开，不一起读的时候关 ==============
+03000012 NOC_cfg ( addr=3 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 片外读取
+04000012 NOC_cfg ( addr=4 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 pingpang 关
+05000012 NOC_cfg ( addr=5 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 目标节点
+06000012 NOC_cfg ( addr=6 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 ==============
+07000012 NOC_cfg ( addr=7 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+08000012 NOC_cfg ( addr=8 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # gap0
+09000012 NOC_cfg ( addr=9 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # gap1
+0A000012 NOC_cfg ( addr=10 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # gap2
+0B000112 NOC_cfg ( addr=11 , wdata=1, cfifo_wdata=0,cfifo_en=0 )    # gap3
+0C000012 NOC_cfg ( addr=12 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # lenth0
+0D000012 NOC_cfg ( addr=13 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # lenth1
+0E000012 NOC_cfg ( addr=14 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # lenth2
+0F023F12 NOC_cfg ( addr=15 , wdata=575, cfifo_wdata=0,cfifo_en=0)   # lenth3 取权重576个 ==============
+10000012 NOC_cfg ( addr=16 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+11023F12 NOC_cfg ( addr=17 , wdata=575, cfifo_wdata=0,cfifo_en=0)   # ping length ==============
+12000012 NOC_cfg ( addr=18 , wdata=0, cfifo_wdata=0,cfifo_en=0)     #
+13000012 NOC_cfg ( addr=19 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # 广播的范围 north_id, east_id, south_id, west_id centernode==============
+14000012 NOC_cfg ( addr=20 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # 同步的目标 ==============
+15000012 NOC_cfg ( addr=21 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # weight ==============
+1D000012 NOC_cfg ( addr=29 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # loop disable ==============
+06024012 NOC_cfg ( addr=6 , wdata=576, cfifo_wdata=0,cfifo_en=0)    # ping基地址 取参数在weight的基础上加576==============
+0F004012 NOC_cfg ( addr=15 , wdata=64, cfifo_wdata=0,cfifo_en=0)    # lenth3 取数据 ==============
+11004012 NOC_cfg ( addr=17 , wdata=64, cfifo_wdata=0,cfifo_en=0)    # ping length ==============
+02000112 NOC_cfg ( addr=2 , wdata=1, cfifo_wdata=0,cfifo_en=0 )     # 1 多节点读合并开
+06000012 NOC_cfg ( addr=6 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 第一部分激活直接用基地址==============
+07005012 NOC_cfg ( addr=7 , wdata=80, cfifo_wdata=0,cfifo_en=0 )    # 比上一个地址+80==============
+0F002712 NOC_cfg ( addr=15 , wdata=39, cfifo_wdata=0,cfifo_en=0)   # lenth3 设置为单行要取的长度
+11054F12 NOC_cfg ( addr=17 , wdata=1359, cfifo_wdata=0,cfifo_en=0  )  # ping length   34*40=1360
+13039E12 NOC_cfg ( addr=19 , wdata=926, cfifo_wdata=0,cfifo_en=0)  # 广播的范围 north_id, east_id, south_id, west_id centernode  1110 0111 1000
+14030012 NOC_cfg ( addr=20 , wdata=768, cfifo_wdata=0,cfifo_en=0)   # 同步的目标 12bit中选取对应bit 0011 0000 0000
+15000112 NOC_cfg ( addr=21 , wdata=1, cfifo_wdata=0,cfifo_en=0)     # feature
+1D002712 NOC_cfg ( addr=29 , wdata=39, cfifo_wdata=0,cfifo_en=0)     #  一行有：640*32/256 = 80；一次取40  十进制数80 40
+1E014112 NOC_cfg ( addr=30 , wdata=321, cfifo_wdata=0,cfifo_en=0)   # dmaloop gap # gap2整行，也就是160  然后最低位是enable为1，所以160*2+1=321
+1F001112 NOC_cfg ( addr=31 , wdata=17, cfifo_wdata=0,cfifo_en=0)    # loop num 取多少行 34/2 = 17==============
+06096012 NOC_cfg ( addr=6 , wdata= 2400, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ============== 2720 - 160*2
+0709B012 NOC_cfg ( addr=7 , wdata= 2480, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+11031F12 NOC_cfg ( addr=17 , wdata=799 , cfifo_wdata=0,cfifo_en=0)  # ping length   20*40=800
+1F000A12 NOC_cfg ( addr=31 , wdata=10, cfifo_wdata=0,cfifo_en=0)    # loop num 取多少行 20/2 = 10==============
+060E6012 NOC_cfg ( addr=6 , wdata= 3680, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ============== 2560 + 1600-160*2 - 160
+070EB012 NOC_cfg ( addr=7 , wdata= 3760, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+06136012 NOC_cfg ( addr=6 , wdata= 4960, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ==============
+0713B012 NOC_cfg ( addr=7 , wdata= 5040, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+06186012 NOC_cfg ( addr=6 , wdata= 6240, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ==============
+0718B012 NOC_cfg ( addr=7 , wdata= 6320, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+061D6012 NOC_cfg ( addr=6 , wdata= 7520, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ==============
+071DB012 NOC_cfg ( addr=7 , wdata= 7600, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+1E000912 NOC_cfg ( addr=30 , wdata=9, cfifo_wdata=0,cfifo_en=0)    # loop num 取多少行 18/2 = 9==============
 08000017 noc_req (comd_type=4, bar=0)
-00000012 NOC_cfg (addr=0 , wdata=0 )     # 0 绝对寻址
-02000012 NOC_cfg (addr=1 , wdata=0 )     #
-04000012 NOC_cfg (addr=2 , wdata=0 )     # 1 多节点读合并开 当一起读的时候开，不一起读的时候关 ==============
-06000012 NOC_cfg (addr=3 , wdata=0 )     # 0 片外读取
-08000012 NOC_cfg (addr=4 , wdata=0 )     # 0 pingpang 关
-0A000012 NOC_cfg (addr=5 , wdata=0 )     # 目标节点
-0C000012 NOC_cfg (addr=6 , wdata=0 )     # ping基地址 ==============
-0E000012 NOC_cfg (addr=7 , wdata=0 )
-10000012 NOC_cfg (addr=8 , wdata=0 )     # gap0
-12000012 NOC_cfg (addr=9 , wdata=0 )     # gap1
-14000012 NOC_cfg (addr=10 , wdata=0 )    # gap2
-16000092 NOC_cfg (addr=11 , wdata=1 )    # gap3
-18000012 NOC_cfg (addr=12 , wdata=0 )    # lenth0
-1A000012 NOC_cfg (addr=13 , wdata=0 )    # lenth1
-1C000012 NOC_cfg (addr=14 , wdata=0)     # lenth2
-1E011F92 NOC_cfg (addr=15 , wdata=575)   # lenth3 取权重576个 ==============
-20000012 NOC_cfg (addr=16 , wdata=0)
-22011F92 NOC_cfg (addr=17 , wdata=575)   # ping length ==============
-24000012 NOC_cfg (addr=18 , wdata=0)     #
-26004A12 NOC_cfg (addr=19 , wdata=148)     # 广播的范围 north_id, east_id, south_id, west_id centernode  0000 1001 0100 ==============
-28002A92 NOC_cfg (addr=20 , wdata=85)     # 同步的目标 0000 0101 0101==============
-2A000012 NOC_cfg (addr=21 , wdata=0)     # weight ==============
-3A000012 NOC_cfg (addr=29 , wdata=0)     # loop disable ==============
-0C012012 NOC_cfg (addr=6 , wdata=576 )   # ping基地址 取参数在weight的基础上加576==============
-1E002012 NOC_cfg (addr=15 , wdata=64)    # lenth3 取数据 ==============
-22002012 NOC_cfg (addr=17 , wdata=64)    # ping length ==============
-04000012 NOC_cfg (addr=2 , wdata=0 )     # 0 多节点读合并关
-0C000012 NOC_cfg (addr=6 , wdata=0 )     # ping基地址 第一部分激活直接用基地址==============
-0E002812 NOC_cfg (addr=7 , wdata=80 )    # 比上一个地址+80==============
-1E001392 NOC_cfg (addr=15 , wdata=39)   # lenth3 设置为单行要取的长度
-2202A792 NOC_cfg (addr=17 , wdata=1359  )  # ping length   34*40=1360
-26000012 NOC_cfg (addr=19 , wdata=0)     # 广播的范围 north_id, east_id, south_id, west_id centernode
-28000012 NOC_cfg (addr=20 , wdata=0)     # 同步的目标 12bit中选取对应bit
-2A000092 NOC_cfg (addr=21 , wdata=1)     # feature
-3A001392 NOC_cfg (addr=29 , wdata=39)     #  一行有：640*32/256 = 80；一次取40  十进制数80 40
-3C00A092 NOC_cfg (addr=30 , wdata=321)   # dmaloop gap # gap2整行，也就是160  然后最低位是enable为1，所以160*2+1=321
-3E000892 NOC_cfg (addr=31 , wdata=17)    # loop num 取多少行 34/2 = 17==============
-0C04B012 NOC_cfg (addr=6 , wdata= 2400)  # ping基地址 ============== 2720 - 160*2
-0E04D812 NOC_cfg (addr=7 , wdata= 2480)    # 比上一个地址+80==============
-22018F92 NOC_cfg (addr=17 , wdata=799 )  # ping length   20*40=800
-3E000512 NOC_cfg (addr=31 , wdata=10)    # loop num 取多少行 20/2 = 10==============
-0C073012 NOC_cfg (addr=6 , wdata= 3680)  # ping基地址 ============== 2560 + 1600-160*2 - 160
-0E075812 NOC_cfg (addr=7 , wdata= 3760)    # 比上一个地址+80==============
-0C09B012 NOC_cfg (addr=6 , wdata= 4960)  # ping基地址 ==============
-0E09D812 NOC_cfg (addr=7 , wdata= 5040)    # 比上一个地址+80==============
-0C0C3012 NOC_cfg (addr=6 , wdata= 6240)  # ping基地址 ==============
-0E0C5812 NOC_cfg (addr=7 , wdata= 6320)    # 比上一个地址+80==============
-0C0EB012 NOC_cfg (addr=6 , wdata= 7520)  # ping基地址 ==============
-0E0ED812 NOC_cfg (addr=7 , wdata= 7600)    # 比上一个地址+80==============
-3C000492 NOC_cfg (addr=30 , wdata=9)    # loop num 取多少行 18/2 = 9==============
+00000012 NOC_cfg ( addr=0 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 绝对寻址
+01000012 NOC_cfg ( addr=1 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     #
+02000012 NOC_cfg ( addr=2 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 1 多节点读合并开 当一起读的时候开，不一起读的时候关 ==============
+03000012 NOC_cfg ( addr=3 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 片外读取
+04000012 NOC_cfg ( addr=4 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 pingpang 关
+05000012 NOC_cfg ( addr=5 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 目标节点
+06000012 NOC_cfg ( addr=6 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 ==============
+07000012 NOC_cfg ( addr=7 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+08000012 NOC_cfg ( addr=8 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # gap0
+09000012 NOC_cfg ( addr=9 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # gap1
+0A000012 NOC_cfg ( addr=10 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # gap2
+0B000112 NOC_cfg ( addr=11 , wdata=1, cfifo_wdata=0,cfifo_en=0 )    # gap3
+0C000012 NOC_cfg ( addr=12 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # lenth0
+0D000012 NOC_cfg ( addr=13 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # lenth1
+0E000012 NOC_cfg ( addr=14 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # lenth2
+0F023F12 NOC_cfg ( addr=15 , wdata=575, cfifo_wdata=0,cfifo_en=0)   # lenth3 取权重576个 ==============
+10000012 NOC_cfg ( addr=16 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+11023F12 NOC_cfg ( addr=17 , wdata=575, cfifo_wdata=0,cfifo_en=0)   # ping length ==============
+12000012 NOC_cfg ( addr=18 , wdata=0, cfifo_wdata=0,cfifo_en=0)     #
+13009412 NOC_cfg ( addr=19 , wdata=148, cfifo_wdata=0,cfifo_en=0)     # 广播的范围 north_id, east_id, south_id, west_id centernode  0000 1001 0100 ==============
+14005512 NOC_cfg ( addr=20 , wdata=85, cfifo_wdata=0,cfifo_en=0)     # 同步的目标 0000 0101 0101==============
+15000012 NOC_cfg ( addr=21 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # weight ==============
+1D000012 NOC_cfg ( addr=29 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # loop disable ==============
+06024012 NOC_cfg ( addr=6 , wdata=576, cfifo_wdata=0,cfifo_en=0 )   # ping基地址 取参数在weight的基础上加576==============
+0F004012 NOC_cfg ( addr=15 , wdata=64, cfifo_wdata=0,cfifo_en=0)    # lenth3 取数据 ==============
+11004012 NOC_cfg ( addr=17 , wdata=64, cfifo_wdata=0,cfifo_en=0)    # ping length ==============
+02000012 NOC_cfg ( addr=2 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 多节点读合并关
+06000012 NOC_cfg ( addr=6 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 第一部分激活直接用基地址==============
+07005012 NOC_cfg ( addr=7 , wdata=80, cfifo_wdata=0,cfifo_en=0 )    # 比上一个地址+80==============
+0F002712 NOC_cfg ( addr=15 , wdata=39, cfifo_wdata=0,cfifo_en=0)   # lenth3 设置为单行要取的长度
+11054F12 NOC_cfg ( addr=17 , wdata=1359, cfifo_wdata=0,cfifo_en=0  )  # ping length   34*40=1360
+13000012 NOC_cfg ( addr=19 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # 广播的范围 north_id, east_id, south_id, west_id centernode
+14000012 NOC_cfg ( addr=20 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # 同步的目标 12bit中选取对应bit
+15000112 NOC_cfg ( addr=21 , wdata=1, cfifo_wdata=0,cfifo_en=0)     # feature
+1D002712 NOC_cfg ( addr=29 , wdata=39, cfifo_wdata=0,cfifo_en=0)     #  一行有：640*32/256 = 80；一次取40  十进制数80 40
+1E014112 NOC_cfg ( addr=30 , wdata=321, cfifo_wdata=0,cfifo_en=0)   # dmaloop gap # gap2整行，也就是160  然后最低位是enable为1，所以160*2+1=321
+1F001112 NOC_cfg ( addr=31 , wdata=17, cfifo_wdata=0,cfifo_en=0)    # loop num 取多少行 34/2 = 17==============
+06096012 NOC_cfg ( addr=6 , wdata= 2400, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ============== 2720 - 160*2
+0709B012 NOC_cfg ( addr=7 , wdata= 2480, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+11031F12 NOC_cfg ( addr=17 , wdata=799 , cfifo_wdata=0,cfifo_en=0)  # ping length   20*40=800
+1F000A12 NOC_cfg ( addr=31 , wdata=10, cfifo_wdata=0,cfifo_en=0)    # loop num 取多少行 20/2 = 10==============
+060E6012 NOC_cfg ( addr=6 , wdata= 3680, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ============== 2560 + 1600-160*2 - 160
+070EB012 NOC_cfg ( addr=7 , wdata= 3760, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+06136012 NOC_cfg ( addr=6 , wdata= 4960, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ==============
+0713B012 NOC_cfg ( addr=7 , wdata= 5040, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+06186012 NOC_cfg ( addr=6 , wdata= 6240, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ==============
+0718B012 NOC_cfg ( addr=7 , wdata= 6320, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+061D6012 NOC_cfg ( addr=6 , wdata= 7520, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ==============
+071DB012 NOC_cfg ( addr=7 , wdata= 7600, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+1E000912 NOC_cfg ( addr=30 , wdata=9, cfifo_wdata=0,cfifo_en=0)    # loop num 取多少行 18/2 = 9==============
 08000017 noc_req (comd_type=4, bar=0)
-00000012 NOC_cfg (addr=0 , wdata=0 )     # 0 绝对寻址
-02000012 NOC_cfg (addr=1 , wdata=0 )     #
-04000012 NOC_cfg (addr=2 , wdata=0 )     # 1 多节点读合并开 当一起读的时候开，不一起读的时候关 ==============
-06000012 NOC_cfg (addr=3 , wdata=0 )     # 0 片外读取
-08000012 NOC_cfg (addr=4 , wdata=0 )     # 0 pingpang 关
-0A000012 NOC_cfg (addr=5 , wdata=0 )     # 目标节点
-0C000012 NOC_cfg (addr=6 , wdata=0 )     # ping基地址 ==============
-0E000012 NOC_cfg (addr=7 , wdata=0 )
-10000012 NOC_cfg (addr=8 , wdata=0 )     # gap0
-12000012 NOC_cfg (addr=9 , wdata=0 )     # gap1
-14000012 NOC_cfg (addr=10 , wdata=0 )    # gap2
-16000092 NOC_cfg (addr=11 , wdata=1 )    # gap3
-18000012 NOC_cfg (addr=12 , wdata=0 )    # lenth0
-1A000012 NOC_cfg (addr=13 , wdata=0 )    # lenth1
-1C000012 NOC_cfg (addr=14 , wdata=0)     # lenth2
-1E011F92 NOC_cfg (addr=15 , wdata=575)   # lenth3 取权重576个 ==============
-20000012 NOC_cfg (addr=16 , wdata=0)
-22011F92 NOC_cfg (addr=17 , wdata=575)   # ping length ==============
-24000012 NOC_cfg (addr=18 , wdata=0)     #
-2602EB92 NOC_cfg (addr=19 , wdata=1495)     # 广播的范围 north_id, east_id, south_id, west_id centernode  0101 1101 0111 ==============
-28005512 NOC_cfg (addr=20 , wdata=170)     # 同步的目标 0000 1010 1010==============
-2A000012 NOC_cfg (addr=21 , wdata=0)     # weight ==============
-3A000012 NOC_cfg (addr=29 , wdata=0)     # loop disable ==============
-0C012012 NOC_cfg (addr=6 , wdata=576 )   # ping基地址 取参数在weight的基础上加576==============
-1E002012 NOC_cfg (addr=15 , wdata=64)    # lenth3 取数据 ==============
-22002012 NOC_cfg (addr=17 , wdata=64)    # ping length ==============
-04000012 NOC_cfg (addr=2 , wdata=0 )     # 0 多节点读合并关
-0C000012 NOC_cfg (addr=6 , wdata=0 )     # ping基地址 第一部分激活直接用基地址==============
-1E001392 NOC_cfg (addr=15 , wdata=39)   # lenth3 设置为单行要取的长度
-2202A792 NOC_cfg (addr=17 , wdata=1359  )  # ping length   34*40=1360
-26000012 NOC_cfg (addr=19 , wdata=0)     # 广播的范围 north_id, east_id, south_id, west_id centernode
-28000012 NOC_cfg (addr=20 , wdata=0)   # 同步的目标 12bit中选取对应bit
-2A000092 NOC_cfg (addr=21 , wdata=1)     # feature
-3A001392 NOC_cfg (addr=29 , wdata=39)     #  一行有：640*32/256 = 80；一次取40  十进制数80 40
-3C00A092 NOC_cfg (addr=30 , wdata=321)   # dmaloop gap # gap2整行，也就是160  然后最低位是enable为1，所以160*2+1=321
-3E000892 NOC_cfg (addr=31 , wdata=17)    # loop num 取多少行 34/2 = 17==============
-0C04B012 NOC_cfg (addr=6 , wdata= 2400)  # ping基地址 ============== 2720 - 160*2
-0E04D812 NOC_cfg (addr=7 , wdata= 2480)    # 比上一个地址+80==============
-22018F92 NOC_cfg (addr=17 , wdata=799 )  # ping length   20*40=800
-3E000512 NOC_cfg (addr=31 , wdata=10)    # loop num 取多少行 20/2 = 10==============
-0C073012 NOC_cfg (addr=6 , wdata= 3680)  # ping基地址 ============== 2560 + 1600-160*2 - 160
-0E075812 NOC_cfg (addr=7 , wdata= 3760)    # 比上一个地址+80==============
-0C09B012 NOC_cfg (addr=6 , wdata= 4960)  # ping基地址 ==============
-0E09D812 NOC_cfg (addr=7 , wdata= 5040)    # 比上一个地址+80==============
-0C0C3012 NOC_cfg (addr=6 , wdata= 6240)  # ping基地址 ==============
-0E0C5812 NOC_cfg (addr=7 , wdata= 6320)    # 比上一个地址+80==============
-0C0EB012 NOC_cfg (addr=6 , wdata= 7520)  # ping基地址 ==============
-0E0ED812 NOC_cfg (addr=7 , wdata= 7600)    # 比上一个地址+80==============
-3C000492 NOC_cfg (addr=30 , wdata=9)    # loop num 取多少行 18/2 = 9==============
+00000012 NOC_cfg ( addr=0 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 绝对寻址
+01000012 NOC_cfg ( addr=1 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     #
+02000012 NOC_cfg ( addr=2 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 1 多节点读合并开 当一起读的时候开，不一起读的时候关 ==============
+03000012 NOC_cfg ( addr=3 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 片外读取
+04000012 NOC_cfg ( addr=4 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 pingpang 关
+05000012 NOC_cfg ( addr=5 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 目标节点
+06000012 NOC_cfg ( addr=6 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 ==============
+07000012 NOC_cfg ( addr=7 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+08000012 NOC_cfg ( addr=8 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # gap0
+09000012 NOC_cfg ( addr=9 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # gap1
+0A000012 NOC_cfg ( addr=10 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # gap2
+0B000112 NOC_cfg ( addr=11 , wdata=1, cfifo_wdata=0,cfifo_en=0 )    # gap3
+0C000012 NOC_cfg ( addr=12 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # lenth0
+0D000012 NOC_cfg ( addr=13 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # lenth1
+0E000012 NOC_cfg ( addr=14 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # lenth2
+0F023F12 NOC_cfg ( addr=15 , wdata=575, cfifo_wdata=0,cfifo_en=0)   # lenth3 取权重576个 ==============
+10000012 NOC_cfg ( addr=16 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+11023F12 NOC_cfg ( addr=17 , wdata=575, cfifo_wdata=0,cfifo_en=0)   # ping length ==============
+12000012 NOC_cfg ( addr=18 , wdata=0, cfifo_wdata=0,cfifo_en=0)     #
+1305D712 NOC_cfg ( addr=19 , wdata=1495, cfifo_wdata=0,cfifo_en=0)     # 广播的范围 north_id, east_id, south_id, west_id centernode  0101 1101 0111 ==============
+1400AA12 NOC_cfg ( addr=20 , wdata=170, cfifo_wdata=0,cfifo_en=0)     # 同步的目标 0000 1010 1010==============
+15000012 NOC_cfg ( addr=21 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # weight ==============
+1D000012 NOC_cfg ( addr=29 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # loop disable ==============
+06024012 NOC_cfg ( addr=6 , wdata=576, cfifo_wdata=0,cfifo_en=0 )   # ping基地址 取参数在weight的基础上加576==============
+0F004012 NOC_cfg ( addr=15 , wdata=64, cfifo_wdata=0,cfifo_en=0)    # lenth3 取数据 ==============
+11004012 NOC_cfg ( addr=17 , wdata=64, cfifo_wdata=0,cfifo_en=0)    # ping length ==============
+02000012 NOC_cfg ( addr=2 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 多节点读合并关
+06000012 NOC_cfg ( addr=6 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 第一部分激活直接用基地址==============
+0F002712 NOC_cfg ( addr=15 , wdata=39, cfifo_wdata=0,cfifo_en=0)   # lenth3 设置为单行要取的长度
+11054F12 NOC_cfg ( addr=17 , wdata=1359, cfifo_wdata=0,cfifo_en=0  )  # ping length   34*40=1360
+13000012 NOC_cfg ( addr=19 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # 广播的范围 north_id, east_id, south_id, west_id centernode
+14000012 NOC_cfg ( addr=20 , wdata=0, cfifo_wdata=0,cfifo_en=0)   # 同步的目标 12bit中选取对应bit
+15000112 NOC_cfg ( addr=21 , wdata=1, cfifo_wdata=0,cfifo_en=0)     # feature
+1D002712 NOC_cfg ( addr=29 , wdata=39, cfifo_wdata=0,cfifo_en=0)     #  一行有：640*32/256 = 80；一次取40  十进制数80 40
+1E014112 NOC_cfg ( addr=30 , wdata=321, cfifo_wdata=0,cfifo_en=0)   # dmaloop gap # gap2整行，也就是160  然后最低位是enable为1，所以160*2+1=321
+1F001112 NOC_cfg ( addr=31 , wdata=17, cfifo_wdata=0,cfifo_en=0)    # loop num 取多少行 34/2 = 17==============
+06096012 NOC_cfg (addr=6 , wdata= 2400, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ============== 2720 - 160*2
+0709B012 NOC_cfg (addr=7 , wdata= 2480, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+11031F12 NOC_cfg (addr=17 , wdata=799 , cfifo_wdata=0,cfifo_en=0)  # ping length   20*40=800
+1F000A12 NOC_cfg (addr=31 , wdata=10, cfifo_wdata=0,cfifo_en=0)    # loop num 取多少行 20/2 = 10==============
+060E6012 NOC_cfg (addr=6 , wdata= 3680, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ============== 2560 + 1600-160*2 - 160
+070EB012 NOC_cfg (addr=7 , wdata= 3760, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+06136012 NOC_cfg (addr=6 , wdata= 4960, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ==============
+0713B012 NOC_cfg (addr=7 , wdata= 5040, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+06186012 NOC_cfg (addr=6 , wdata= 6240, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ==============
+0718B012 NOC_cfg (addr=7 , wdata= 6320, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+061D6012 NOC_cfg (addr=6 , wdata= 7520, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ==============
+071DB012 NOC_cfg (addr=7 , wdata= 7600, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+1E000912 NOC_cfg (addr=30 , wdata=9  , cfifo_wdata=0,cfifo_en=0)    # loop num 取多少行 18/2 = 9==============
 08000017 noc_req (comd_type=4, bar=0)
-00000012 NOC_cfg (addr=0 , wdata=0 )     # 0 绝对寻址
-02000012 NOC_cfg (addr=1 , wdata=0 )     #
-04000012 NOC_cfg (addr=2 , wdata=0 )     # 0 多节点读合并关 当一起读的时候开，不一起读的时候关 ==============
-06000012 NOC_cfg (addr=3 , wdata=0 )     # 0 片外读取
-08000012 NOC_cfg (addr=4 , wdata=0 )     # 0 pingpang 关
-0A000012 NOC_cfg (addr=5 , wdata=0 )     # 目标节点
-0C000012 NOC_cfg (addr=6 , wdata=0 )     # ping基地址 ==============
-0E000012 NOC_cfg (addr=7 , wdata=0 )
-10000012 NOC_cfg (addr=8 , wdata=0 )     # gap0
-12000012 NOC_cfg (addr=9 , wdata=0 )     # gap1
-14000012 NOC_cfg (addr=10 , wdata=0 )    # gap2
-16000092 NOC_cfg (addr=11 , wdata=1 )    # gap3
-18000012 NOC_cfg (addr=12 , wdata=0 )    # lenth0
-1A000012 NOC_cfg (addr=13 , wdata=0 )    # lenth1
-1C000012 NOC_cfg (addr=14 , wdata=0)     # lenth2
-1E011F92 NOC_cfg (addr=15 , wdata=575)   # lenth3 取权重576个 ==============
-20000012 NOC_cfg (addr=16 , wdata=0)
-22011F92 NOC_cfg (addr=17 , wdata=575)   # ping length ==============
-24000012 NOC_cfg (addr=18 , wdata=0)     #
-26004D92 NOC_cfg (addr=19 , wdata=155)     # 广播的范围 north_id, east_id, south_id, west_id centernode  0000 1001 1011 ==============
-28060012 NOC_cfg (addr=20 , wdata=3072)     # 同步的目标 1100 0000 0000==============
-2A000012 NOC_cfg (addr=21 , wdata=0)     # weight ==============
-3A000012 NOC_cfg (addr=29 , wdata=0)     # loop disable ==============
-0C012012 NOC_cfg (addr=6 , wdata=576 )   # ping基地址 取参数在weight的基础上加576==============
-1E002012 NOC_cfg (addr=15 , wdata=64)    # lenth3 取数据 ==============
-22002012 NOC_cfg (addr=17 , wdata=64)    # ping length ==============
-04000092 NOC_cfg (addr=2 , wdata=1 )     # 1 多节点读合并开
-0C000012 NOC_cfg (addr=6 , wdata=0 )     # ping基地址 第一部分激活直接用基地址==============
-0E002812 NOC_cfg (addr=7 , wdata=80 )    # 比上一个地址+80==============
-1E001392 NOC_cfg (addr=15 , wdata=39)   # lenth3 设置为单行要取的长度
-2202A792 NOC_cfg (addr=17 , wdata=1359  )  # ping length   34*40=1360
-26073C12 NOC_cfg (addr=19 , wdata=3704)  # 广播的范围 north_id, east_id, south_id, west_id centernode  1110 0111 1000
-28018012 NOC_cfg (addr=20 , wdata=768)   # 同步的目标 12bit中选取对应bit 0011 0000 0000
-2A000092 NOC_cfg (addr=21 , wdata=1)     # feature
-3A001392 NOC_cfg (addr=29 , wdata=39)     #  一行有：640*32/256 = 80；一次取40  十进制数80 40
-3C00A092 NOC_cfg (addr=30 , wdata=321)   # dmaloop gap # gap2整行，也就是160  然后最低位是enable为1，所以160*2+1=321
-3E000892 NOC_cfg (addr=31 , wdata=17)    # loop num 取多少行 34/2 = 17==============
-0C04B012 NOC_cfg (addr=6 , wdata= 2400)  # ping基地址 ============== 2720 - 160*2
-0E04D812 NOC_cfg (addr=7 , wdata= 2480)    # 比上一个地址+80==============
-22018F92 NOC_cfg (addr=17 , wdata=799 )  # ping length   20*40=800
-3E000512 NOC_cfg (addr=31 , wdata=10)    # loop num 取多少行 20/2 = 10==============
-0C073012 NOC_cfg (addr=6 , wdata= 3680)  # ping基地址 ============== 2560 + 1600-160*2 - 160
-0E075812 NOC_cfg (addr=7 , wdata= 3760)    # 比上一个地址+80==============
-0C09B012 NOC_cfg (addr=6 , wdata= 4960)  # ping基地址 ==============
-0E09D812 NOC_cfg (addr=7 , wdata= 5040)    # 比上一个地址+80==============
+00000012 NOC_cfg (addr=0 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 绝对寻址
+01000012 NOC_cfg (addr=1 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     #
+02000012 NOC_cfg (addr=2 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 多节点读合并关 当一起读的时候开，不一起读的时候关 ==============
+03000012 NOC_cfg (addr=3 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 片外读取
+04000012 NOC_cfg (addr=4 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 pingpang 关
+05000012 NOC_cfg (addr=5 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 目标节点
+06000012 NOC_cfg (addr=6 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 ==============
+07000012 NOC_cfg (addr=7 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+08000012 NOC_cfg (addr=8 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # gap0
+09000012 NOC_cfg (addr=9 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # gap1
+0A000012 NOC_cfg (addr=10 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # gap2
+0B000112 NOC_cfg (addr=11 , wdata=1, cfifo_wdata=0,cfifo_en=0 )    # gap3
+0C000012 NOC_cfg (addr=12 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # lenth0
+0D000012 NOC_cfg (addr=13 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # lenth1
+0E000012 NOC_cfg (addr=14 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # lenth2
+0F023F12 NOC_cfg (addr=15 , wdata=575, cfifo_wdata=0,cfifo_en=0)   # lenth3 取权重576个 ==============
+10000012 NOC_cfg (addr=16 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+11023F12 NOC_cfg (addr=17 , wdata=575, cfifo_wdata=0,cfifo_en=0)   # ping length ==============
+12000012 NOC_cfg (addr=18 , wdata=0, cfifo_wdata=0,cfifo_en=0)     #
+13009B12 NOC_cfg (addr=19 , wdata=155, cfifo_wdata=0,cfifo_en=0)     # 广播的范围 north_id, east_id, south_id, west_id centernode  0000 1001 1011 ==============
+140C0012 NOC_cfg (addr=20 , wdata=3072, cfifo_wdata=0,cfifo_en=0)     # 同步的目标 1100 0000 0000==============
+15000012 NOC_cfg (addr=21 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # weight ==============
+1D000012 NOC_cfg (addr=29 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # loop disable ==============
+06024012 NOC_cfg (addr=6 , wdata=576, cfifo_wdata=0,cfifo_en=0 )   # ping基地址 取参数在weight的基础上加576==============
+0F004012 NOC_cfg (addr=15 , wdata=64, cfifo_wdata=0,cfifo_en=0)    # lenth3 取数据 ==============
+11004012 NOC_cfg (addr=17 , wdata=64, cfifo_wdata=0,cfifo_en=0)    # ping length ==============
+02000112 NOC_cfg (addr=2 , wdata=1, cfifo_wdata=0,cfifo_en=0 )     # 1 多节点读合并开
+06000012 NOC_cfg (addr=6 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 第一部分激活直接用基地址==============
+07005012 NOC_cfg (addr=7 , wdata=80, cfifo_wdata=0,cfifo_en=0 )    # 比上一个地址+80==============
+0F002712 NOC_cfg (addr=15 , wdata=39, cfifo_wdata=0,cfifo_en=0)   # lenth3 设置为单行要取的长度
+11054F12 NOC_cfg (addr=17 , wdata=1359, cfifo_wdata=0,cfifo_en=0  )  # ping length   34*40=1360
+130E7812 NOC_cfg (addr=19 , wdata=3704, cfifo_wdata=0,cfifo_en=0)  # 广播的范围 north_id, east_id, south_id, west_id centernode  1110 0111 1000
+14030012 NOC_cfg (addr=20 , wdata=768, cfifo_wdata=0,cfifo_en=0)   # 同步的目标 12bit中选取对应bit 0011 0000 0000
+15000112 NOC_cfg (addr=21 , wdata=1, cfifo_wdata=0,cfifo_en=0)     # feature
+1D002712 NOC_cfg (addr=29 , wdata=39, cfifo_wdata=0,cfifo_en=0)     #  一行有：640*32/256 = 80；一次取40  十进制数80 40
+1E014112 NOC_cfg (addr=30 , wdata=321, cfifo_wdata=0,cfifo_en=0)   # dmaloop gap # gap2整行，也就是160  然后最低位是enable为1，所以160*2+1=321
+1F001112 NOC_cfg (addr=31 , wdata=17, cfifo_wdata=0,cfifo_en=0)    # loop num 取多少行 34/2 = 17==============
+06096012 NOC_cfg (addr=6 , wdata= 2400, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ============== 2720 - 160*2
+0709B012 NOC_cfg (addr=7 , wdata= 2480, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+11031F12 NOC_cfg (addr=17 , wdata=799 , cfifo_wdata=0,cfifo_en=0)  # ping length   20*40=800
+1F000A12 NOC_cfg (addr=31 , wdata=10, cfifo_wdata=0,cfifo_en=0)    # loop num 取多少行 20/2 = 10==============
+060E6012 NOC_cfg (addr=6 , wdata= 3680, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ============== 2560 + 1600-160*2 - 160
+070EB012 NOC_cfg (addr=7 , wdata= 3760, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
+06136012 NOC_cfg (addr=6 , wdata= 4960, cfifo_wdata=0,cfifo_en=0)  # ping基地址 ==============
+0713B012 NOC_cfg (addr=7 , wdata= 5040, cfifo_wdata=0,cfifo_en=0)    # 比上一个地址+80==============
 08000017 noc_req (comd_type=4, bar=0)
 
