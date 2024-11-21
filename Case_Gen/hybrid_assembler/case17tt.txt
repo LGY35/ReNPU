@@ -1,2 +1,0 @@
-F4003C12 NOC_cfg (addr=122 , wdata=120 )  # dmaloop Baddr
-
