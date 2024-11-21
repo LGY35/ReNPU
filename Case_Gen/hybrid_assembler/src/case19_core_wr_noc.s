@@ -329,16 +329,57 @@ VQ_alu_csrw(csr_addr=10,csr_wdata=0b100001111)
 VQ_alu_csrw(csr_addr=11,csr_wdata=0b1)
 VQ_alu_csrw(csr_addr=12,csr_wdata=0b0)
 
-NOC_cfg (addr=34,wdata=0,cfifo_wdata=0,cfifo_en=0)           
-NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            
-NOC_cfg (addr=37,wdata=0,cfifo_wdata=0,cfifo_en=0)           
-NOC_cfg (addr=42,wdata=1,cfifo_wdata=0,cfifo_en=0)           
-NOC_cfg (addr=46,wdata=14,cfifo_wdata=0,cfifo_en=0)             
-NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)           
-NOC_cfg (addr=48,wdata=14,cfifo_wdata=0,cfifo_en=0)            
+# 一共15个数   
+# 5*3
+NOC_cfg (addr=32,wdata=0,cfifo_wdata=0,cfifo_en=0)  #绝对寻址
+NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)  #
+NOC_cfg (addr=34,wdata=0,cfifo_wdata=0,cfifo_en=0)  # 1片上         
+NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)  # pingpang关          
+NOC_cfg (addr=37,wdata=0,cfifo_wdata=0,cfifo_en=0)  # ping基地址         
+NOC_cfg (addr=39,wdata=0,cfifo_wdata=0,cfifo_en=0)  # gap0        
+NOC_cfg (addr=40,wdata=0,cfifo_wdata=0,cfifo_en=0)  # gap1        
+NOC_cfg (addr=41,wdata=1,cfifo_wdata=0,cfifo_en=0)  # gap2        
+NOC_cfg (addr=42,wdata=1,cfifo_wdata=0,cfifo_en=0)  # gap3        
+NOC_cfg (addr=43,wdata=0,cfifo_wdata=0,cfifo_en=0)  # length0            
+NOC_cfg (addr=44,wdata=0,cfifo_wdata=0,cfifo_en=0)  # length1            
+NOC_cfg (addr=45,wdata=4,cfifo_wdata=0,cfifo_en=0)  # length2  5          
+NOC_cfg (addr=46,wdata=2,cfifo_wdata=0,cfifo_en=0)  # length3  3          
+NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)  # pingpangnum  = 0        
+NOC_cfg (addr=48,wdata=14,cfifo_wdata=0,cfifo_en=0) # ping length           
 npu_store(cfifo_en=0,bar=0)
 VQ_scache_rd_en(addr=256,size=byte,sign_ext=1,rd_cycle_num=15,wait_type=1,cfifo_en=1,bar=0)
 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) 
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+# dma_rd
+NOC_cfg (addr=64 , wdata=0 , cfifo_wdata=0,cfifo_en=0)  # 直接寻址
+NOC_cfg (addr=65 , wdata=0 , cfifo_wdata=0,cfifo_en=0)  # 
+NOC_cfg (addr=66 , wdata=0 , cfifo_wdata=0,cfifo_en=0)  # 0 片外
+NOC_cfg (addr=67 , wdata=0 , cfifo_wdata=0,cfifo_en=0)
+NOC_cfg (addr=68 , wdata=0 , cfifo_wdata=0,cfifo_en=0)  # 本地ram ping基地址
+NOC_cfg (addr=69 , wdata=0 , cfifo_wdata=0,cfifo_en=0)
+NOC_cfg (addr=70 , wdata=0 , cfifo_wdata=0,cfifo_en=0)  # noc ping基地址=0，用idma的地址
+NOC_cfg (addr=71 , wdata=0 , cfifo_wdata=0,cfifo_en=0)
+NOC_cfg (addr=72 , wdata=0 , cfifo_wdata=0,cfifo_en=0)
+NOC_cfg (addr=73 , wdata=0 , cfifo_wdata=0,cfifo_en=0)
+NOC_cfg (addr=74 , wdata=0 , cfifo_wdata=0,cfifo_en=0)
+NOC_cfg (addr=75 , wdata=1 , cfifo_wdata=0,cfifo_en=0)  # gap3
+NOC_cfg (addr=76 , wdata=0 , cfifo_wdata=0,cfifo_en=0)
+NOC_cfg (addr=77 , wdata=0 , cfifo_wdata=0,cfifo_en=0)
+NOC_cfg (addr=78 , wdata=0 , cfifo_wdata=0,cfifo_en=0)
+NOC_cfg (addr=79 , wdata=14, cfifo_wdata=0,cfifo_en=0)  # length3
+NOC_cfg (addr=80 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+NOC_cfg (addr=81 , wdata=17, cfifo_wdata=0,cfifo_en=0)  # ping length3
+NOC_cfg (addr=82 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+NOC_cfg (addr=83 , wdata=0 , cfifo_wdata=0,cfifo_en=0)  # 0weight
+noc_req (comd_type=2, bar=0)
+noc_req (comd_type=4, bar=0)
 MQ_NOP(bar=0,nop_cycle_num=0)
 MQ_NOP(bar=0,nop_cycle_num=0)
 MQ_NOP(bar=0,nop_cycle_num=0)
