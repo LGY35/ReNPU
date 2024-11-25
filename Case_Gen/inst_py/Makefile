@@ -63,6 +63,7 @@ hex_gen:
 	python3 hex_gen.py -i ./out/case18_idma.txt ./out/case18_cr_dma_node_jump_noc.txt ./input_data0.txt 						-o ./hex_gen/case18_merge_inst.txt ./hex_gen/case18_out_hex.txt
 	python3 hex_gen.py -i ./out/case19_idma.txt ./out/case19_core_wr_noc.txt    	 ./input_data0.txt 							-o ./hex_gen/case19_merge_inst.txt ./hex_gen/case19_out_hex.txt
 	python3 hex_gen.py -i ./out/case99_idma.txt ./out/case99_noc.txt    		 	 ./input_data0.txt 							-o ./hex_gen/case99_merge_inst.txt ./hex_gen/case99_out_hex.txt
+	python3 hex_gen.py -i ./out/case991_idma.txt ./out/case991_conv_bottleneck_noccore_4.1_ins_noc.txt    		 	 ./input_data0.txt 							-o ./hex_gen/case991_merge_inst.txt ./hex_gen/case991_out_hex.txt
 
 clean:
 	rm -rf $(HEX_GEN_DIR)
