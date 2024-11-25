@@ -1,0 +1,622 @@
+asm volatile (
+        4401 c.li x8, 0
+    02440413 addi x8, x8, 36
+        0436 c.slli x8, 13
+    0080105B storec x8, MQ; 
+    0000005B next_fetch_is_npu
+    40012222 CVEC_cfg2    (cal_mode=rgb,wreg_wr_cnt=0,fprec=INT8,wprec=INT8,v_tq=0)
+    00028610 MQ_cfg0      (gpu_mode=0,para_mode=0,tcache_mode=32CH_SFIFO,one_ram_base_addr=40,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+    40000090 MQ_cfg1      (sub_gap=1, sys_gap_ext=0b00000)
+    80837591 npu_load     (we=wr,l1b_mode=norm,tcache_bank_num=0,sys_gap=221,sub_gap=1,sub_len=36,addr=0,sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight 6*6*16*8bit/128bit=36
+    
+    00060040 cub_alu_insn_fill(addr=0,num=24) //post-processing
+    240020CD cub.lw.l1b x1, 576(x0)  //fill start
+    2440214D cub.lw.l1b x2, 580(x0)
+    248021CD cub.lw.l1b x3, 584(x0)
+    24C0224D cub.lw.l1b x4, 588(x0)
+    250022CD cub.lw.l1b x5, 592(x0)
+    2540234D cub.lw.l1b x6, 596(x0)
+    258023CD cub.lw.l1b x7, 600(x0)
+    25C0244D cub.lw.l1b x8, 604(x0)
+    260024CD cub.lw.l1b x9, 608(x0)
+    2640254D cub.lw.l1b x10, 612(x0)
+    268025CD cub.lw.l1b x11, 616(x0)
+    26C0264D cub.lw.l1b x12, 620(x0)
+    270026CD cub.lw.l1b x13, 624(x0)
+    2740274D cub.lw.l1b x14, 628(x0)
+    00001044 cub.event_finish //fill end0
+    
+    00007047 cub.csrw 0, 0b0_0_000 //alu_flow_cfg0: cflow_mode,scache_dout_flow_sel,alu_din_flow_sel
+    00107147 cub.csrw 2, 0b00000_00000_10000 //crossbar cfg
+    020071C7 cub.csrw 3, 0b10000_00000 //crossbar cfg
+    00007247 cub.csrw 4, 0b0000000 //acti_work_mode
+    00017447 cub.csrw 8, 0b1 //scache_wr1 (sub_gap=1)
+    000175C7 cub.csrw 11, 0b1 //scache_rd1 (sub_gap=1)
+    00001044 cub.event_finish //fill end1
+    
+    E0804047 cub.scache_rd_en 0, byte, 1
+    00001044 cub.event_finish //fill end2
+    
+    30000019 MQ_NOP(bar=3,nop_cycle_num=0)
+    30000023 VQ_alu_event_call(event_addr=0,bar=3)
+    00000020 VQ_alu_csrw(csr_addr=0,csr_wdata=0b0_0_000)
+    400007A3 VQ_alu_event_call(event_addr=15,bar=4)
+    40000019 MQ_NOP(bar=4,nop_cycle_num=0)
+    00020020 VQ_alu_csrw(csr_addr=0,csr_wdata=0b1_0_000)//alu_flow_cfg0: cflow_mode,scache_dout_flow_sel,alu_din_flow_sel
+    00000073 next_fetch_is_cpu
+    j 0x1000
+);
+
+int main() {
+int w_addr=0;
+int f_addr=0;
+int mv_len_w=1;
+int mv_len_w_s=mv_len_w<<13;
+int mv_len_f=2;
+int mv_len_f_s=mv_len_f<<13;
+
+int first_sub_flag=1;
+int subch;
+int bc_mode=0;
+int bc_len=0;
+int hl_op=0;
+int bc_keep_2cycle_en=0;
+int rgba_mode=1;
+int rgba_stride=1;
+int rgba_shift=0;
+int run_cycle_num=17;
+int pad0_sel=0;
+int pad0_len=0;
+int tcache_offset=0;
+int scache_wr_addr = 0;
+
+int mcfifo_mv_w_0=0;
+int mcfifo_mv_w_1=0;
+int mcfifo_mv_w_2=0;
+int mcfifo_mv_w_3=0;
+int mcfifo_mv_w_4=0;
+int mcfifo_mv_w_5=0;
+int mcfifo_mv_f=0;
+int vcfifo_conv3d_0=0;
+int vcfifo_conv3d_1=0;
+int vcfifo_conv3d_2=0;
+int vcfifo_conv3d_3=0;
+int vcfifo_conv3d_4=0;
+int vcfifo_conv3d_5=0;
+
+int vcfifo_conv3d_base0=(run_cycle_num<<24)+(bc_keep_2cycle_en<<8)+(hl_op<<7)+bc_mode;
+int vcfifo_conv3d_base1=0;
+
+int load_addr=0;
+int load_sub_len=128;
+int load_sub_len_w=load_sub_len<<13;
+int mcfifo_load_w=load_sub_len_w+load_addr;
+
+int vcfifo_psum=0;
+int vcfifo_scache_wr = 64*4;
+int vcfifo_scache_rd_0 = 0;
+int vcfifo_scache_rd_1 = 64*4;
+//vcfifo_conv3d=first_sub_flag<<29+pad0_len<<25+pad0_sel<<24+run_cycle_num<<16+rgba_shift<<11+rgba_stride<<10+rgba_mode<<9+bc_keep_2cycle_en<<8+hl_op<<7+bc_len<<1+bc_mode;
+
+int fmap_top_pad_en=0;//图片分割的第一块，需要上补pad
+int fmap_bottom_pad_en=0;//图片分割的第六块，需要下补pad
+int split_num=0;
+int core_id;//这个是core真实的id号，可用于做判断
+int param_zero=0;
+asm volatile (
+    "csrrs %0, 0xF14, %1\n"
+    : "=r" (core_id)
+    : "r" (param_zero)
+);
+split_num = (core_id>9) ? 3 : 4;
+
+for(int k=0; k<split_num; k++) {
+    fmap_top_pad_en=(k==0) && (core_id<2);
+    fmap_bottom_pad_en=(k==3) && (core_id>9);//由于分割的最后一块补零，需要的有效输出只有11个行，故不需要下补pad
+    asm volatile (
+        "storec %0, MQ\n"
+        :: "r" (mcfifo_load_w));
+    
+    //load fmap+scache_len
+    if(fmap_top_pad_en){
+        npu_load     (we=wr,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=128,addr=0,sys_len=20,mv_last_dis=0,cfifo_en=1,bar=0) //load_fmap 640*32*4*8bit/256bit=2560
+        VQ_alu_csrw(csr_addr=7,csr_wdata=0b1_00111100)//scache_wr0 (sub_len=15*4,sys_len=1)
+        VQ_alu_csrw(csr_addr=10,csr_wdata=0b1_00111100)//scache_rd0 (sub_len=1,sys_len=15*4)
+    }
+    else{
+        npu_load     (we=wr,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=128,addr=0,sys_len=20,mv_last_dis=0,cfifo_en=1,bar=0) //load_fmap 640*32*4*8bit/256bit=2560
+        VQ_alu_csrw(csr_addr=7,csr_wdata=0b1_00111000)//scache_wr0 (sub_len=14*4,sys_len=1)
+        VQ_alu_csrw(csr_addr=10,csr_wdata=0b1_00111000)//scache_rd0 (sub_len=1,sys_len=14*4)
+    }
+         
+    for(int j=0; j<80; j++) { //320/4=80
+        if(j==0 || j==79){
+            for(int i=0; i<2; i++) { //做完K6*6 输出:15*4/14*4
+                f_addr=(j==0) ? i*80 : i*80+(j-1);
+                mcfifo_mv_f=mv_len_f_s+f_addr;
+
+                for(int l=0; l<3; l++) {
+                    w_addr=i*6+l*6*2;
+                    first_sub_flag=(i==0 && l==0);
+                    tcache_offset=fmap_top_pad_en ? (l==2) : l;
+                    rgba_shift=(j==0) ? -2 : 6;
+                    pad0_len=(fmap_top_pad_en&&(l==0));
+                    pad0_sel=fmap_top_pad_en&&(l==0);
+                    bc_len=fmap_top_pad_en ? 15-pad0_len : 14;
+                    vcfifo_conv3d_base1=vcfifo_conv3d_base0+(pad0_len<<12)+(pad0_sel<<16)+(tcache_offset<<8)+(bc_len<<1); //计算weight的一行，6个pixel，6次conv_start
+
+                    //分别对应下面7条指令
+                    mcfifo_mv_w_0=mv_len_w_s+w_addr;
+                    vcfifo_conv3d_0=vcfifo_conv3d_base1+(first_sub_flag<<22)+((rgba_shift&0x1F)<<17);
+                    mcfifo_mv_w_1=mcfifo_mv_w_0+1;
+                    vcfifo_conv3d_1=vcfifo_conv3d_base1+(((rgba_shift+1)&0x1F)<<17);
+                    mcfifo_mv_w_2=mcfifo_mv_w_1+1;
+                    vcfifo_conv3d_2=vcfifo_conv3d_base1+(((rgba_shift+2)&0x1F)<<17);
+                    mcfifo_mv_w_3=mcfifo_mv_w_2+1;
+                    vcfifo_conv3d_3=vcfifo_conv3d_base1+(((rgba_shift+3)&0x1F)<<17);
+                    mcfifo_mv_w_4=mcfifo_mv_w_3+1;
+                    vcfifo_conv3d_4=vcfifo_conv3d_base1+(((rgba_shift+4)&0x1F)<<17);
+                    mcfifo_mv_w_5=mcfifo_mv_w_4+1;
+                    vcfifo_conv3d_5=vcfifo_conv3d_base1+(((rgba_shift+5)&0x1F)<<17);
+
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_0));
+                    if(l==0) {
+                        asm volatile (
+                            "storec %0, MQ\n"
+                            :: "r" (mcfifo_mv_f));                    
+                    }
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_0));
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_1));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_1));        
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_2));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_2));
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_3));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_3));
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_4));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_4));
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_5));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_5));
+
+                    asm volatile (
+                        next_fetch_is_npu
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0));
+                    if(l==0){
+                    asm volatile (    
+                        npu_mv       (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=159,sub_gap=1,sub_len=2,addr=0,sys_len=16,mv_last_dis=0,cfifo_en=1,bar=1)); //mv_fmap，addr=0
+                    }
+                    if(fmap_top_pad_en){
+                        asm volatile (
+                            conv3d_start (first_sub_flag=1, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=-2, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=1) //shift=-1 k0* (-2,-1,0,1）
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=1,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=-1, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k1* (-1,0,1,2)
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=2,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=0 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=1  k2* (0,1,2,3)
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=3,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0) 
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=1 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=-1 k3* (1,2,3,4）
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=4,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=2 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k4* (2,3,4,5)
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=5,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=3 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=1  k5* (3,4,5,6)
+                            next_fetch_is_cpu
+                        );
+                    }
+                    else{
+                        asm volatile (
+                            conv3d_start (first_sub_flag=1, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=-2, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=1) //shift=-1 k0* (-2,-1,0,1）
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=1,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=-1, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k1* (-1,0,1,2)
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=2,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=0 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=1  k2* (0,1,2,3)
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=3,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0) 
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=1 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=-1 k3* (1,2,3,4）
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=4,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=2 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k4* (2,3,4,5)
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=5,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=3 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=1  k5* (3,4,5,6)
+                            next_fetch_is_cpu
+                        );                        
+                    }
+                }
+            }//3*3end
+
+            if(fmap_top_pad_en){
+                asm volatile (
+                    //npu_store(cfifo_en=0,bar=0);
+                    VQ_NOP       (bar=0,nop_cycle_num=4)
+                    psum_rd      (rd_num=14,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=14,rd_ch_sel=0,rd_rgb_sel=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=14,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=14,rd_ch_sel=1,rd_rgb_sel=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    VQ_NOP       (bar=0,nop_cycle_num=4)
+                    VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=16,wait_type=0,cfifo_en=0,bar=0)
+                );
+            }
+            else{
+                asm volatile (
+                    //npu_store(cfifo_en=0,bar=0);
+                    VQ_NOP       (bar=0,nop_cycle_num=4)
+                    psum_rd      (rd_num=13,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=13,rd_ch_sel=0,rd_rgb_sel=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=13,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=13,rd_ch_sel=1,rd_rgb_sel=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    VQ_NOP       (bar=0,nop_cycle_num=4)
+                    VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=16,wait_type=0,cfifo_en=0,bar=0)
+                    
+                );
+            }
+        }
+        /*
+        else if(j==79){ //最后一列，需要补右pad
+            for(int i=0; i<2; i++) {
+                f_addr=i*80+(j-1);
+                mcfifo_mv_f=mv_len_f_s+f_addr;
+
+                for(int l=0; l<3; l++) {
+                    w_addr=i*6+l*6*2;
+                    first_sub_flag=(i==0 && l==0);
+                    tcache_offset=(l==2);
+                    rgba_shift=6;
+                    pad0_len=(l==0);
+                    pad0_sel=(l==0);
+                    bc_len=15-pad0_len;
+                    vcfifo_conv3d_base1=vcfifo_conv3d_base0+(pad0_len<<12)+(pad0_sel<<16)+(tcache_offset<<8)+(bc_len<<1); //计算weight的一行，6个pixel，6次conv_start
+
+                    //分别对应下面7条指令
+                    mcfifo_mv_w_0=mv_len_w_s+w_addr;
+                    vcfifo_conv3d_0=vcfifo_conv3d_base1+(first_sub_flag<<22)+((rgba_shift&0x1F)<<17);
+                    mcfifo_mv_w_1=mcfifo_mv_w_0+1;
+                    vcfifo_conv3d_1=vcfifo_conv3d_base1+(((rgba_shift+1)&0x1F)<<17);
+                    mcfifo_mv_w_2=mcfifo_mv_w_1+1;
+                    vcfifo_conv3d_2=vcfifo_conv3d_base1+(((rgba_shift+2)&0x1F)<<17);
+                    mcfifo_mv_w_3=mcfifo_mv_w_2+1;
+                    vcfifo_conv3d_3=vcfifo_conv3d_base1+(((rgba_shift+3)&0x1F)<<17);
+                    mcfifo_mv_w_4=mcfifo_mv_w_3+1;
+                    vcfifo_conv3d_4=vcfifo_conv3d_base1+(((rgba_shift+4)&0x1F)<<17);
+                    mcfifo_mv_w_5=mcfifo_mv_w_4+1;
+                    vcfifo_conv3d_5=vcfifo_conv3d_base1+(((rgba_shift+5)&0x1F)<<17);
+
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_0));
+                    if(l==0) {
+                        asm volatile (
+                            "storec %0, MQ\n"
+                            :: "r" (mcfifo_mv_f));                    
+                    }
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_0));
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_1));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_1));        
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_2));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_2));
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_3));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_3));
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_4));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_4));
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_5));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_5));
+
+                    asm volatile (
+                        next_fetch_is_npu
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0));
+                    if(l==0){
+                    asm volatile (    
+                        npu_mv       (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=159,sub_gap=1,sub_len=2,addr=0,sys_len=16,mv_last_dis=0,cfifo_en=1,bar=1)); //mv_fmap，addr=0
+                    }
+                    asm volatile (
+                        conv3d_start (first_sub_flag=1, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=6, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=1) //shift=-1 k0* (-2,-1,0,1）
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=1,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=7, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k1* (-1,0,1,2)
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=2,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=8 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=1  k2* (0,1,2,3)
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=3,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0) 
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=9 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=-1 k3* (1,2,3,4）
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=4,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=10 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k4* (2,3,4,5)
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=5,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=11 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=1  k5* (3,4,5,6)
+                        next_fetch_is_cpu
+                    );
+                }
+            }//3*3end
+
+            asm volatile (
+                VQ_NOP       (bar=0,nop_cycle_num=4)
+                psum_rd      (rd_num=14,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                psum_rd      (rd_num=14,rd_ch_sel=0,rd_rgb_sel=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                psum_rd      (rd_num=14,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                psum_rd      (rd_num=14,rd_ch_sel=1,rd_rgb_sel=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+            );
+        } //j==79 end
+        */
+        else{
+            for(int i=0; i<2; i++) {
+                f_addr=i*80+(j-1);
+                mcfifo_mv_f=mv_len_f_s+f_addr;
+
+                for(int l=0; l<3; l++) {
+                    w_addr=i*6+l*6*2;
+                    first_sub_flag=(i==0 && l==0);
+                    tcache_offset=fmap_top_pad_en ? (l==2) : l;
+                    rgba_shift=6;
+                    pad0_len=(fmap_top_pad_en&&(l==0));
+                    pad0_sel=(fmap_top_pad_en&&(l==0));
+                    bc_len=fmap_top_pad_en ? 15-pad0_len : 14;
+                    vcfifo_conv3d_base1=vcfifo_conv3d_base0+(pad0_len<<12)+(pad0_sel<<16)+(tcache_offset<<8)+(bc_len<<1); //计算weight的一行，6个pixel，6次conv_start
+
+                    //分别对应下面7条指令
+                    mcfifo_mv_w_0=mv_len_w_s+w_addr;
+                    vcfifo_conv3d_0=vcfifo_conv3d_base1+(first_sub_flag<<22)+((rgba_shift&0x1F)<<17);
+                    mcfifo_mv_w_1=mcfifo_mv_w_0+1;
+                    vcfifo_conv3d_1=vcfifo_conv3d_base1+(((rgba_shift+1)&0x1F)<<17);
+                    mcfifo_mv_w_2=mcfifo_mv_w_1+1;
+                    vcfifo_conv3d_2=vcfifo_conv3d_base1+(((rgba_shift+2)&0x1F)<<17);
+                    mcfifo_mv_w_3=mcfifo_mv_w_2+1;
+                    vcfifo_conv3d_3=vcfifo_conv3d_base1+(((rgba_shift+3)&0x1F)<<17);
+
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_0));
+                    if(l==0){
+                        asm volatile (
+                            "storec %0, MQ\n"
+                            :: "r" (mcfifo_mv_f));
+                    }
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_0));
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_1));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_1));        
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_2));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_2));
+                    asm volatile (
+                        "storec %0, MQ\n"
+                        :: "r" (mcfifo_mv_w_3));
+                    asm volatile (
+                        "storec %0, VQ\n"
+                        :: "r" (vcfifo_conv3d_3));
+
+                    asm volatile (
+                        next_fetch_is_npu
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0));
+                    if(l==0){
+                    asm volatile (    
+                        npu_mv       (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=159,sub_gap=1,sub_len=2,addr=0,sys_len=16,mv_last_dis=0,cfifo_en=1,bar=1)); //mv_fmap，addr=0
+                    }
+                    if(fmap_top_pad_en){
+                        asm volatile (
+                            conv3d_start (first_sub_flag=1, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=-2, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=1) //shift=-1 k0* (-2,-1,0,1）
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=1,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=-1, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k1* (-1,0,1,2)
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=2,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=0 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=1  k2* (0,1,2,3)
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=3,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0) 
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=1 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=-1 k3* (1,2,3,4）
+                            next_fetch_is_cpu
+                        );
+                    }
+                    else{
+                        asm volatile (
+                            conv3d_start (first_sub_flag=1, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=-2, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=1) //shift=-1 k0* (-2,-1,0,1）
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=1,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=-1, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k1* (-1,0,1,2)
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=2,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=0 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=1  k2* (0,1,2,3)
+                            npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=3,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0) 
+                            conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=1 , hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=-1 k3* (1,2,3,4）
+                            next_fetch_is_cpu
+                        );                    
+                    }
+                }
+            }
+
+            for(int i=0; i<2; i++) { //做完K6*6 输出:15*4/14*4
+                f_addr=i*80++(j-1)+1;
+                mcfifo_mv_f=mv_len_f_s+f_addr;
+
+                w_addr=i*6+4;
+                tcache_offset=l;
+                rgba_shift=2;
+                pad0_len=fmap_top_pad_en;
+                pad0_sel=fmap_top_pad_en;
+                bc_len=fmap_top_pad_en ? 15 : 14;
+                vcfifo_conv3d_base1=vcfifo_conv3d_base0; //计算weight的一行，6个pixel，6次conv_start
+
+                //分别对应下面7条指令
+                mcfifo_mv_w_0=mv_len_w_s+w_addr;
+                mcfifo_mv_w_1=mcfifo_mv_w_0+1;
+                if(fmap_top_pad_en){
+                    vcfifo_conv3d_0=vcfifo_conv3d_base1+((rgba_shift&0x1F)<<17)+(pad0_len<<12)+(pad0_sel<<16)+((bc_len-1)<<1);
+                    vcfifo_conv3d_1=vcfifo_conv3d_base1+(((rgba_shift+1)&0x1F)<<17)+(pad0_len<<12)+(pad0_sel<<16)++((bc_len-1)<<1);
+                }
+                else{
+                    vcfifo_conv3d_0=vcfifo_conv3d_base1+((rgba_shift&0x1F)<<17)+(pad0_len<<12)+(pad0_sel<<16)+(bc_len<<1);
+                    vcfifo_conv3d_1=vcfifo_conv3d_base1+(((rgba_shift+1)&0x1F)<<17)+(pad0_len<<12)+(pad0_sel<<16)++(bc_len<<1);
+                }
+                
+                mcfifo_mv_w_2=mcfifo_mv_w_1+11;
+                mcfifo_mv_w_3=mcfifo_mv_w_2+1;                
+                if(fmap_top_pad_en){
+                    vcfifo_conv3d_2=vcfifo_conv3d_base1+((rgba_shift&0x1F)<<17)+(bc_len<<1);
+                    vcfifo_conv3d_3=vcfifo_conv3d_base1+(((rgba_shift+1)&0x1F)<<17)+(bc_len<<1);
+                }
+                else{
+                    vcfifo_conv3d_2=vcfifo_conv3d_base1+((rgba_shift&0x1F)<<17)+(bc_len<<1)+(tcache_offset<<8);
+                    vcfifo_conv3d_3=vcfifo_conv3d_base1+(((rgba_shift+1)&0x1F)<<17)+(bc_len<<1)+(tcache_offset<<8);                
+                }
+
+                mcfifo_mv_w_4=mcfifo_mv_w_3+11;
+                mcfifo_mv_w_5=mcfifo_mv_w_4+1;
+                if(fmap_top_pad_en){
+                    vcfifo_conv3d_4=vcfifo_conv3d_base1+((rgba_shift&0x1F)<<17)+(bc_len<<1)+(tcache_offset<<8); 
+                    vcfifo_conv3d_5=vcfifo_conv3d_base1+(((rgba_shift+1)&0x1F)<<17)+(bc_len<<1)+(tcache_offset<<8);
+                }
+                else{
+                    vcfifo_conv3d_4=vcfifo_conv3d_base1+((rgba_shift&0x1F)<<17)+(bc_len<<1)+((tcache_offset+1)<<8);
+                    vcfifo_conv3d_5=vcfifo_conv3d_base1+(((rgba_shift+1)&0x1F)<<17)+(bc_len<<1)+((tcache_offset+1)<<8);                
+                }
+                
+                asm volatile (
+                    "storec %0, MQ\n"
+                    :: "r" (mcfifo_mv_w_0));
+                asm volatile (
+                    "storec %0, MQ\n"
+                    :: "r" (mcfifo_mv_f));                
+                asm volatile (
+                    "storec %0, VQ\n"
+                    :: "r" (vcfifo_conv3d_0));
+                asm volatile (
+                    "storec %0, MQ\n"
+                    :: "r" (mcfifo_mv_w_1));
+                asm volatile (
+                    "storec %0, VQ\n"
+                    :: "r" (vcfifo_conv3d_1));        
+                asm volatile (
+                    "storec %0, MQ\n"
+                    :: "r" (mcfifo_mv_w_2));
+                asm volatile (
+                    "storec %0, VQ\n"
+                    :: "r" (vcfifo_conv3d_2));
+                asm volatile (
+                    "storec %0, MQ\n"
+                    :: "r" (mcfifo_mv_w_3));
+                asm volatile (
+                    "storec %0, VQ\n"
+                    :: "r" (vcfifo_conv3d_3));
+                asm volatile (
+                    "storec %0, MQ\n"
+                    :: "r" (mcfifo_mv_w_4));
+                asm volatile (
+                    "storec %0, VQ\n"
+                    :: "r" (vcfifo_conv3d_4));
+                asm volatile (
+                    "storec %0, MQ\n"
+                    :: "r" (mcfifo_mv_w_5));
+                asm volatile (
+                    "storec %0, VQ\n"
+                    :: "r" (vcfifo_conv3d_5));
+
+                if(fmap_top_pad_en){
+                    asm volatile (
+                        next_fetch_is_npu
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=4,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        npu_mv       (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=159,sub_gap=1,sub_len=2,addr=1,sys_len=16,mv_last_dis=0,cfifo_en=1,bar=1) //mv_fmap，addr=1
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=2, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=1) //shift=-1 k0* (-2,-1,0,1）
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=5,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=3, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=head, pad0_len=1, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k1* (-1,0,1,2)
+    
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=16,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0) 
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=15, rgba_mode=1, rgba_stride=1, rgba_shift=2, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=end, pad0_len=0, run_cycle_num=17, cfifo_en=1, bar=0) //shift=-1 k0* (-2,-1,0,1）
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=17,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=15, rgba_mode=1, rgba_stride=1, rgba_shift=3, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=end, pad0_len=0, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k1* (-1,0,1,2)
+    
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=28,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=1, bc_mode=0, bc_len=15, rgba_mode=1, rgba_stride=1, rgba_shift=2, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=end, pad0_len=0, run_cycle_num=17, cfifo_en=1, bar=0) //shift=-1 k0* (-2,-1,0,1）
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=29,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=14, tcache_stride=0, tcache_offset=1, bc_mode=0, bc_len=15, rgba_mode=1, rgba_stride=1, rgba_shift=3, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=end, pad0_len=0, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k1* (-1,0,1,2)
+                        next_fetch_is_cpu
+                    );
+                }
+                else{
+                    asm volatile (
+                        next_fetch_is_npu
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=4,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        npu_mv       (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=159,sub_gap=1,sub_len=2,addr=1,sys_len=16,mv_last_dis=0,cfifo_en=1,bar=1) //mv_fmap，addr=1
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=2, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=end, pad0_len=0, run_cycle_num=17, cfifo_en=1, bar=1) //shift=-1 k0* (-2,-1,0,1）
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=5,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=3, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=end, pad0_len=0, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k1* (-1,0,1,2)
+    
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=16,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0) 
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=2, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=end, pad0_len=0, run_cycle_num=17, cfifo_en=1, bar=0) //shift=-1 k0* (-2,-1,0,1）
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=17,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=3, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=end, pad0_len=0, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k1* (-1,0,1,2)
+    
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=28,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=1, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=2, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=end, pad0_len=0, run_cycle_num=17, cfifo_en=1, bar=0) //shift=-1 k0* (-2,-1,0,1）
+                        npu_mv       (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=29,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
+                        conv3d_start (first_sub_flag=0, start_index=0, end_index=13, tcache_stride=0, tcache_offset=1, bc_mode=0, bc_len=14, rgba_mode=1, rgba_stride=1, rgba_shift=3, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=end, pad0_len=0, run_cycle_num=17, cfifo_en=1, bar=0) //shift=0  k1* (-1,0,1,2)
+                        next_fetch_is_cpu
+                    );                
+                }
+            }
+            if(fmap_top_pad_en){
+                asm volatile (
+                    //npu_store(cfifo_en=0,bar=0);
+                    VQ_NOP       (bar=0,nop_cycle_num=4)
+                    psum_rd      (rd_num=14,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=14,rd_ch_sel=0,rd_rgb_sel=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=14,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=14,rd_ch_sel=1,rd_rgb_sel=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    VQ_NOP       (bar=0,nop_cycle_num=4)
+                    VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=16,wait_type=0,cfifo_en=0,bar=0)
+                );
+            }
+            else{
+                asm volatile (
+                    //npu_store(cfifo_en=0,bar=0);
+                    VQ_NOP       (bar=0,nop_cycle_num=4)
+                    psum_rd      (rd_num=13,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=13,rd_ch_sel=0,rd_rgb_sel=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=13,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=13,rd_ch_sel=1,rd_rgb_sel=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    VQ_NOP       (bar=0,nop_cycle_num=4)
+                    VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=16,wait_type=0,cfifo_en=0,bar=0)
+                );
+            }
+        }
+    }
+}
+}//main end
