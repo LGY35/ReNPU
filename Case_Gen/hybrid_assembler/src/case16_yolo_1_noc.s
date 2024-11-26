@@ -35,8 +35,8 @@ NOC_cfg ( addr=29 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # loop disable ======
 #npu_load
 # 取参数  
 NOC_cfg ( addr=6 , wdata=576, cfifo_wdata=0,cfifo_en=0)    # ping基地址 取参数在weight的基础上加576==============
-NOC_cfg ( addr=15 , wdata=64, cfifo_wdata=0,cfifo_en=0)    # lenth3 取数据 ==============
-NOC_cfg ( addr=17 , wdata=64, cfifo_wdata=0,cfifo_en=0)    # ping length ==============
+NOC_cfg ( addr=15 , wdata=63, cfifo_wdata=0,cfifo_en=0)    # lenth3 取数据 ==============
+NOC_cfg ( addr=17 , wdata=63, cfifo_wdata=0,cfifo_en=0)    # ping length ==============
 # 取激活 32行+2
 NOC_cfg ( addr=2 , wdata=1, cfifo_wdata=0,cfifo_en=0 )     # 1 多节点读合并开  
 NOC_cfg ( addr=6 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 第一部分激活直接用基地址==============
@@ -110,8 +110,8 @@ NOC_cfg ( addr=29 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # loop disable ======
 #npu_loadcfifo_en=0, 
 # 取参数 cfifo_en=0,  
 NOC_cfg ( addr=6 , wdata=576, cfifo_wdata=0,cfifo_en=0 )   # ping基地址 取参数在weight的基础上加576==============
-NOC_cfg ( addr=15 , wdata=64, cfifo_wdata=0,cfifo_en=0)    # lenth3 取数据 ==============
-NOC_cfg ( addr=17 , wdata=64, cfifo_wdata=0,cfifo_en=0)    # ping length ==============
+NOC_cfg ( addr=15 , wdata=63, cfifo_wdata=0,cfifo_en=0)    # lenth3 取数据 ==============
+NOC_cfg ( addr=17 , wdata=63, cfifo_wdata=0,cfifo_en=0)    # ping length ==============
 # 取激活 cfifo_en=0, 32行+2
 NOC_cfg ( addr=2 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 多节点读合并关   
 NOC_cfg ( addr=6 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 第一部分激活直接用基地址==============

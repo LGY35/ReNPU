@@ -21,13 +21,13 @@ NOC_cfg ( addr=18 , wdata=0, cfifo_wdata=0,cfifo_en=0)
 NOC_cfg ( addr=19 , wdata=0, cfifo_wdata=0,cfifo_en=0)
 NOC_cfg ( addr=20 , wdata=0, cfifo_wdata=0,cfifo_en=0)
 NOC_cfg ( addr=21 , wdata=0, cfifo_wdata=0,cfifo_en=0)   
-#NOC_cfg (cfifo_en=0, addr=22 , wdata=2)
-#NOC_cfg (cfifo_en=0, addr=23 , wdata=2)
-#NOC_cfg (cfifo_en=0, addr=24 , wdata=4)
-#NOC_cfg (cfifo_en=0, addr=25 , wdata=4)
-#NOC_cfg (cfifo_en=0, addr=26 , wdata=2) #有效行数
-#NOC_cfg (cfifo_en=0, addr=27 , wdata=3) #有效列数
-#NOC_cfg (cfifo_en=0, addr=28 , wdata=0) #pad mode
+#NOC_cfg ( addr=22 , wdata=2, cfifo_wdata=0,cfifo_en=0)
+#NOC_cfg ( addr=23 , wdata=2, cfifo_wdata=0,cfifo_en=0)
+#NOC_cfg ( addr=24 , wdata=4, cfifo_wdata=0,cfifo_en=0)
+#NOC_cfg ( addr=25 , wdata=4, cfifo_wdata=0,cfifo_en=0)
+#NOC_cfg ( addr=26 , wdata=2, cfifo_wdata=0,cfifo_en=0) #有效行数
+#NOC_cfg ( addr=27 , wdata=3, cfifo_wdata=0,cfifo_en=0) #有效列数
+#NOC_cfg ( addr=28 , wdata=0, cfifo_wdata=0,cfifo_en=0) #pad mode
 NOC_cfg ( addr=29 , wdata=0, cfifo_wdata=0,cfifo_en=0) 
 NOC_cfg ( addr=30 , wdata=1, cfifo_wdata=0,cfifo_en=0) #单核取指
 
