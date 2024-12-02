@@ -1,15 +1,15 @@
-imm_ba(0x80008B00) #base addr 0     # group 1  取激活
-imm_ba(0x80008B00) #base addr 1     # group 2  取激活
-imm_ba(0x8000AE00) #base addr 2     # group 1  取激活
-imm_ba(0x8000AE00) #base addr 3     # group 2  取激活
-imm_ba(0x80006800) #base addr 4     # group 1  取激活
-imm_ba(0x80006800) #base addr 5     # group 2  取激活
-imm_ba(0x8000D100) #base addr 6     # group 1  取激活
-imm_ba(0x8000D100) #base addr 7     # group 2  取激活
-imm_ba(0x80004000) #base addr 8     # group 0  取权重
-imm_ba(0x80004280) #base addr 9     # group 0  取权重
-imm_ba(0x80004000) #base addr 10    # group 3  取权重
-imm_ba(0x80004280) #base addr 11    # group 3  取权重
+imm_ba(0x80008B00)   #base addr 0     # group 1  取激活
+imm_ba(0x80008B00)   #base addr 1     # group 2  取激活
+imm_ba(0x8000AE00)   #base addr 2     # group 1  取激活
+imm_ba(0x8000AE00)   #base addr 3     # group 2  取激活
+imm_ba(0x80006800)   #base addr 4     # group 1  取激活
+imm_ba(0x80006800)   #base addr 5     # group 2  取激活
+imm_ba(0x8000D100)   #base addr 6     # group 1  取激活
+imm_ba(0x8000D100)   #base addr 7     # group 2  取激活
+imm_ba(0x80004000)   #base addr 8     # group 0  取权重
+imm_ba(0x80004280)   #base addr 9     # group 0  取权重
+imm_ba(0x80004000)   #base addr 10    # group 3  取权重
+imm_ba(0x80004280)   #base addr 11    # group 3  取权重
 imm_wba(0x80015620)  # addr 0 
 imm_wba(0x80015A80)  # addr 1 
 imm_wba(0x80017920)  # addr 2 
