@@ -930,14 +930,45 @@ for(int k=0; k<split_num; k++) {
                     );                
                 }
             }
-            if(fmap_top_pad_en || ((core_id == 8 || core_id == 9) && k == 1)){
+            if(fmap_top_pad_en){
                 asm volatile (
                     /*配置数据输出*/
                     NOC_cfg (addr=32,wdata=0,cfifo_wdata=0,cfifo_en=0)           //绝对寻址
                     NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)           //
                     NOC_cfg (addr=34,wdata=0,cfifo_wdata=0,cfifo_en=0)           // 数据直接输出到ddr
                     NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
-                    NOC_cfg (addr=37,wdata=k*1200,cfifo_wdata=0,cfifo_en=0)          // 输出基地址偏移，需要根据输出行数变量进行配置
+                    NOC_cfg (addr=37,wdata=0,cfifo_wdata=0,cfifo_en=0)          // 输出基地址偏移，需要根据输出行数变量进行配置
+                    NOC_cfg (addr=42,wdata=1,cfifo_wdata=0,cfifo_en=0)           //loop gap 3
+                    NOC_cfg (addr=46,wdata=1199,cfifo_wdata=0,cfifo_en=0)             // 输出总长度 15*80=1200 -1
+                    NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)           //pingpongnum = 0
+                    NOC_cfg (addr=48,wdata=1199,cfifo_wdata=0,cfifo_en=0)            // ping传输的长度15*80=1200 -1
+                    npu_store(cfifo_en=0,bar =0)
+                    VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=170,wait_type=1,cfifo_en=1,bar=0)
+                    noc_req (comd_type=4, bar=0) // 检查是否完成搬运
+                    MQ_NOP(bar=0,nop_cycle_num=0)
+                    MQ_NOP(bar=0,nop_cycle_num=0)
+                    MQ_NOP(bar=0,nop_cycle_num=0)
+                    MQ_NOP(bar=0,nop_cycle_num=0)
+                    MQ_NOP(bar=0,nop_cycle_num=0)
+                    MQ_NOP(bar=0,nop_cycle_num=0)
+                    MQ_NOP(bar=0,nop_cycle_num=0)
+                    MQ_NOP(bar=0,nop_cycle_num=0)
+                    VQ_NOP       (bar=0,nop_cycle_num=4)
+                    psum_rd      (rd_num=14,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=14,rd_ch_sel=0,rd_rgb_sel=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=14,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    psum_rd      (rd_num=14,rd_ch_sel=1,rd_rgb_sel=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=17,cfifo_en=0,bar=0)
+                    VQ_NOP       (bar=0,nop_cycle_num=4)
+                    VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=16,wait_type=0,cfifo_en=0,bar=0)
+                );
+            } else if(core_id == 8){
+                asm volatile (
+                    /*配置数据输出*/
+                    NOC_cfg (addr=32,wdata=0,cfifo_wdata=0,cfifo_en=0)           //绝对寻址
+                    NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)           //
+                    NOC_cfg (addr=34,wdata=0,cfifo_wdata=0,cfifo_en=0)           // 数据直接输出到ddr
+                    NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
+                    NOC_cfg (addr=37,wdata=2400 + (k-1)*(1120*2),cfifo_wdata=0,cfifo_en=0)          // 输出基地址偏移，需要根据输出行数变量进行配置
                     NOC_cfg (addr=42,wdata=1,cfifo_wdata=0,cfifo_en=0)           //loop gap 3
                     NOC_cfg (addr=46,wdata=1199,cfifo_wdata=0,cfifo_en=0)             // 输出总长度 15*80=1200 -1
                     NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)           //pingpongnum = 0
@@ -962,15 +993,16 @@ for(int k=0; k<split_num; k++) {
                     VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=16,wait_type=0,cfifo_en=0,bar=0)
                 );
             }
+
             // group1 的其他k
-            else if( core_id == 8 || core_id == 9){
+            else if(core_id == 9){
                 asm volatile (
                     /*配置数据输出*/
                     NOC_cfg (addr=32,wdata=0,cfifo_wdata=0,cfifo_en=0)           //绝对寻址
                     NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)           //
                     NOC_cfg (addr=34,wdata=0,cfifo_wdata=0,cfifo_en=0)           // 数据直接输出到ddr
                     NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
-                    NOC_cfg (addr=37,wdata=1200 + (k-1)*1120,cfifo_wdata=0,cfifo_en=0)          // 输出基地址偏移，需要根据输出行数变量进行配置
+                    NOC_cfg (addr=37,wdata=1200+1120 + (k-1)*(1120*2),cfifo_wdata=0,cfifo_en=0)          // 输出基地址偏移，需要根据输出行数变量进行配置
                     NOC_cfg (addr=42,wdata=1,cfifo_wdata=0,cfifo_en=0)           //loop gap 3
                     NOC_cfg (addr=46,wdata=1119,cfifo_wdata=0,cfifo_en=0)             // 输出总长度 14*80=1120 -1
                     NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)           //pingpongnum = 0
@@ -1003,7 +1035,7 @@ for(int k=0; k<split_num; k++) {
                     NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)           //
                     NOC_cfg (addr=34,wdata=0,cfifo_wdata=0,cfifo_en=0)           // 数据直接输出到ddr
                     NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
-                    NOC_cfg (addr=37,wdata=k*1120,cfifo_wdata=0,cfifo_en=0)          // 输出基地址偏移，需要根据输出行数变量进行配置
+                    NOC_cfg (addr=37,wdata=k*2*1120,cfifo_wdata=0,cfifo_en=0)          // 输出基地址偏移，需要根据输出行数变量进行配置
                     NOC_cfg (addr=42,wdata=1,cfifo_wdata=0,cfifo_en=0)           //loop gap 3
                     NOC_cfg (addr=46,wdata=879,cfifo_wdata=0,cfifo_en=0)             // 输出总长度 11*80=880 -1
                     NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)           //pingpongnum = 0
@@ -1035,7 +1067,7 @@ for(int k=0; k<split_num; k++) {
                     NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)           //
                     NOC_cfg (addr=34,wdata=0,cfifo_wdata=0,cfifo_en=0)           // 数据直接输出到ddr
                     NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
-                    NOC_cfg (addr=37,wdata=k*1120,cfifo_wdata=0,cfifo_en=0)          // 输出基地址偏移，需要根据输出行数变量进行配置
+                    NOC_cfg (addr=37,wdata=k*2*1120,cfifo_wdata=0,cfifo_en=0)          // 输出基地址偏移，需要根据输出行数变量进行配置
                     NOC_cfg (addr=42,wdata=1,cfifo_wdata=0,cfifo_en=0)           //loop gap 3
                     NOC_cfg (addr=46,wdata=1119,cfifo_wdata=0,cfifo_en=0)             // 输出总长度 14*80=1120 -1
                     NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)           //pingpongnum = 0
