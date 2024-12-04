@@ -24,5 +24,5 @@ imm_wba(0x80000000)
 imm_wba(0x80000000)
 imm_wba(0x80000000)
 imm_gba(0x80000000)
-imm_cfg(0x80002000) # base addr
+imm_cfg(0x00002000) # base addr
 finish_group(0x005) # 0101 节点0和2为一组, 然后每个都往下个group发数 
