@@ -48,24 +48,24 @@ inst_remake: $(OBJECTS)
 
 hex_gen:
 	mkdir -p $(HEX_GEN_DIR)
-	python3 hex_gen.py -i ./out/case3_idma.txt  ./out/case3_core_rd_noc.txt          ./input_data0.txt 						    -o ./hex_gen/case3_merge_inst.txt  ./hex_gen/case3_out_hex.txt
-	python3 hex_gen.py -i ./out/case5_idma.txt  ./out/case5_dwcr_noc.txt             ./input_data0.txt							-o ./hex_gen/case5_merge_inst.txt  ./hex_gen/case5_out_hex.txt
+	python3 hex_gen.py -i ./out/case3_idma.txt  ./out/case3_core_rd_noc.txt          ./data/input_data0.txt 						    -o ./hex_gen/case3_merge_inst.txt  ./hex_gen/case3_out_hex.txt
+	python3 hex_gen.py -i ./out/case5_idma.txt  ./out/case5_dwcr_noc.txt             ./data/input_data0.txt							-o ./hex_gen/case5_merge_inst.txt  ./hex_gen/case5_out_hex.txt
 	python3 hex_gen.py -i ./out/case8_idma.txt  ./out/case8_mc_dmawr_noc.txt         ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case8_merge_inst.txt  ./hex_gen/case8_out_hex.txt
 	python3 hex_gen.py -i ./out/case9_idma.txt  ./out/case9_nestloop_dmawr_noc.txt   ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case9_merge_inst.txt  ./hex_gen/case9_out_hex.txt
 	python3 hex_gen.py -i ./out/case10_idma.txt ./out/case10_relative_dmawr_noc.txt  ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case10_merge_inst.txt ./hex_gen/case10_out_hex.txt
 	python3 hex_gen.py -i ./out/case11_idma.txt ./out/case11_multi_filter_noc.txt    ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case11_merge_inst.txt ./hex_gen/case11_out_hex.txt
 	python3 hex_gen.py -i ./out/case12_idma.txt ./out/case12_dmawrrd_noc.txt         ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case12_merge_inst.txt ./hex_gen/case12_out_hex.txt
 	python3 hex_gen.py -i ./out/case13_idma.txt ./out/case13_twoloop_noc.txt         ../../DVcase/case9_nestloop/case9_data.txt -o ./hex_gen/case13_merge_inst.txt ./hex_gen/case13_out_hex.txt
-	python3 hex_gen.py -i ./out/case14_idma.txt ./out/case14_feishu.txt         	 ./input_data0.txt 							-o ./hex_gen/case14_merge_inst.txt ./hex_gen/case14_out_hex.txt
-	python3 hex_gen.py -i ./out/case15_idma.txt ./out/case15_core_rd_node_noc.txt    ./input_data0.txt 							-o ./hex_gen/case15_merge_inst.txt ./hex_gen/case15_out_hex.txt
-	python3 hex_gen.py -i ./out/case16_idma.txt ./out/case16_yolo_1_noc.txt    		 ./input_data0.txt 							-o ./hex_gen/case16_merge_inst.txt ./hex_gen/case16_out_hex.txt
-	python3 hex_gen.py -i ./out/case17_idma.txt ./out/case17_dma_node_jump_noc.txt   ./input_data0.txt 							-o ./hex_gen/case17_merge_inst.txt ./hex_gen/case17_out_hex.txt
-	python3 hex_gen.py -i ./out/case18_idma.txt ./out/case18_cr_dma_node_jump_noc.txt ./input_data0.txt 						-o ./hex_gen/case18_merge_inst.txt ./hex_gen/case18_out_hex.txt
-	python3 hex_gen.py -i ./out/case19_idma.txt ./out/case19_core_wr_noc.txt    	 ./input_data0.txt 							-o ./hex_gen/case19_merge_inst.txt ./hex_gen/case19_out_hex.txt
-	python3 hex_gen.py -i ./out/case99_idma.txt ./out/case99_noc.txt    		 	 ./input_data0.txt 							-o ./hex_gen/case99_merge_inst.txt ./hex_gen/case99_out_hex.txt
-	python3 hex_gen.py -i ./out/case991_idma.txt ./out/case991_conv_bottleneck_noccore_4.1_ins_noc.txt    		 	 ./input_data0.txt 							-o ./hex_gen/case991_merge_inst.txt ./hex_gen/case991_out_hex.txt
-	python3 hex_gen.py -i ./out/case992_idma.txt ./out/case992_bottleneck_noccore_12cores_4.1_ins_noc.txt    		 ./bottleneck_combined_input_data.txt 		-o ./hex_gen/case992_merge_inst.txt ./hex_gen/case992_out_hex.txt
-	python3 hex_gen.py -i ./out/case993_idma.txt ./out/case993_bottleneck_noccore_1cores_4.1_ins_noc.txt    		 ./bottleneck_combined_input_data_1core.txt -o ./hex_gen/case993_merge_inst.txt ./hex_gen/case993_out_hex.txt
+	python3 hex_gen.py -i ./out/case14_idma.txt ./out/case14_feishu.txt         	 ./data/input_data0.txt 							-o ./hex_gen/case14_merge_inst.txt ./hex_gen/case14_out_hex.txt
+	python3 hex_gen.py -i ./out/case15_idma.txt ./out/case15_core_rd_node_noc.txt    ./data/input_data0.txt 							-o ./hex_gen/case15_merge_inst.txt ./hex_gen/case15_out_hex.txt
+	python3 hex_gen.py -i ./out/case16_idma.txt ./out/case16_yolo_1_noc.txt    		 ./data/input_data0.txt 							-o ./hex_gen/case16_merge_inst.txt ./hex_gen/case16_out_hex.txt
+	python3 hex_gen.py -i ./out/case17_idma.txt ./out/case17_dma_node_jump_noc.txt   ./data/input_data0.txt 							-o ./hex_gen/case17_merge_inst.txt ./hex_gen/case17_out_hex.txt
+	python3 hex_gen.py -i ./out/case18_idma.txt ./out/case18_cr_dma_node_jump_noc.txt ./data/input_data0.txt 						-o ./hex_gen/case18_merge_inst.txt ./hex_gen/case18_out_hex.txt
+	python3 hex_gen.py -i ./out/case19_idma.txt ./out/case19_core_wr_noc.txt    	 ./data/input_data0.txt 							-o ./hex_gen/case19_merge_inst.txt ./hex_gen/case19_out_hex.txt
+	python3 hex_gen.py -i ./out/case99_idma.txt ./out/case99_noc.txt    		 	 ./data/input_data0.txt 							-o ./hex_gen/case99_merge_inst.txt ./hex_gen/case99_out_hex.txt
+	python3 hex_gen.py -i ./out/case991_idma.txt ./out/case991_conv_bottleneck_noccore_4.1_ins_noc.txt    		 	 ./data/input_data0.txt 							-o ./hex_gen/case991_merge_inst.txt ./hex_gen/case991_out_hex.txt
+	python3 hex_gen.py -i ./out/case992_idma.txt ./out/case992_bottleneck_noccore_12cores_4.1_ins_noc.txt    		 ./data/bottleneck_combined_input_data.txt 		-o ./hex_gen/case992_merge_inst.txt ./hex_gen/case992_out_hex.txt
+	python3 hex_gen.py -i ./out/case993_idma.txt ./out/case993_bottleneck_noccore_1cores_4.1_ins_noc.txt    		 ./data/bottleneck_combined_input_data_1core.txt -o ./hex_gen/case993_merge_inst.txt ./hex_gen/case993_out_hex.txt
 
 clean:
 	rm -rf $(HEX_GEN_DIR)
