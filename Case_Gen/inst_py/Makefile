@@ -62,7 +62,8 @@ hex_gen:
 	python3 hex_gen.py -i ./out/case17_idma.txt ./out/case17_dma_node_jump_noc.txt   ./data/input_data0.txt 							-o ./hex_gen/case17_merge_inst.txt ./hex_gen/case17_out_hex.txt
 	python3 hex_gen.py -i ./out/case18_idma.txt ./out/case18_cr_dma_node_jump_noc.txt ./data/input_data0.txt 						-o ./hex_gen/case18_merge_inst.txt ./hex_gen/case18_out_hex.txt
 	python3 hex_gen.py -i ./out/case19_idma.txt ./out/case19_core_wr_noc.txt    	 ./data/input_data0.txt 							-o ./hex_gen/case19_merge_inst.txt ./hex_gen/case19_out_hex.txt
-	python3 hex_gen.py -i ./out/case99_idma.txt ./out/case99_noc.txt    		 	 ./data/input_data0.txt 							-o ./hex_gen/case99_merge_inst.txt ./hex_gen/case99_out_hex.txt
+	python3 hex_gen.py -i ./out/case20_idma.txt ./out/case20_2task_noc.txt    	 ./data/input_data0.txt 							-o ./hex_gen/case19_merge_inst.txt ./hex_gen/case19_out_hex.txt
+	python3 hex_gen.py -i ./out/case99_idma.txt ./out/case99_noc.txt    		 	 ./data/input_data0.txt 							-o ./hex_gen/case20_merge_inst.txt ./hex_gen/case20_out_hex.txt
 	python3 hex_gen.py -i ./out/case991_idma.txt ./out/case991_conv_bottleneck_noccore_4.1_ins_noc.txt    		 	 ./data/input_data0.txt 							-o ./hex_gen/case991_merge_inst.txt ./hex_gen/case991_out_hex.txt
 	python3 hex_gen.py -i ./out/case992_idma.txt ./out/case992_bottleneck_noccore_12cores_4.1_ins_noc.txt    		 ./data/bottleneck_combined_input_data.txt 		-o ./hex_gen/case992_merge_inst.txt ./hex_gen/case992_out_hex.txt
 	python3 hex_gen.py -i ./out/case993_idma.txt ./out/case993_bottleneck_noccore_1cores_4.1_ins_noc.txt    		 ./data/bottleneck_combined_input_data_1core.txt -o ./hex_gen/case993_merge_inst.txt ./hex_gen/case993_out_hex.txt
@@ -71,9 +72,8 @@ clean:
 	rm -rf $(HEX_GEN_DIR)
 	rm -rf $(OUT_DIR)
 
+
 #=====================================================================================================
-
-
 # 指令示例：
 # python3 hex_gen.py -i ./out/case5_idma.txt ./out/case5_dwcr_noc.txt ../../DVcase/case9_nestloop/case9_data.txt -o ./case5_merge_inst.txt ./case5_out_hex.txt
 # 目的： 通过hex_gen.py 把out文件夹下的 带idma后缀的和带noc后缀的文件与SRC_DATA文件拼接在一起，并输出两个文件，一个是idma和noc拼接的指令文件，一个是指令+数据并把空行补零的文件

@@ -23,5 +23,6 @@
 80000000 imm_wba(0x80000000)
 80000000 imm_wba(0x80000000)
 80000000 imm_gba(0x80000000)
-80002000 imm_cfg(0x80002000) # base addr
+00002000 imm_cfg(0x00002000) # base addr
 00210003 finish_group(0x021) # 启动节点0 5  测试1 4
+

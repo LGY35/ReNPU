@@ -1,6 +1,6 @@
 CVEC_cfg2       (cal_mode=norm_conv,wreg_wr_cnt=0,fprec=INT8,wprec=INT8,v_tq=0)
 MQ_cfg0         (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=40,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
-MQ_cfg1(sub_gap=1, sys_gap_ext=0b00000)
+MQ_cfg1 (sub_gap=0, sys_gap_ext=0b10001, iob_pric=INT8, iob_l2c_in_cfg=0, tcache_mvfmap_stride=0, tcache_mvfmap_offset=0)
 
 NOC_cfg (addr=2,wdata=0,cfifo_wdata=0,cfifo_en=0) 
 NOC_cfg (addr=3,wdata=0,cfifo_wdata=0,cfifo_en=0) 
@@ -70,7 +70,7 @@ conv3d_start    (first_sub_flag=1,start_index=0,end_index=29,tcache_stride=0, tc
 npu_mv          (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=1,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
 conv3d_start    (first_sub_flag=0,start_index=0,end_index=29,tcache_stride=0, tcache_offset=0, bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,pad0_sel=end, pad0_len=0, run_cycle_num=32,cfifo_en=1,bar=0)
 
-MQ_cfg1(sub_gap=1, sys_gap_ext=0b00000)
+MQ_cfg1 (sub_gap=0, sys_gap_ext=0b10001, iob_pric=INT8, iob_l2c_in_cfg=0, tcache_mvfmap_stride=0, tcache_mvfmap_offset=0)
 npu_mv          (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=2,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
 npu_mv          (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=1024,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
 conv3d_start    (first_sub_flag=0,start_index=0,end_index=29,tcache_stride=0, tcache_offset=0, bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,pad0_sel=end, pad0_len=0, run_cycle_num=32,cfifo_en=1,bar=2)
@@ -214,7 +214,7 @@ conv3d_start    (first_sub_flag=0,start_index=0,end_index=29,tcache_stride=0, tc
 npu_mv          (we=rd,l1b_mode=norm,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1,addr=3,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
 conv3d_start    (first_sub_flag=0,start_index=0,end_index=29,tcache_stride=0, tcache_offset=0, bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,pad0_sel=end, pad0_len=0, run_cycle_num=32,cfifo_en=1,bar=0)
 
-MQ_cfg1(sub_gap=1, sys_gap_ext=0b00000)
+MQ_cfg1 (sub_gap=0, sys_gap_ext=0b10001, iob_pric=INT8, iob_l2c_in_cfg=0, tcache_mvfmap_stride=0, tcache_mvfmap_offset=0)
 npu_mv          (we=rd,l1b_mode=norm ,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=1, addr=4,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
 npu_mv          (we=rd,l1b_mode=cache,tcache_bank_num=0,sys_gap=1,sub_gap=1,sub_len=30,addr=33,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
 conv3d_start    (first_sub_flag=0,start_index=0,end_index=29,tcache_stride=0, tcache_offset=0, bc_mode=0,bc_len=30,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,pad0_sel=end, pad0_len=0, run_cycle_num=32,cfifo_en=1,bar=1)

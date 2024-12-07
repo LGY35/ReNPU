@@ -10,7 +10,7 @@ def extract_hex_instructions(input_filename, output_filename):
         # finish_group_found = False
         # zero_padding_needed = False
         wfi_found = False
-        addr_compute = '80002F48'
+        addr_compute = '00002000'
         current_addr = int(addr_compute, 16) - 4  # 因为下面检测到第一条就会加，而第一条的起始是80002F48，所以这里减去4
         # 初始化 updated_addr
         updated_addr = current_addr

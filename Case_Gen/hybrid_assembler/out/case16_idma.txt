@@ -23,7 +23,7 @@
 8000D080 imm_wba(0x8000D080)
 8000D080 imm_wba(0x8000D080)
 80004480 imm_gba(0x80004480)  # group 0 取激活
-80002000 imm_cfg(0x80002000)  #TODO: base addr
+00002000 imm_cfg(0x00002000)  #TODO: base addr
 03000001 normal_group(0x300)  # 启动节点 8 9 //0011 0000 0000
 80004000 imm_gba(0x80004000)  # group 1 取权重
 80000000 imm_cfg(0x80000000)  #TODO: base addr
