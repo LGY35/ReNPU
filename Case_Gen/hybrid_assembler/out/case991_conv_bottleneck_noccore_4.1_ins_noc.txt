@@ -1285,6 +1285,8 @@ A0000EA1 conv3d_start    (first_sub_flag=0,start_index=0,end_index=29,tcache_str
 880E1223 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=36,wait_type=1,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
+
+00000073 next_fetch_is_cpu
 10000913 addi x18, x0, 256
 4120105B storec x18, VQ; 
 0000005B next_fetch_is_npu

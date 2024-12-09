@@ -62,8 +62,8 @@ hex_gen:
 	python3 hex_gen.py -i ./out/case17_idma.txt ./out/case17_dma_node_jump_noc.txt   ./data/input_data0.txt 							-o ./hex_gen/case17_merge_inst.txt ./hex_gen/case17_out_hex.txt
 	python3 hex_gen.py -i ./out/case18_idma.txt ./out/case18_cr_dma_node_jump_noc.txt ./data/input_data0.txt 						-o ./hex_gen/case18_merge_inst.txt ./hex_gen/case18_out_hex.txt
 	python3 hex_gen.py -i ./out/case19_idma.txt ./out/case19_core_wr_noc.txt    	 ./data/input_data0.txt 							-o ./hex_gen/case19_merge_inst.txt ./hex_gen/case19_out_hex.txt
-	python3 hex_gen.py -i ./out/case20_idma.txt ./out/case20_2task_noc.txt    	 ./data/input_data0.txt 							-o ./hex_gen/case19_merge_inst.txt ./hex_gen/case19_out_hex.txt
-	python3 hex_gen.py -i ./out/case99_idma.txt ./out/case99_noc.txt    		 	 ./data/input_data0.txt 							-o ./hex_gen/case20_merge_inst.txt ./hex_gen/case20_out_hex.txt
+	python3 hex_gen.py -i ./out/case20_idma.txt ./out/case20_2task_noc.txt    	 ./data/input_data0.txt 							-o ./hex_gen/case20_merge_inst.txt ./hex_gen/case20_out_hex.txt
+	python3 hex_gen.py -i ./out/case99_idma.txt ./out/case99_noc.txt    		 	 ./data/input_data0.txt 							-o ./hex_gen/case99_merge_inst.txt ./hex_gen/case99_out_hex.txt
 	python3 hex_gen.py -i ./out/case991_idma.txt ./out/case991_conv_bottleneck_noccore_4.1_ins_noc.txt    		 	 ./data/input_data0.txt 							-o ./hex_gen/case991_merge_inst.txt ./hex_gen/case991_out_hex.txt
 	python3 hex_gen.py -i ./out/case992_idma.txt ./out/case992_bottleneck_noccore_12cores_4.1_ins_noc.txt    		 ./data/bottleneck_combined_input_data.txt 		-o ./hex_gen/case992_merge_inst.txt ./hex_gen/case992_out_hex.txt
 	python3 hex_gen.py -i ./out/case993_idma.txt ./out/case993_bottleneck_noccore_1cores_4.1_ins_noc.txt    		 ./data/bottleneck_combined_input_data_1core.txt -o ./hex_gen/case993_merge_inst.txt ./hex_gen/case993_out_hex.txt
