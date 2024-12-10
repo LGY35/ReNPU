@@ -24,7 +24,7 @@ imm_wba(0x810A5000)
 imm_wba(0x8116D000)
 imm_gba(0x80004000)
 imm_cfg(0x00002000) # base addr
-finish_group(0x001)   # 启动节点0
+last_group(0x001)   # 启动节点0
 imm_ba(0x8000E000)
 imm_ba(0x8000E000)
 imm_ba(0x8002FC00)

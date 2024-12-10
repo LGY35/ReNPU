@@ -1,0 +1,742 @@
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+01b40413 addi x8, x8, 27
+    0436 c.slli x8, 13
+00040413 addi x8, x8, 0
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+00048493 addi x9, x9, 0
+    04b6 c.slli x9, 13
+00048493 addi x9, x9, 0
+    4501 c.li x10, 0
+    0526 c.slli x10, 9
+00350513 addi x10, x10, 3
+    0536 c.slli x10, 13
+00950513 addi x10, x10, 9
+    4581 c.li x11, 0
+    05a6 c.slli x11, 9
+01f58593 addi x11, x11, 31
+    05b6 c.slli x11, 13
+00058593 addi x11, x11, 0
+22811937 lui x18, 0x22811
+03e90913 addi x18, x18, 0x03E
+224119b7 lui x19, 0x22411
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+00A0105B storec x10, MQ; 
+00B0105B storec x11, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+400128A2 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
+0001B210 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+02000012 NOC_cfg (addr=2,wdata=0,cfifo_wdata=0,cfifo_en=0) // ¹Ø±Õ¶à½ÚµãºÏ²¢¶Á
+03000012 NOC_cfg (addr=3,wdata=0,cfifo_wdata=0,cfifo_en=0) // Ö±½Ó´Óddr¶ÁÈ¡Êý¾Ý
+04000012 NOC_cfg (addr=4,wdata=0,cfifo_wdata=0,cfifo_en=0) // ¹Ø±Õpingpong
+06000012 NOC_cfg (addr=6,wdata=0,cfifo_wdata=0,cfifo_en=0) // »ùµØÖ·Æ«ÒÆÎª0£¬µØÖ·Îª512
+0B000112 NOC_cfg (addr=11,wdata=1,cfifo_wdata=0,cfifo_en=0) //×îÄÚ²ãÑ­»·µÝÔö£¬Ã¿´Î¶ÁÈë256bit
+0F023F12 NOC_cfg (addr=15,wdata=431,cfifo_wdata=0,cfifo_en=0)  // weight×Ü³¤¶È576-1
+10000012 NOC_cfg (addr=16,wdata=0,cfifo_wdata=0,cfifo_en=0) //²»²ÉÓÃpingpong
+11023F12 NOC_cfg (addr=17,wdata=431,cfifo_wdata=0,cfifo_en=0) // ping´«ÊäµÄ³¤¶È
+13000012 NOC_cfg (addr=19,wdata=0,cfifo_wdata=0,cfifo_en=0) //µ¥²¥Ä£Ê½
+14000012 NOC_cfg (addr=20,wdata=0,cfifo_wdata=0,cfifo_en=0) //²»ºÍÈÎºÎ½ÚµãÍ¬²½
+15000112 NOC_cfg (addr=21,wdata=1,cfifo_wdata=0,cfifo_en=0) // ¶ÁÈ¡baseµØÖ·ÎªclusterÖ¸ÁîÖÐµÄweightµØÖ·£¨Ã¿×éÍ³Ò»µÄµØÖ·£©
+1F000112 NOC_cfg (addr=31,wdata=1,cfifo_wdata=0,cfifo_en=0) //µ¥¶ÀÈ¡Ö¸
+40000090 MQ_cfg1(sub_gap=1, sys_gap_ext=0b00000, iob_pric=INT8, iob_l2c_in_cfg=0, tcache_mvfmap_stride=0, tcache_mvfmap_offset=0)
+80839991 npu_load           (we=wr,l1b_mode=norm ,from_noc_or_sc=noc, sys_gap=230,sub_gap=1,sub_len=27,addr=0, sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight£¬ 576
+08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // ¼ì²éÊÇ·ñÍê³Éweight°áÔË
+62000012 NOC_cfg (addr=98  , wdata=0,cfifo_wdata=0,cfifo_en=0) // ¹Ø±Õ¶à½ÚµãºÏ²¢¶Á
+63000012 NOC_cfg (addr=99  , wdata=0,cfifo_wdata=0,cfifo_en=0) // Ö±½Ó´Óddr¶ÁÈ¡Êý¾Ý
+64000012 NOC_cfg (addr=100 , wdata=0 ,cfifo_wdata=0,cfifo_en=0) // ¹Ø±Õpingpong
+65000012 NOC_cfg (addr=101 , wdata=0,cfifo_wdata=0,cfifo_en=0) // ±¾µØram ping »ùµØÖ·
+67000012 NOC_cfg (addr=103 , wdata=0,cfifo_wdata=0,cfifo_en=0) // ddrµØÖ·Æ«ÒÆ
+68000012 NOC_cfg (addr=104 , wdata=0,cfifo_wdata=0,cfifo_en=0) // ddrµØÖ·Æ«ÒÆ
+6C000112 NOC_cfg (addr=108 , wdata=1,cfifo_wdata=0,cfifo_en=0) // ×îÄÚ²ãÑ­»·µÝÔö£¬Ã¿´Î¶ÁÈë256bit
+7003FF12 NOC_cfg (addr=112 , wdata=1023,cfifo_wdata=0,cfifo_en=0) // fmap×Ü³¤¶È2048-1
+71000012 NOC_cfg (addr=113 , wdata=0,cfifo_wdata=0,cfifo_en=0) //²»²ÉÓÃpingpong
+7203FF12 NOC_cfg (addr=114 , wdata=1023,cfifo_wdata=0,cfifo_en=0)  // fmap×Ü³¤¶È2048-1
+74000012 NOC_cfg (addr=116 , wdata=0,cfifo_wdata=0,cfifo_en=0)//µ¥²¥Ä£Ê½
+75000012 NOC_cfg (addr=117 , wdata=0,cfifo_wdata=0,cfifo_en=0) //²»ºÍÈÎºÎ½ÚµãÍ¬²½
+76000012 NOC_cfg (addr=118 , wdata=0,cfifo_wdata=0,cfifo_en=0) // °áÔËfmap
+06000017 noc_req (comd_type=3, bar=0,cfifo_wdata=0,cfifo_en=0) // Æô¶¯dma¡ª¡ªwr
+08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// ¼ì²éÊÇ·ñÍê³Éfmap°áÔË
+00000112 NOC_cfg (addr=0,wdata=1,cfifo_wdata=0,cfifo_en=0) // Ïà¶ÔÑ°Ö·
+01000012 NOC_cfg (addr=1,wdata=0,cfifo_wdata=0,cfifo_en=0) //¶ÁÈ¡±¾µØL2
+02000012 NOC_cfg (addr=2,wdata=0,cfifo_wdata=0,cfifo_en=0) // ¹Ø±Õ¶à½ÚµãºÏ²¢¶Á
+03000112 NOC_cfg (addr=3,wdata=1,cfifo_wdata=0,cfifo_en=0) // ´ÓÆ¬ÉÏ¶ÁÈ¡Êý¾Ý
+04000012 NOC_cfg (addr=4,wdata=0,cfifo_wdata=0,cfifo_en=0) // ¹Ø±Õpingpong
+06000012 NOC_cfg (addr=6,wdata=0,cfifo_wdata=0,cfifo_en=0) // »ùµØÖ·Æ«ÒÆÎª0
+0B000112 NOC_cfg (addr=11,wdata=1,cfifo_wdata=0,cfifo_en=0) //×îÄÚ²ãÑ­»·µÝÔö£¬Ã¿´Î¶ÁÈë256bit
+0F03FF12 NOC_cfg (addr=15,wdata=1023,cfifo_wdata=0,cfifo_en=0)  // fmap×Ü³¤¶È1023
+10000012 NOC_cfg (addr=16,wdata=0,cfifo_wdata=0,cfifo_en=0) //²»²ÉÓÃpingpong
+1103FF12 NOC_cfg (addr=17,wdata=1023,cfifo_wdata=0,cfifo_en=0) // ping´«ÊäµÄ³¤¶È1023
+13000012 NOC_cfg (addr=19,wdata=0,cfifo_wdata=0,cfifo_en=0) //µ¥²¥Ä£Ê½
+14000012 NOC_cfg (addr=20,wdata=0,cfifo_wdata=0,cfifo_en=0) //²»ºÍÈÎºÎ½ÚµãÍ¬²½
+15000012 NOC_cfg (addr=21,wdata=0,cfifo_wdata=0,cfifo_en=0) // ¶ÁÈ¡baseµØÖ·ÎªclusterÖ¸ÁîÖÐµÄweightµØÖ·£¨Ã¿×é²»Í¬µÄµØÖ·£©
+1F000112 NOC_cfg (addr=31,wdata=1,cfifo_wdata=0,cfifo_en=0) //µ¥¶ÀÈ¡Ö¸
+80200491 npu_load           (we=wr,l1b_mode=cache,from_noc_or_sc=noc, sys_gap=1,  sub_gap=1,sub_len=0 ,addr=0, sys_len=4 ,mv_last_dis=0,cfifo_en=1,bar=0) //load_fmap£¬ 1024
+08000017 noc_req (comd_type=4, bar=0) // ¼ì²éÊÇ·ñÍê³Éfmap°áÔË
+22000012 NOC_cfg (addr=34,wdata=0,cfifo_wdata=0,cfifo_en=0)           // Êý¾ÝÖ±½ÓÊä³öµ½ddr
+23000012 NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // ¹Ø±Õpingpong
+25000012 NOC_cfg (addr=37,wdata=0,cfifo_wdata=0,cfifo_en=0)           // Êä³ö»ùµØÖ·Æ«ÒÆÎª0£¬µØÖ·Îª3200
+2A000112 NOC_cfg (addr=42,wdata=1,cfifo_wdata=0,cfifo_en=0)           //×îÄÚ²ãÑ­»·µÝÔö£¬Ã¿´Î¶ÁÈë256bit
+2E003F12 NOC_cfg (addr=46,wdata=63,cfifo_wdata=0,cfifo_en=0)             // Êä³ö×Ü³¤¶È64
+2F000012 NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)           //²»²ÉÓÃpingpong
+30003F12 NOC_cfg (addr=48,wdata=63,cfifo_wdata=0,cfifo_en=0)            // ping´«ÊäµÄ³¤¶È64
+00020040 cub_alu_insn_fill(addr=0,num=8)
+01407547 cub.csrw 10, 0b101000000 //scache_rd0 (sub_len=64,sys_len=1)
+000175C7 cub.csrw 11, 0b1 //scache_rd1 (sub_gap=1)
+E0004047 cub.scache_rd_en 0, byte, 1 //store out of core
+00001044 cub.event_finish
+E0204047 cub.scache_rd_en 64, byte, 1 //store out of core
+00001044 cub.event_finish
+E0404047 cub.scache_rd_en 128, byte, 1 //store out of core
+00001044 cub.event_finish
+00020020 VQ_alu_csrw(csr_addr=0,csr_wdata=0b10000) //cub_alu_din_cflow_sel
+00000120 VQ_alu_csrw(csr_addr=2,csr_wdata=0b000000000000000) //crossbar
+004001A0 VQ_alu_csrw(csr_addr=3,csr_wdata=0b1000000000) //crossbar
+003803A0 VQ_alu_csrw(csr_addr=7,csr_wdata=0b111000000) //scache wr0: sys_len=1,sub_len=32*2*3
+00002420 VQ_alu_csrw(csr_addr=8,csr_wdata=0b1) //scache wr1: sub_gap=1
+04020023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+80080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=9,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0) //mv_weight
+90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=0, sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1) //mv_fmap
+90000FA1 conv3d_start       (first_sub_flag=1,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=1)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+00000073 next_fetch_is_cpu
+10500073 wfi
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00c40413 addi x8, x8, 12
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+02048493 addi x9, x9, 32
+    04b6 c.slli x9, 13
+00048493 addi x9, x9, 0
+22000937 lui x18, 0x22000
+04090913 addi x18, x18, 0x040
+224009b7 lui x19, 0x22400
+04098993 addi x19, x19, 0x040
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=12,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=32,addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=3)
+48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00f40413 addi x8, x8, 15
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+00148493 addi x9, x9, 1
+22001937 lui x18, 0x22001
+03e90913 addi x18, x18, 0x03E
+224019b7 lui x19, 0x22401
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=15,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
+90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=1,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=1)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+01240413 addi x8, x8, 18
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+02048493 addi x9, x9, 32
+22011937 lui x18, 0x22011
+03e90913 addi x18, x18, 0x03E
+224119b7 lui x19, 0x22411
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=18,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=32,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=3)
+48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+01540413 addi x8, x8, 21
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+02048493 addi x9, x9, 32
+    04b6 c.slli x9, 13
+02048493 addi x9, x9, 32
+22000937 lui x18, 0x22000
+04090913 addi x18, x18, 0x040
+224009b7 lui x19, 0x22400
+04098993 addi x19, x19, 0x040
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=21,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
+90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=32,addr=32,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=1)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+01840413 addi x8, x8, 24
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+02148493 addi x9, x9, 33
+22001937 lui x18, 0x22001
+03e90913 addi x18, x18, 0x03E
+224019b7 lui x19, 0x22401
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=24,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=33,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=3)
+48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00040413 addi x8, x8, 0
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+00048493 addi x9, x9, 0
+22811937 lui x18, 0x22811
+03e90913 addi x18, x18, 0x03E
+224119b7 lui x19, 0x22411
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+08000521 VQ_NOP                         (bar=0,nop_cycle_num=5) //100_000000000000000000_010_0001
+0781FFA1 psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=0,bar=0)
+07A07FA1 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=7,cfifo_en=0,bar=0)
+C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4) //mv_weight
+90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=0, sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1) //mv_fmap
+90000FA1 conv3d_start       (first_sub_flag=1,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=1)
+00000013 npu_store(cfifo_en=0,bar=0) //Êä³ö64¸öÊý
+00000020 VQ_alu_csrw(csr_addr=0,csr_wdata=0b00000)
+00000023 VQ_alu_event_call(event_addr=0,bar=0)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成搬运
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00340413 addi x8, x8, 3
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+02048493 addi x9, x9, 32
+    04b6 c.slli x9, 13
+00048493 addi x9, x9, 0
+22000937 lui x18, 0x22000
+04090913 addi x18, x18, 0x040
+224009b7 lui x19, 0x22400
+04098993 addi x19, x19, 0x040
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=3,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=32,addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=3)
+48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00640413 addi x8, x8, 6
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+00148493 addi x9, x9, 1
+22001937 lui x18, 0x22001
+03e90913 addi x18, x18, 0x03E
+224019b7 lui x19, 0x22401
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=6,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
+90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=1,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=1)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00940413 addi x8, x8, 9
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+02048493 addi x9, x9, 32
+22011937 lui x18, 0x22011
+03e90913 addi x18, x18, 0x03E
+224119b7 lui x19, 0x22411
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=9,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=32,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=3)
+48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00c40413 addi x8, x8, 12
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+02048493 addi x9, x9, 32
+    04b6 c.slli x9, 13
+02048493 addi x9, x9, 32
+22000937 lui x18, 0x22000
+04090913 addi x18, x18, 0x040
+224009b7 lui x19, 0x22400
+04098993 addi x19, x19, 0x040
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=12,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
+90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=32,addr=32,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=1)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00f40413 addi x8, x8, 15
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+02148493 addi x9, x9, 33
+22001937 lui x18, 0x22001
+03e90913 addi x18, x18, 0x03E
+224019b7 lui x19, 0x22401
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=15,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=33,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=3)
+48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+01240413 addi x8, x8, 18
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+04048493 addi x9, x9, 64
+22011937 lui x18, 0x22011
+03e90913 addi x18, x18, 0x03E
+224119b7 lui x19, 0x22411
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=18,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=64,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=3)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+01540413 addi x8, x8, 21
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+02048493 addi x9, x9, 32
+    04b6 c.slli x9, 13
+04048493 addi x9, x9, 64
+22000937 lui x18, 0x22000
+04090913 addi x18, x18, 0x040
+224009b7 lui x19, 0x22400
+04098993 addi x19, x19, 0x040
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=21,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=32,addr=64,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=1)
+48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+01840413 addi x8, x8, 24
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+04148493 addi x9, x9, 65
+22001937 lui x18, 0x22001
+03e90913 addi x18, x18, 0x03E
+224019b7 lui x19, 0x22401
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=24,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=65,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=3)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00040413 addi x8, x8, 0
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+02048493 addi x9, x9, 32
+22811937 lui x18, 0x22811
+03e90913 addi x18, x18, 0x03E
+    4501 c.li x10, 0
+224119b7 lui x19, 0x22411
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+00A0105B storec x10, MQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+08000521 VQ_NOP                         (bar=0,nop_cycle_num=5) //100_000000000000000000_010_0001
+0781FFA1 psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_addr=64,scache_wr_size=byte,run_cycle_num=31,cfifo_en=0,bar=0)
+07A07FA1 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_addr=96,scache_wr_size=byte,run_cycle_num=7,cfifo_en=0,bar=0)
+A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2) //mv_weight
+90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=32, sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1) //mv_fmap
+90000FA1 conv3d_start       (first_sub_flag=1,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=1)
+A5004012 NOC_cfg (addr=37,wdata=64,cfifo_wdata=0,cfifo_en=1)           // Êä³ö»ùµØÖ·Æ«ÒÆÎª0£¬µØÖ·Îª3200
+00000013 npu_store(cfifo_en=0,bar=0) //Êä³ö64¸öÊý
+00000020 VQ_alu_csrw(csr_addr=0,csr_wdata=0b00000)
+00000223 VQ_alu_event_call(event_addr=4,bar=0)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成搬运
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00340413 addi x8, x8, 3
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+02048493 addi x9, x9, 32
+    04b6 c.slli x9, 13
+02048493 addi x9, x9, 32
+22000937 lui x18, 0x22000
+04090913 addi x18, x18, 0x040
+224009b7 lui x19, 0x22400
+04098993 addi x19, x19, 0x040
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=3,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=32,addr=32,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=3)
+48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00640413 addi x8, x8, 6
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+02148493 addi x9, x9, 33
+22001937 lui x18, 0x22001
+03e90913 addi x18, x18, 0x03E
+224019b7 lui x19, 0x22401
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=6,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
+90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=33,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=1)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00940413 addi x8, x8, 9
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+04048493 addi x9, x9, 64
+22011937 lui x18, 0x22011
+03e90913 addi x18, x18, 0x03E
+224119b7 lui x19, 0x22411
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=9,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=64,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=3)
+48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00c40413 addi x8, x8, 12
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+02048493 addi x9, x9, 32
+    04b6 c.slli x9, 13
+04048493 addi x9, x9, 64
+22000937 lui x18, 0x22000
+04090913 addi x18, x18, 0x040
+224009b7 lui x19, 0x22400
+04098993 addi x19, x19, 0x040
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=12,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
+90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=32,addr=64,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=1)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+00f40413 addi x8, x8, 15
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+04148493 addi x9, x9, 65
+22001937 lui x18, 0x22001
+03e90913 addi x18, x18, 0x03E
+224019b7 lui x19, 0x22401
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=15,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=65,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=3)
+48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+01240413 addi x8, x8, 18
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+06048493 addi x9, x9, 96
+22011937 lui x18, 0x22011
+03e90913 addi x18, x18, 0x03E
+224119b7 lui x19, 0x22411
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=18,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=96,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=3)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+01540413 addi x8, x8, 21
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+02048493 addi x9, x9, 32
+    04b6 c.slli x9, 13
+06048493 addi x9, x9, 96
+22000937 lui x18, 0x22000
+04090913 addi x18, x18, 0x040
+224009b7 lui x19, 0x22400
+04098993 addi x19, x19, 0x040
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=21,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
+90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=32,addr=96,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
+90000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=1)
+48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=0)
+
+00000073 next_fetch_is_cpu
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+01840413 addi x8, x8, 24
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01f48493 addi x9, x9, 31
+    04b6 c.slli x9, 13
+06148493 addi x9, x9, 97
+22001937 lui x18, 0x22001
+03e90913 addi x18, x18, 0x03E
+224019b7 lui x19, 0x22401
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=24,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
+B0080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=97,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
+B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=3)
+28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
+80000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
+
+08000521 VQ_NOP                         (bar=0,nop_cycle_num=5) //100_000000000000000000_010_0001
+0781FFA1 psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_addr=128,scache_wr_size=byte,run_cycle_num=31,cfifo_en=0,bar=0)
+07A1FFA1 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_addr=160,scache_wr_size=byte,run_cycle_num=31,cfifo_en=0,bar=0)
+25008012 NOC_cfg (addr=37,wdata=128,cfifo_wdata=0,cfifo_en=0)           // Êä³ö»ùµØÖ·Æ«ÒÆÎª0£¬µØÖ·Îª3200
+00000013 npu_store(cfifo_en=0,bar=0) //Êä³ö64¸öÊý
+00000323 VQ_alu_event_call(event_addr=6,bar=0)
+08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成搬运
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000073 next_fetch_is_cpu
+10500073 wfi  
