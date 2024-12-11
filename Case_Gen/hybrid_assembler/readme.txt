@@ -1,8 +1,8 @@
-hybrid_assembler_v4.2
+hybrid_assembler_v4.3
 
 使用说明：
-1. hybrid_assembler_v4.2: cpu和npu混合汇编器，可通过-h查看usage。
-2. inst_set_v4.2.s: 默认的输入文件，存放汇编指令。
+1. hybrid_assembler_v4.3: cpu和npu混合汇编器，可通过-h查看usage。
+2. inst_set_v4.3.s: 默认的输入文件，存放汇编指令。
 
 功能更新：
 1. 修改后的指令的同步更新
@@ -13,11 +13,12 @@ hybrid_assembler_v4.2
 npu_load (we=wr, l1b_mode=norm, from_noc_or_sc=noc, sys_gap=1, sub_gap=0, sub_len=16, addr=1, sys_len=8, mv_last_dis=0, cfifo_en=1, bar=0)
 npu_mv (we=rd, l1b_mode=norm, sys_gap=1, sub_gap=1, sub_len=1, addr=0, sys_len=1, mv_last_dis=0, cfifo_en=1, bar=0)
 hid_load (we=rd, l1b_mode=norm, sys_gap=1, sub_gap=1, sub_len=1, addr=0, sys_len=1, cfifo_en=1, bar=0)
-npu_store (cfifo_en=0, bar=0)
+npu_store (bar=0)
 MQ_cfg0 (gpu_mode=0, para_mode=0, tcache_mode=TRANS_DWCONV, one_ram_base_addr=1, tcache_trans_swbank=0, tcache_trans_prici=INT8, mv_cub_dst_sel=weight, wr_hl_mask=0)
 MQ_cfg1 (sub_gap=0, sys_gap_ext=0b10001, iob_pric=INT8, iob_l2c_in_cfg=0, tcache_mvfmap_stride=0, tcache_mvfmap_offset=0)
 MQ_cfg2 (hide_sub_gap=0, hide_sys_gap_ext=0b10001, l1b_norm_paral_mode=0)
 MQ_NOP (bar=0, nop_cycle_num=1)
+hid_load_chk_done
 CVEC_cfg0 (kernel_size=3, dw_depth=1, fmap_bank_num=7, stride=0)
 CVEC_cfg1 (routing_code=0b10000000010000001111, route_cfg_done=0)
 CVEC_cfg2 (cal_mode=dw_conv, wreg_wr_cnt=0, fprec=INT8, wprec=INT8, v_tq=0)
@@ -25,7 +26,7 @@ conv3d_start (first_sub_flag=0, start_index=0, end_index=29, tcache_stride=0, tc
 dwconv_start (cross_right=0, cross_left=1, right_pad=0, left_pad=1, bottom_pad=1, top_pad=1, trans_num=3, scache_wr_size=word, scache_wr_addr=0, run_cycle_num=20, cfifo_en=1, bar=1)
 eltwise_start(elt_mode=0, elt_pric=INT8, elt_bsel=0, elt_32ch_i16=0, scache_rd_en=0, scache_rd_addr=0, scache_rd_size=word, scache_sign_ext=0, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=16, rgba_mode=0, rgba_stride=0, rgba_shift=0, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=end, pad0_len=0, run_cycle_num=32, cfifo_en=1, bar=1)
 Y_mode_pre_start (Y_mode_cram_sel=0, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=16, rgba_mode=0, rgba_stride=0, rgba_shift=0, hl_op=0, bc_keep_2cycle_en=0, bc_group=0, pad0_sel=end, pad0_len=0, run_cycle_num=1, cfifo_en=1, bar=1)
-psum_rd (rd_num=0, rd_ch_sel=0, rd_rgb_sel=0, scache_wr_addr=0, scache_wr_size=word, run_cycle_num=0, cfifo_en=0, bar=1)
+psum_rd (rd_num=0, rd_ch_sel=0, rd_rgb_sel=0, scache_wr_en_mask=0, scache_wr_addr=0, scache_wr_size=word, run_cycle_num=0, cfifo_en=0, bar=1)
 VQ_NOP (bar=0, nop_cycle_num=1)
 VQ_alu_csrw (csr_addr=2, csr_wdata=0b001_0001_0001_0000)
 VQ_alu_csrr (csr_addr=2, rd=x1)
