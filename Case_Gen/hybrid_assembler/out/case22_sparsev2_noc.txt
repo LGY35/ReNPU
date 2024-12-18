@@ -49,6 +49,7 @@
 00000019 MQ_NOP(bar=0,nop_cycle_num=0)
 00000073 next_fetch_is_cpu
 10500073 wfi
+
 00000073 next_fetch_is_cpu
     4401 c.li x8, 0
     0426 c.slli x8, 9
@@ -770,6 +771,20 @@ A5068012 NOC_cfg (addr=37,wdata=1664,cfifo_wdata=0,cfifo_en=1)
 00000013 npu_store(bar=0)
 00000323 VQ_alu_event_call(event_addr=6,bar=0)
 08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成搬运
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000073 next_fetch_is_cpu
+10500073 wfi
+0000005B next_fetch_is_npu
+400128A2 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
+0001B210 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
 42000012 NOC_cfg (addr=66,wdata=0,cfifo_wdata=0,cfifo_en=0)           // 输出到ddr
 43000012 NOC_cfg (addr=67,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
 44180012 NOC_cfg (addr=68,wdata=6144,cfifo_wdata=0,cfifo_en=0)           // 输出基地址
