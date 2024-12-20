@@ -69,6 +69,7 @@ hex_gen:
 	python3 hex_gen.py -i ./out/case991_idma.txt ./out/case991_conv_bottleneck_noccore_4.1_ins_noc.txt    		 	 ./data/input_data0.txt 							-o ./hex_gen/case991_merge_inst.txt ./hex_gen/case991_out_hex.txt
 	python3 hex_gen.py -i ./out/case992_idma.txt ./out/case992_bottleneck_noccore_12cores_4.1_ins_noc.txt    		 ./data/bottleneck_combined_input_data.txt 		-o ./hex_gen/case992_merge_inst.txt ./hex_gen/case992_out_hex.txt
 	python3 hex_gen.py -i ./out/case993_idma.txt ./out/case993_bottleneck_noccore_1cores_4.1_ins_noc.txt    		 ./data/bottleneck_combined_input_data.txt 	-o ./hex_gen/case993_merge_inst.txt ./hex_gen/case993_out_hex.txt
+	python3 hex_gen.py -i ./out/case994_idma.txt ./out/case994_bottleneck_noccore_1cores_4.1_ins_noc.txt    		 ./data/bottleneck_combined_input_data.txt 	-o ./hex_gen/case994_merge_inst.txt ./hex_gen/case994_out_hex.txt
 
 clean:
 	rm -rf $(HEX_GEN_DIR)
