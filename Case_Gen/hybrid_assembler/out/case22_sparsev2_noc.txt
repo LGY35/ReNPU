@@ -1,4 +1,3 @@
-00000073 next_fetch_is_cpu
     4401 c.li x8, 0
     0426 c.slli x8, 9
 01b40413 addi x8, x8, 27
@@ -50,7 +49,6 @@
 00000073 next_fetch_is_cpu
 10500073 wfi
 
-00000073 next_fetch_is_cpu
     4401 c.li x8, 0
     0426 c.slli x8, 9
 00040413 addi x8, x8, 0
