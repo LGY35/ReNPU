@@ -58,7 +58,7 @@ NOC_cfg (addr=31,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指
 npu_load           (we=wr,l1b_mode=cache,from_noc_or_sc=noc, sys_gap=1,  sub_gap=1,sub_len=0 ,addr=0, sys_len=4 ,mv_last_dis=0,cfifo_en=1,bar=0) //load_fmap， 1024
 noc_req (comd_type=4, bar=0) // 检查是否完成fmap搬运
 NOC_cfg (addr=32,wdata=1,cfifo_wdata=0,cfifo_en=0)            // 相对寻址
-NOC_cfg (addr=32,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 设置为0即可，用ping addr
+NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 设置为0即可，用ping addr
 NOC_cfg (addr=34,wdata=1,cfifo_wdata=0,cfifo_en=0)           // 数据输出到本地
 NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
 NOC_cfg (addr=37,wdata=1536,cfifo_wdata=0,cfifo_en=0)           // 因为fmap占了32KB，也就是bank0到3，所以结果输出到bank6
