@@ -256,7 +256,7 @@ NOC_cfg (addr=71,wdata=0,cfifo_wdata=0,cfifo_en=0)             // noc地址
 NOC_cfg (addr=75,wdata=1,cfifo_wdata=0,cfifo_en=0)             // loop gap3
 NOC_cfg (addr=79,wdata=191,cfifo_wdata=0,cfifo_en=0)             // loop lenth3 = 64*3
 NOC_cfg (addr=80,wdata=0,cfifo_wdata=0,cfifo_en=0)           //piingpang num
-NOC_cfg (addr=48,wdata=191,cfifo_wdata=0,cfifo_en=0)            // ping传输的长度64
+NOC_cfg (addr=81,wdata=191,cfifo_wdata=0,cfifo_en=0)            // ping传输的长度64
 noc_req (comd_type=2, bar=0,cfifo_wdata=0,cfifo_en=0)   // 启动dma rd
 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)
 MQ_NOP(bar=0,nop_cycle_num=0)
