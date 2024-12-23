@@ -96,11 +96,11 @@
 21000012 NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 设置为0即可，用ping addr
 22000112 NOC_cfg (addr=34,wdata=1,cfifo_wdata=0,cfifo_en=0)           // 数据输出到本地
 23000012 NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
-25060012 NOC_cfg (addr=37,wdata=1536,cfifo_wdata=0,cfifo_en=0)           // 因为fmap占了32KB，也就是bank0到3，所以结果输出到bank6
+25060012 NOC_cfg (addr=37,wdata=1536,cfifo_wdata=0,cfifo_en=0)           // 输出到bank3
 2A000112 NOC_cfg (addr=42,wdata=1,cfifo_wdata=0,cfifo_en=0)           //最内层循环递增，每次读入256bit
-2E003F12 NOC_cfg (addr=46,wdata=63,cfifo_wdata=0,cfifo_en=0)             // 输出总长度64
+2E00BF12 NOC_cfg (addr=46,wdata=191,cfifo_wdata=0,cfifo_en=0)             // 输出总长度64
 2F000012 NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)           //不采用pingpong
-30003F12 NOC_cfg (addr=48,wdata=63,cfifo_wdata=0,cfifo_en=0)            // ping传输的长度64
+3000BF12 NOC_cfg (addr=48,wdata=191,cfifo_wdata=0,cfifo_en=0)            // ping传输的长度64
 00020040 cub_alu_insn_fill(addr=0,num=8)
 01407547 cub.csrw 10, 0b101000000 //scache_rd0 (sub_len=64,sys_len=1)
 000175C7 cub.csrw 11, 0b1 //scache_rd1 (sub_gap=1)
@@ -523,20 +523,18 @@ B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_
 02048493 addi x9, x9, 32
 22811937 lui x18, 0x22811
 03e90913 addi x18, x18, 0x03E
-    4501 c.li x10, 0
-224119b7 lui x19, 0x22411
+224119b7 lui x19, 0x22411 
 03e98993 addi x19, x19, 0x03E
 0080105B storec x8, MQ; 
 0090105B storec x9, MQ; 
 4120105B storec x18, VQ; 
-00A0105B storec x10, MQ; 
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
 A0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2) //mv_weight
 90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=32, sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1) //mv_fmap
 90000FA1 conv3d_start       (first_sub_flag=1,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=1)
-A5064012 NOC_cfg (addr=37,wdata=1600,cfifo_wdata=0,cfifo_en=1)
-00000013 npu_store(bar=0)//输出64个数
+25064012 NOC_cfg (addr=37,wdata=1600,cfifo_wdata=0,cfifo_en=0)
+00000013 npu_store(bar=0)//输出64个数 
 00000020 VQ_alu_csrw(csr_addr=0,csr_wdata=0b00000)
 00000223 VQ_alu_event_call(event_addr=4,bar=0)
 28000021 VQ_NOP             (bar=2,nop_cycle_num=0)
@@ -761,11 +759,7 @@ B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_
 8781FFA1 psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=128,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
 87A1FFA1 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=160,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
 
-00000073 next_fetch_is_cpu
-    4401 c.li x8, 0
-0080105B storec x8, MQ; 
-0000005B next_fetch_is_npu
-A5068012 NOC_cfg (addr=37,wdata=1664,cfifo_wdata=0,cfifo_en=1)
+25068012 NOC_cfg (addr=37,wdata=1664,cfifo_wdata=0,cfifo_en=0)
 00000013 npu_store(bar=0)
 00000323 VQ_alu_event_call(event_addr=6,bar=0)
 08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成搬运
@@ -785,7 +779,7 @@ A5068012 NOC_cfg (addr=37,wdata=1664,cfifo_wdata=0,cfifo_en=1)
 0001B210 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
 42000012 NOC_cfg (addr=66,wdata=0,cfifo_wdata=0,cfifo_en=0)           // 输出到ddr
 43000012 NOC_cfg (addr=67,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
-44180012 NOC_cfg (addr=68,wdata=6144,cfifo_wdata=0,cfifo_en=0)           // 输出基地址
+44060012 NOC_cfg (addr=68,wdata=1536,cfifo_wdata=0,cfifo_en=0)           // 输出基地址
 46000012 NOC_cfg (addr=70,wdata=0,cfifo_wdata=0,cfifo_en=0)           //noc地址
 47000012 NOC_cfg (addr=71,wdata=0,cfifo_wdata=0,cfifo_en=0)             // noc地址
 4B000112 NOC_cfg (addr=75,wdata=1,cfifo_wdata=0,cfifo_en=0)             // loop gap3
