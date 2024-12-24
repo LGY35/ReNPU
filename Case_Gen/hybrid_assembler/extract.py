@@ -11,7 +11,7 @@ def extract_hex_instructions(input_filename, output_filename):
         # zero_padding_needed = False
         wfi_found = False
         addr_compute = '00002000'
-        current_addr = int(addr_compute, 16) - 4  # 因为下面检测到第一条就会加，而第一条的起始是80002F48，所以这里减去4
+        current_addr = int(addr_compute, 16)  # 因为下面检测到第一条就会加，而第一条的起始是80002F48，所以这里减去4
         # 初始化 updated_addr
         updated_addr = current_addr
         for line in lines:
@@ -28,18 +28,23 @@ def extract_hex_instructions(input_filename, output_filename):
                 elif len(parts[0]) == 4:
                     updated_addr += 2  # 一条指令是2B
 
-                if wfi_found:
-                    if parts[1] != 'nop':
-                        wfi_found = False
-                        addr_compute = f"{updated_addr:X}" # 转换为大写十六进制，不带 `0x` 前缀
-                        print(f"Updated Address: {addr_compute}") 
-                    else:
-                        print("nop found") 
-                        wfi_found = True   
-                        
+                # if wfi_found:
+                #     if parts[1] != 'MQ_NOP(bar=0,nop_cycle_num=0)':
+                #         wfi_found = False
+                #         addr_compute = f"{updated_addr:X}" # 转换为大写十六进制，不带 `0x` 前缀
+                #         print(f"Updated Address: {addr_compute}") 
+                #     else:
+                #         print("nop found") 
+                #         wfi_found = True   
+                # if 'wfi' in line:
+                #     wfi_found = True
+                #     print("wfi found")
+                
+                # 检测到 'wfi' 指令，输出当前地址
                 if 'wfi' in line:
-                    wfi_found = True
-                    print("wfi found")
+                    addr_compute = f"{updated_addr:X}"  # 转换为大写的十六进制，不带 `0x`
+                    print(f"Updated Address: {addr_compute}")
+                        
                     
                     # if 'next_fetch_is_npu' in line:
                     #     print("next_fetch_is_npu found")

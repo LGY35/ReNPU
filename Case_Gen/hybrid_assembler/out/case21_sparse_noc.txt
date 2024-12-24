@@ -492,7 +492,7 @@ B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_
 22811937 lui x18, 0x22811
 03e90913 addi x18, x18, 0x03E
     4501 c.li x10, 0
-224119b7 lui x19, 0x22411
+224119b7 lui x19, 0x22411 
 03e98993 addi x19, x19, 0x03E
 0080105B storec x8, MQ; 
 0090105B storec x9, MQ; 
