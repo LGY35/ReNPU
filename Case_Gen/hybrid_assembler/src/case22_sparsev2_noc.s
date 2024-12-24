@@ -63,9 +63,9 @@ NOC_cfg (addr=34,wdata=1,cfifo_wdata=0,cfifo_en=0)           // 数据输出到�
 NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
 NOC_cfg (addr=37,wdata=1536,cfifo_wdata=0,cfifo_en=0)           // 输出到bank3
 NOC_cfg (addr=42,wdata=1,cfifo_wdata=0,cfifo_en=0)           //最内层循环递增，每次读入256bit
-NOC_cfg (addr=46,wdata=191,cfifo_wdata=0,cfifo_en=0)             // 输出总长度64
+NOC_cfg (addr=46,wdata=63,cfifo_wdata=0,cfifo_en=0)             // 输出总长度64
 NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)           //不采用pingpong
-NOC_cfg (addr=48,wdata=191,cfifo_wdata=0,cfifo_en=0)            // ping传输的长度64
+NOC_cfg (addr=48,wdata=63,cfifo_wdata=0,cfifo_en=0)            // ping传输的长度64
 cub_alu_insn_fill(addr=0,num=8)
 cub.csrw 10, 0b101000000 //scache_rd0 (sub_len=64,sys_len=1)
 cub.csrw 11, 0b1 //scache_rd1 (sub_gap=1)
@@ -123,7 +123,6 @@ npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=0,s
 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=31,addr=0, sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1) //mv_fmap
 conv3d_start       (first_sub_flag=1,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=1)
 npu_store(bar=0)//输出64个数
-noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成搬运
 VQ_alu_csrw(csr_addr=0,csr_wdata=0b00000)
 VQ_alu_event_call(event_addr=0,bar=0)
 VQ_NOP             (bar=2,nop_cycle_num=0)
@@ -186,7 +185,6 @@ VQ_alu_csrw(csr_addr=0,csr_wdata=0b00000)
 VQ_alu_event_call(event_addr=4,bar=0)
 VQ_NOP             (bar=2,nop_cycle_num=0)
 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=34,cfifo_en=1,bar=0)
-noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成搬运
 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=3,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=32,addr=32,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=32,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=0,run_cycle_num=34,cfifo_en=1,bar=3)
