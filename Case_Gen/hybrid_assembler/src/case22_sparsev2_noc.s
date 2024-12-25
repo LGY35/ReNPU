@@ -11,7 +11,7 @@ NOC_cfg (addr=17,wdata=431,cfifo_wdata=0,cfifo_en=0) // ping传输的长度
 NOC_cfg (addr=19,wdata=0,cfifo_wdata=0,cfifo_en=0) //单播模式
 NOC_cfg (addr=20,wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
 NOC_cfg (addr=21,wdata=1,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组统一的地址）
-NOC_cfg (addr=31,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指
+NOC_cfg (addr=31,wdata=0,cfifo_wdata=0,cfifo_en=0) //单独取指
 npu_load           (we=wr,l1b_mode=norm ,from_noc_or_sc=noc, sys_gap=230,sub_gap=1,sub_len=27,addr=0, sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight， 432
 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成weight搬运
 NOC_cfg (addr=98  , wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭多节点合并读
@@ -26,7 +26,7 @@ NOC_cfg (addr=113 , wdata=0,cfifo_wdata=0,cfifo_en=0) //不采用pingpong
 NOC_cfg (addr=114 , wdata=1023,cfifo_wdata=0,cfifo_en=0)  // fmap总长度2048-1
 NOC_cfg (addr=116 , wdata=0,cfifo_wdata=0,cfifo_en=0)//单播模式
 NOC_cfg (addr=117 , wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
-NOC_cfg (addr=118 , wdata=0,cfifo_wdata=0,cfifo_en=0) // 搬运fmap
+NOC_cfg (addr=118 , wdata=1,cfifo_wdata=0,cfifo_en=0) // 搬运fmap
 noc_req (comd_type=3, bar=0,cfifo_wdata=0,cfifo_en=0) // 启动dma——wr
 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
 MQ_NOP(bar=0,nop_cycle_num=0)
