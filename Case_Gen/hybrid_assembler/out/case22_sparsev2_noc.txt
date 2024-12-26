@@ -1,12 +1,12 @@
     4401 c.li x8, 0
     0426 c.slli x8, 9
-06c40413 addi x8, x8, 108
+01b40413 addi x8, x8, 27
     0436 c.slli x8, 13
 00040413 addi x8, x8, 0
 0080105B storec x8, MQ; 
 0000005B next_fetch_is_npu
 400128A2 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
-0006C010 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=108,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+0001B010 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
 02000012 NOC_cfg (addr=2,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭多节点合并读
 03000012 NOC_cfg (addr=3,wdata=0,cfifo_wdata=0,cfifo_en=0) // 直接从ddr读取数据
 04000012 NOC_cfg (addr=4,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong
@@ -20,8 +20,7 @@
 15000012 NOC_cfg (addr=21,wdata=0,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组统一的地址）
 1F000112 NOC_cfg (addr=31,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指
 40000090 MQ_cfg1(sub_gap=1, sys_gap_ext=0b00000, iob_pric=INT8, iob_l2c_in_cfg=0, tcache_mvfmap_stride=0, tcache_mvfmap_offset=0)
-80825591 npu_load           (we=wr,l1b_mode=norm ,from_noc_or_sc=noc,sys_gap=149,sub_gap=1,sub_len=108,addr=0, sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight
-08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成weight搬运
+80839991 npu_load           (we=wr,l1b_mode=norm ,from_noc_or_sc=noc, sys_gap=230,sub_gap=1,sub_len=27,addr=0, sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight， 432noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成weight搬运
 62000012 NOC_cfg (addr=98  , wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭多节点合并读
 63000012 NOC_cfg (addr=99  , wdata=0,cfifo_wdata=0,cfifo_en=0) // 直接从ddr读取数据
 64000012 NOC_cfg (addr=100 , wdata=0 ,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong
@@ -89,9 +88,7 @@
 14000012 NOC_cfg (addr=20,wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
 15000112 NOC_cfg (addr=21,wdata=1,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组不同的地址）
 1F000112 NOC_cfg (addr=31,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指
-80400491 npu_load           (we=wr,l1b_mode=cache,from_noc_or_sc=noc,sys_gap=1,  sub_gap=1,sub_len=0 ,addr=0, sys_len=8 ,mv_last_dis=0,cfifo_en=1,bar=0) //load_fmap
-08000017 noc_req (comd_type=4, bar=0) // 检查是否完成fmap搬运
-20000112 NOC_cfg (addr=32,wdata=1,cfifo_wdata=0,cfifo_en=0)            // 相对寻址
+80200491 npu_load           (we=wr,l1b_mode=cache,from_noc_or_sc=noc, sys_gap=1,  sub_gap=1,sub_len=0 ,addr=0, sys_len=4 ,mv_last_dis=0,cfifo_en=1,bar=0) //load_fmap， 1024NOC_cfg (addr=32,wdata=1,cfifo_wdata=0,cfifo_en=0)            // 相对寻址
 21000012 NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 设置为0即可，用ping addr
 22000112 NOC_cfg (addr=34,wdata=1,cfifo_wdata=0,cfifo_en=0)           // 数据输出到本地
 23000012 NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
