@@ -77,6 +77,6 @@
 8001E600 imm_wba(0x8001E600)
 8001FE80 imm_wba(0x8001FE80)
 80007600 imm_gba(0x80007600)
-00002A7C imm_cfg(0x00002A7C) # base addr
+0000433C imm_cfg(0x0000433C) # base addr
 0FFF0003 finish_group(0xFFF)   # 启动节点0
 
