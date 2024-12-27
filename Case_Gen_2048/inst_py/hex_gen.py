@@ -26,6 +26,8 @@ def append_files_with_marker(file_list, address_list, output_file):
                 # 从地址列表中取出对应的地址分界符
                 address_marker = address_list[idx]
                 fout.write(address_marker + '\n')
+        print("Merge instruction file")
+
 
 def inst_proc(input_file, output_file):
     global byte_cnt, data  # 需要在函数中修改全局变量
@@ -59,16 +61,27 @@ def inst_proc(input_file, output_file):
         f_out.writelines(data)                
 
 
-def middle():
+# def middle():
+#     global byte_cnt, data
+#     data_base_addr = 32,768              # 1024*16=16384
+#     while(byte_cnt < data_base_addr):
+#         if(byte_cnt%16 == 15):
+#             data.append('00\n')
+#             # data.append('')
+#         else:
+#             data.append('00 ')
+#         byte_cnt = byte_cnt + 1
+def middle(address_list):
     global byte_cnt, data
-    data_base_addr = 16384
+    # 去除地址字符串前的'@'符号，并转换为十进制
+    data_base_addr = int(address_list[1][1:], 16)
     while(byte_cnt < data_base_addr):
-        if(byte_cnt%16 == 15):
+        if(byte_cnt % 16 == 15):
             data.append('00\n')
-            # data.append('')
         else:
             data.append('00 ')
         byte_cnt = byte_cnt + 1
+
 
 
 # def data_proc(input_file, output_file):
@@ -165,18 +178,18 @@ def main():
     hex_file   = args.output[1]  
     
     # 分界符列表
-    address_list = ["@00002000",  "@00004000"]  # "@00002F48" "@00004000"
+    address_list = ["@00002000",  "@00008000"]  # "@00002F48" "@00008000"
     
     # 拼接文件
     append_files_with_marker(files_to_merge, address_list, merge_inst)
-
+    print("Merge instruction file:", merge_inst)
     
     file1 = "temp_file1.txt"  # 临时文件1
     
     inst_proc(merge_inst, file1)
     # middle(1)
     # inst_proc(param2, file2)
-    middle()
+    middle(address_list)  
     data_proc(param3, hex_file)
     os.remove(file1)
 

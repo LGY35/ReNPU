@@ -22,7 +22,7 @@
 80004D00 imm_wba(0x80004D00)
 80004DC0 imm_wba(0x80004DC0)
 80004E80 imm_wba(0x80004E80)
-80004240 imm_gba(0x800041B0)
+80004240 imm_gba(0x80004240)
 00002000 imm_cfg(0x00002000) # base addr
 0FFF0002 last_group(0xFFF)   #
 8000E000 imm_ba(0x8000E000)
@@ -49,7 +49,7 @@
 80004D00 imm_wba(0x80004D00)
 80004DC0 imm_wba(0x80004DC0)
 80004E80 imm_wba(0x80004E80)
-80004240 imm_gba(0x800041B0)
-00002114 imm_cfg(0x0000219C) # base addr
+80004240 imm_gba(0x80004240)
+00002114 imm_cfg(0x00002114) # base addr
 0FFF0003 finish_group(0xFFF)   # 启动节点0
 
