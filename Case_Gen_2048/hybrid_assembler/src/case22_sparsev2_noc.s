@@ -12,7 +12,8 @@ NOC_cfg (addr=19,wdata=0,cfifo_wdata=0,cfifo_en=0) //单播模式
 NOC_cfg (addr=20,wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
 NOC_cfg (addr=21,wdata=0,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组统一的地址）
 NOC_cfg (addr=31,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指
-npu_load           (we=wr,l1b_mode=norm ,from_noc_or_sc=noc, sys_gap=230,sub_gap=1,sub_len=27,addr=0, sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight， 432noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成weight搬运
+npu_load           (we=wr,l1b_mode=norm ,from_noc_or_sc=noc, sys_gap=230,sub_gap=1,sub_len=27,addr=0, sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight， 432
+noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成weight搬运
 NOC_cfg (addr=98  , wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭多节点合并读
 NOC_cfg (addr=99  , wdata=0,cfifo_wdata=0,cfifo_en=0) // 直接从ddr读取数据
 NOC_cfg (addr=100 , wdata=0 ,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong

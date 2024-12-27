@@ -20,7 +20,8 @@
 15000012 NOC_cfg (addr=21,wdata=0,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组统一的地址）
 1F000112 NOC_cfg (addr=31,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指
 40000090 MQ_cfg1(sub_gap=1, sys_gap_ext=0b00000, iob_pric=INT8, iob_l2c_in_cfg=0, tcache_mvfmap_stride=0, tcache_mvfmap_offset=0)
-80839991 npu_load           (we=wr,l1b_mode=norm ,from_noc_or_sc=noc, sys_gap=230,sub_gap=1,sub_len=27,addr=0, sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight， 432noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成weight搬运
+80839991 npu_load           (we=wr,l1b_mode=norm ,from_noc_or_sc=noc, sys_gap=230,sub_gap=1,sub_len=27,addr=0, sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight， 432
+08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成weight搬运
 62000012 NOC_cfg (addr=98  , wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭多节点合并读
 63000012 NOC_cfg (addr=99  , wdata=0,cfifo_wdata=0,cfifo_en=0) // 直接从ddr读取数据
 64000012 NOC_cfg (addr=100 , wdata=0 ,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong

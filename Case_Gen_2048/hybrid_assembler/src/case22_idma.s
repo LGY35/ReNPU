@@ -22,7 +22,7 @@ imm_wba(0x80008C40)
 imm_wba(0x80008D00)
 imm_wba(0x80008DC0)
 imm_wba(0x80008E80)
-imm_gba(0x8000F600) # 432个*32 = 3600H
+imm_gba(0x8000B600) # 432个*32 = 3600H
 imm_cfg(0x00002000) # base addr
 last_group(0xFFF)   # 
 imm_ba(0x80008000)
@@ -49,7 +49,7 @@ imm_wba(0x80008C40)
 imm_wba(0x80008D00)
 imm_wba(0x80008DC0)
 imm_wba(0x80008E80)
-imm_gba(0x8000F600)
+imm_gba(0x8000B600)
 imm_cfg(0x000020C2) # base addr
 last_group(0xFFF)   #   
 imm_ba(0x80008000)
@@ -76,6 +76,6 @@ imm_wba(0x8001F600)
 imm_wba(0x80020E00)
 imm_wba(0x80021600)
 imm_wba(0x80022E80) 
-imm_gba(0x8000F600)
-imm_cfg(0x00004330) # base addr
+imm_gba(0x8000B600)
+imm_cfg(0x00004334) # base addr
 finish_group(0xFFF)   # 启动节点0  
