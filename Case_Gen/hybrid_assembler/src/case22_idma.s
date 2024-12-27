@@ -50,7 +50,7 @@ imm_wba(0x80004D00)
 imm_wba(0x80004DC0)
 imm_wba(0x80004E80)
 imm_gba(0x80007600)
-imm_cfg(0x000020C2) # base addr
+imm_cfg(0x000020BE) # base addr
 last_group(0xFFF)   #   
 imm_ba(0x80004000)
 imm_ba(0x80004000)

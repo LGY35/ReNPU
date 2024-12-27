@@ -1,4 +1,3 @@
-00000073 next_fetch_is_cpu
     4401 c.li x8, 0
     0426 c.slli x8, 9
 01b40413 addi x8, x8, 27
@@ -7,7 +6,7 @@
 0080105B storec x8, MQ; 
 0000005B next_fetch_is_npu
 400128A2 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
-0001B010 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+0001B210 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
 02000012 NOC_cfg (addr=2,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭多节点合并读
 03000012 NOC_cfg (addr=3,wdata=0,cfifo_wdata=0,cfifo_en=0) // 直接从ddr读取数据
 04000012 NOC_cfg (addr=4,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong
@@ -48,8 +47,6 @@
 00000019 MQ_NOP(bar=0,nop_cycle_num=0)
 00000073 next_fetch_is_cpu
 10500073 wfi
-
-00000073 next_fetch_is_cpu
     4401 c.li x8, 0
     0426 c.slli x8, 9
 00040413 addi x8, x8, 0
@@ -2638,12 +2635,12 @@ B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_
 00000019 MQ_NOP(bar=0,nop_cycle_num=0)
 00000019 MQ_NOP(bar=0,nop_cycle_num=0)
 00000019 MQ_NOP(bar=0,nop_cycle_num=0)
-00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0) 
 00000019 MQ_NOP(bar=0,nop_cycle_num=0)
 00000019 MQ_NOP(bar=0,nop_cycle_num=0)
 00000073 next_fetch_is_cpu
 10500073 wfi
-
+0000005B next_fetch_is_npu
 400128A2 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
 0001B210 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
 42000012 NOC_cfg (addr=66,wdata=0,cfifo_wdata=0,cfifo_en=0)           // 输出到ddr
