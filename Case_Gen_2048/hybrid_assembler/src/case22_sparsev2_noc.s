@@ -40,7 +40,7 @@ MQ_NOP(bar=0,nop_cycle_num=0)
 MQ_NOP(bar=0,nop_cycle_num=0)
 wfi  
 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
-MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
 NOC_cfg (addr=0,wdata=1,cfifo_wdata=0,cfifo_en=0) // 相对寻址
 NOC_cfg (addr=1,wdata=0,cfifo_wdata=0,cfifo_en=0) //读取本地L2
 NOC_cfg (addr=2,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭多节点合并读
@@ -603,14 +603,14 @@ MQ_NOP(bar=0,nop_cycle_num=0)
 MQ_NOP(bar=0,nop_cycle_num=0)
 MQ_NOP(bar=0,nop_cycle_num=0)
 MQ_NOP(bar=0,nop_cycle_num=0)
-MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0) 
 MQ_NOP(bar=0,nop_cycle_num=0)
 MQ_NOP(bar=0,nop_cycle_num=0)
 MQ_NOP(bar=0,nop_cycle_num=0)
 MQ_NOP(bar=0,nop_cycle_num=0)
 wfi  
 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
-MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_SFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
 NOC_cfg (addr=66,wdata=0,cfifo_wdata=0,cfifo_en=0)           // 输出到ddr
 NOC_cfg (addr=67,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
 NOC_cfg (addr=68,wdata=1536,cfifo_wdata=0,cfifo_en=0)           // 输出基地址

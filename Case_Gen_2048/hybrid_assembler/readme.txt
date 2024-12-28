@@ -1,8 +1,8 @@
-hybrid_assembler_v4.3
+hybrid_assembler_v4.5
 
 使用说明：
-1. hybrid_assembler_v4.3: cpu和npu混合汇编器，可通过-h查看usage。
-2. inst_set_v4.3.s: 默认的输入文件，存放汇编指令。
+1. hybrid_assembler_v4.5: cpu和npu混合汇编器，可通过-h查看usage。
+2. inst_set_v4.5.s: 默认的输入文件，存放汇编指令。
 
 功能更新：
 1. 修改后的指令的同步更新
@@ -42,10 +42,10 @@ storec x11, VQ
 cub_alu_insn_fill(addr=1, num=1)
 cub_alu_event_call(start_addr=1)
 cub_alu_mask(mask_sel=1, cub_alu_mask=0b1)
-cub.lp.starti 1, 1
-cub.lp.endi 1, 1
-cub.lp.counti 1, 1
-cub.lp.setupi 1, 1, 1
+cub.lp.starti 1, 0x01
+cub.lp.endi 1, 0x01
+cub.lp.counti 1, 0x01
+cub.lp.setupi 1, 0x01, 0x01
 cub.event_finish
 cub.nop 1
 cub.cflow_nop 1
@@ -89,31 +89,31 @@ cub.p.vec.minh x5, x1, x2
 cub.p.vec.minb x5, x1, x2
 cub.p.abs x5, x1
 cub.relu x5, x1, 1
-cub.sb.l1b x2, 1(x1)
-cub.sh.l1b x2, 1(x1)
-cub.sw.l1b x2, 1(x1)
-cub.sb.scache x2, 1(x1)
-cub.sh.scache x2, 1(x1)
-cub.sw.scache x2, 1(x1)
-cub.sw.cram x2, 113(x1)
-cub.addi x5, x1, 1
-cub.slti x5, x1, 1
-cub.sltiu x5, x1, 1
-cub.xori x5, x1, 1
-cub.ori x5, x1, 1
-cub.andi x5, x1, 1
-cub.lb.l1b x5, 1(x1)
-cub.lbu.l1b x5, 1(x1)
-cub.lh.l1b x5, 1(x1)
-cub.lhu.l1b x5, 1(x1)
-cub.lw.l1b x5, 1(x1)
-cub.lb.scache x5, 1(x1)
-cub.lbu.scache x5, 1(x1)
-cub.lh.scache x5, 1(x1)
-cub.lhu.scache x5, 1(x1)
-cub.lw.scache x5, 1(x1)
-cub.lw.cram x5, 1(x1)
-cub.lui x5, 1
+cub.sb.l1b x2, 0x01(x1)
+cub.sh.l1b x2, 0x01(x1)
+cub.sw.l1b x2, 0x01(x1)
+cub.sb.scache x2, 0x01(x1)
+cub.sh.scache x2, 0x01(x1)
+cub.sw.scache x2, 0x01(x1)
+cub.sw.cram x2, 0x01(x1)
+cub.addi x5, x1, 0x01
+cub.slti x5, x1, 0x01
+cub.sltiu x5, x1, 0x01
+cub.xori x5, x1, 0x01
+cub.ori x5, x1, 0x01
+cub.andi x5, x1, 0x01
+cub.lb.l1b x5, 0x01(x1)
+cub.lbu.l1b x5, 0x01(x1)
+cub.lh.l1b x5, 0x01(x1)
+cub.lhu.l1b x5, 0x01(x1)
+cub.lw.l1b x5, 0x01(x1)
+cub.lb.scache x5, 0x01(x1)
+cub.lbu.scache x5, 0x01(x1)
+cub.lh.scache x5, 0x01(x1)
+cub.lhu.scache x5, 0x01(x1)
+cub.lw.scache x5, 0x01(x1)
+cub.lw.cram x5, 0x01(x1)
+cub.lui x5, 0x01
 cub.addT8 x5, x1, x2, 3
 cub.addT16 x5, x1, x2, 3
 cub.subT8 x5, x1, x2, 3
