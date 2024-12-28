@@ -1,0 +1,87 @@
+0000005B next_fetch_is_npu     节点1
+
+60000012 NOC_cfg ( addr=96  , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+61000012 NOC_cfg ( addr=97  , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+62000012 NOC_cfg ( addr=98  , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+63000012 NOC_cfg ( addr=99  , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+64000012 NOC_cfg ( addr=100 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+65000012 NOC_cfg ( addr=101 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+66000012 NOC_cfg ( addr=102 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+67020012 NOC_cfg ( addr=103 , wdata=512, cfifo_wdata=0,cfifo_en=0 )
+68000012 NOC_cfg ( addr=104 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+69000012 NOC_cfg ( addr=105 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6A000012 NOC_cfg ( addr=106 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6B000012 NOC_cfg ( addr=107 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6C000112 NOC_cfg ( addr=108 , wdata=1, cfifo_wdata=0,cfifo_en=0 )
+6D000012 NOC_cfg ( addr=109 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6E000012 NOC_cfg ( addr=110 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+6F000012 NOC_cfg ( addr=111 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+700A7F12 NOC_cfg ( addr=112 , wdata=2687, cfifo_wdata=0,cfifo_en=0)   # loop lenth
+71000012 NOC_cfg ( addr=113 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+720A7F12 NOC_cfg ( addr=114 , wdata=2687, cfifo_wdata=0,cfifo_en=0)   # ping lenth
+73000012 NOC_cfg ( addr=115 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+74000012 NOC_cfg ( addr=116 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+75000012 NOC_cfg ( addr=117 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+76000012 NOC_cfg ( addr=118 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+06000017 noc_req (comd_type=3, bar=0)
+08000017 noc_req (comd_type=4, bar=0)
+00000012 NOC_cfg (addr=0 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 绝对寻址
+01000012 NOC_cfg (addr=1 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+02000012 NOC_cfg (addr=2 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+03000112 NOC_cfg (addr=3 , wdata=1, cfifo_wdata=0,cfifo_en=0 )     # 1片上读取
+04000012 NOC_cfg (addr=4 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+05000112 NOC_cfg (addr=5 , wdata=1, cfifo_wdata=0,cfifo_en=0 )     # 目的节点坐标，相当于地址的最高4位---节点1，所以是1
+06000012 NOC_cfg (addr=6 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 0
+07000012 NOC_cfg (addr=7 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+08000012 NOC_cfg (addr=8 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # gap0
+09000012 NOC_cfg (addr=9 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # gap1
+0A000012 NOC_cfg (addr=10 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # gap2
+0B000112 NOC_cfg (addr=11 , wdata=1, cfifo_wdata=0,cfifo_en=0 )    # gap3
+0C000012 NOC_cfg (addr=12 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # lenth0
+0D000012 NOC_cfg (addr=13 , wdata=0, cfifo_wdata=0,cfifo_en=0 )    # lenth1
+0E000012 NOC_cfg (addr=14 , wdata=0, cfifo_wdata=0,cfifo_en=0)     # lenth2
+0F023F12 NOC_cfg (addr=15 , wdata=575, cfifo_wdata=0,cfifo_en=0)   # lenth3
+10000012 NOC_cfg (addr=16 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+11023F12 NOC_cfg (addr=17 , wdata=575, cfifo_wdata=0,cfifo_en=0)
+12000012 NOC_cfg (addr=18 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+13000012 NOC_cfg (addr=19 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+14000012 NOC_cfg (addr=20 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+15000012 NOC_cfg (addr=21 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+1C000012 NOC_cfg ( addr=28 , wdata=0, cfifo_wdata=0,cfifo_en=0) #pad mode
+1D000012 NOC_cfg ( addr=29 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+1E000112 NOC_cfg ( addr=30 , wdata=1, cfifo_wdata=0,cfifo_en=0) #单核取指
+08000017 noc_req (comd_type=4, bar=0)
+00000119 MQ_NOP (bar=0, nop_cycle_num=1)
+00000119 MQ_NOP (bar=0, nop_cycle_num=1)
+00000119 MQ_NOP (bar=0, nop_cycle_num=1)
+00000119 MQ_NOP (bar=0, nop_cycle_num=1)
+00000119 MQ_NOP (bar=0, nop_cycle_num=1)
+00000119 MQ_NOP (bar=0, nop_cycle_num=1)
+00000119 MQ_NOP (bar=0, nop_cycle_num=1)
+00000112 NOC_cfg ( addr=0 , wdata=1, cfifo_wdata=0,cfifo_en=0 )     # 1 相对寻址
+01001412 NOC_cfg ( addr=1 , wdata=20, cfifo_wdata=0,cfifo_en=0 )     # bit4 = 1，比当前节点小  bit 3:0=  5-1=4= 0100   10100
+02000012 NOC_cfg ( addr=2 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+03000112 NOC_cfg ( addr=3 , wdata=1, cfifo_wdata=0,cfifo_en=0 )     # 1片上读取
+04000012 NOC_cfg ( addr=4 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+05000112 NOC_cfg ( addr=5 , wdata=1, cfifo_wdata=0,cfifo_en=0 )     # 目的节点坐标，相当于地址的最高4位---节点1，所以是1
+06024012 NOC_cfg ( addr=6 , wdata=576, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 0
+0C000012 NOC_cfg ( addr=12 , wdata=0, cfifo_wdata=0,cfifo_en=0 )  # lenth0
+0D000012 NOC_cfg ( addr=13 , wdata=0, cfifo_wdata=0,cfifo_en=0 )  # lenth1
+0E000012 NOC_cfg ( addr=14 , wdata=0, cfifo_wdata=0,cfifo_en=0)   # lenth2
+0F003F12 NOC_cfg ( addr=15 , wdata=63, cfifo_wdata=0,cfifo_en=0)   # lenth3
+10000012 NOC_cfg ( addr=16 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+11003F12 NOC_cfg ( addr=17 , wdata=63, cfifo_wdata=0,cfifo_en=0)
+00000012 NOC_cfg ( addr=0 , wdata=0, cfifo_wdata=0,cfifo_en=0 )     # 0 绝对寻址
+01000012 NOC_cfg ( addr=1 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+02000012 NOC_cfg ( addr=2 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+03000112 NOC_cfg ( addr=3 , wdata=1, cfifo_wdata=0,cfifo_en=0 )     # 1片上读取
+04000012 NOC_cfg ( addr=4 , wdata=0, cfifo_wdata=0,cfifo_en=0 )
+05000112 NOC_cfg ( addr=5 , wdata=1, cfifo_wdata=0,cfifo_en=0 )     # 目的节点坐标，相当于地址的最高4位---节点1，所以是1
+06028012 NOC_cfg ( addr=6 , wdata=640, cfifo_wdata=0,cfifo_en=0 )     # ping基地址 0
+0C000012 NOC_cfg ( addr=12 , wdata=0, cfifo_wdata=0,cfifo_en=0 )  # lenth0
+0D000012 NOC_cfg ( addr=13 , wdata=0, cfifo_wdata=0,cfifo_en=0 )  # lenth1
+0E000012 NOC_cfg ( addr=14 , wdata=0, cfifo_wdata=0,cfifo_en=0)   # lenth2
+0F07FF12 NOC_cfg ( addr=15 , wdata=2047, cfifo_wdata=0,cfifo_en=0)   # lenth3
+10000012 NOC_cfg ( addr=16 , wdata=0, cfifo_wdata=0,cfifo_en=0)
+1107FF12 NOC_cfg ( addr=17 , wdata=2047, cfifo_wdata=0,cfifo_en=0)
+

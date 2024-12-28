@@ -1,0 +1,39 @@
+# 需要手动添加/修改的指令
+
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000073 next_fetch_is_cpu
+10500073 wfi
+
+00000013 nop
+
+00001044 cub.event_finish        //fill end
+
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+MQ_NOP(bar=0)
+next_fetch_is_cpu
+wfi

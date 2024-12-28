@@ -1,0 +1,76 @@
+0000005B next_fetch_is_npu
+
+
+
+C0000012 NOC_cfg (addr=96  , wdata=0 )
+C2000012 NOC_cfg (addr=97  , wdata=0 )
+C4000012 NOC_cfg (addr=98  , wdata=0 )
+C6000012 NOC_cfg (addr=99  , wdata=0 )
+C8000012 NOC_cfg (addr=100 , wdata=0 )   # pingpang 使能
+CA000012 NOC_cfg (addr=101 , wdata=0 )   # 本地ram ping基地址    bank0
+CC000012 NOC_cfg (addr=102 , wdata=0 )   # 本地ram pang基地址    bank4
+CE010012 NOC_cfg (addr=103 , wdata=512 ) # noc_base_addr  256bit为单位 低位补5bit0
+D0000012 NOC_cfg (addr=104 , wdata=0 )   # noc_base_addr
+D2000012 NOC_cfg (addr=105 , wdata=0 )
+D4000012 NOC_cfg (addr=106 , wdata=0 )
+D6000012 NOC_cfg (addr=107 , wdata=0 )
+D8000092 NOC_cfg (addr=108 , wdata=1 )   # loopgap3
+DA000012 NOC_cfg (addr=109 , wdata=0 )
+DC000012 NOC_cfg (addr=110 , wdata=0 )
+DE000012 NOC_cfg (addr=111 , wdata=0)
+E0012012 NOC_cfg (addr=112 , wdata=576)   # loop lenth
+E2000012 NOC_cfg (addr=113 , wdata=0)    # pingpangnum = 0
+E4012012 NOC_cfg (addr=114 , wdata=576)    # ping lenth
+E6000012 NOC_cfg (addr=115 , wdata=0)    # pang lenth
+E8000012 NOC_cfg (addr=116 , wdata=0 )
+EA000012 NOC_cfg (addr=117 , wdata=0 )
+EC000012 NOC_cfg (addr=118 , wdata=0 )
+06000017 noc_req (comd_type=3, bar=0)
+E0002012 NOC_cfg (addr=112 , wdata=64)   # loop lenth
+E4002012 NOC_cfg (addr=114 , wdata=64)    # ping lenth
+E0040012 NOC_cfg (addr=112 , wdata=2048)   # loop lenth
+E4040012 NOC_cfg (addr=114 , wdata=2048)    # ping lenth
+00000012 NOC_cfg (addr=0 , wdata=0 )
+02000012 NOC_cfg (addr=1 , wdata=0 )
+04000012 NOC_cfg (addr=2 , wdata=0 )
+06000092 NOC_cfg (addr=3 , wdata=1 )    # 1片上读取
+08000012 NOC_cfg (addr=4 , wdata=0 )    # 开pingpang
+0A000012 NOC_cfg (addr=5 , wdata=0 )
+0C000012 NOC_cfg (addr=6 , wdata=0 )  # ping基地址
+0E000012 NOC_cfg (addr=7 , wdata=0 ) # pang基地址
+10000012 NOC_cfg (addr=8 , wdata=0 )  # gap0
+12000012 NOC_cfg (addr=9 , wdata=0 )  # gap1
+14000012 NOC_cfg (addr=10 , wdata=0 )  # gap2
+16000092 NOC_cfg (addr=11 , wdata=1 )  # gap3
+18000012 NOC_cfg (addr=12 , wdata=0 )  # lenth0
+1A000012 NOC_cfg (addr=13 , wdata=0 )  # lenth1
+1C000012 NOC_cfg (addr=14 , wdata=0)   # lenth2
+1E012012 NOC_cfg (addr=15 , wdata=576)  # lenth3
+20000012 NOC_cfg (addr=16 , wdata=0)   # pingpangnum = 0
+22012012 NOC_cfg (addr=17 , wdata=576)
+24000012 NOC_cfg (addr=18 , wdata=0)
+26000012 NOC_cfg (addr=19 , wdata=0)
+28000012 NOC_cfg (addr=20 , wdata=0)
+2A000012 NOC_cfg (addr=21 , wdata=0)   # 取权重
+2C000112 NOC_cfg (addr=22 , wdata=2)
+2E000112 NOC_cfg (addr=23 , wdata=2)
+30000212 NOC_cfg (addr=24 , wdata=4)
+32000212 NOC_cfg (addr=25 , wdata=4)
+34000112 NOC_cfg (addr=26 , wdata=2)   #有效行数
+36000192 NOC_cfg (addr=27 , wdata=3)   #有效列数
+38000012 NOC_cfg (addr=28 , wdata=0)   #pad mode
+3A000012 NOC_cfg (addr=29 , wdata=0)
+3C000092 NOC_cfg (addr=30 , wdata=1)   #单核取指
+08000017 noc_req (comd_type=4, bar=0)
+1E002012 NOC_cfg (addr=15 , wdata=64)  # lenth3
+22002012 NOC_cfg (addr=17 , wdata=64)
+1E040012 NOC_cfg (addr=15 , wdata=2048)  # lenth3
+22040012 NOC_cfg (addr=17 , wdata=2048)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000019 MQ_NOP(bar=0)
+00000073 next_fetch_is_cpu
+10500073 wfi
