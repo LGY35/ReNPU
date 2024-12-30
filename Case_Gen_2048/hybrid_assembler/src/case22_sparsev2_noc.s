@@ -5,9 +5,9 @@ NOC_cfg (addr=3,wdata=0,cfifo_wdata=0,cfifo_en=0) // 直接从ddr读取数据
 NOC_cfg (addr=4,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong
 NOC_cfg (addr=6,wdata=0,cfifo_wdata=0,cfifo_en=0) // 基地址偏移为0，地址为512
 NOC_cfg (addr=11,wdata=1,cfifo_wdata=0,cfifo_en=0) //最内层循环递增，每次读入256bit
-NOC_cfg (addr=15,wdata=431,cfifo_wdata=0,cfifo_en=0)  // weight总长度432-1
+NOC_cfg (addr=15,wdata=1727,cfifo_wdata=0,cfifo_en=0)  // weight总长度1728-1
 NOC_cfg (addr=16,wdata=0,cfifo_wdata=0,cfifo_en=0) //不采用pingpong
-NOC_cfg (addr=17,wdata=431,cfifo_wdata=0,cfifo_en=0) // ping传输的长度
+NOC_cfg (addr=17,wdata=1727,cfifo_wdata=0,cfifo_en=0) // ping传输的长度
 NOC_cfg (addr=19,wdata=0,cfifo_wdata=0,cfifo_en=0) //单播模式
 NOC_cfg (addr=20,wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
 NOC_cfg (addr=21,wdata=0,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组统一的地址）
@@ -21,9 +21,9 @@ NOC_cfg (addr=101 , wdata=0,cfifo_wdata=0,cfifo_en=0) // 本地ram ping 基地�
 NOC_cfg (addr=103 , wdata=0,cfifo_wdata=0,cfifo_en=0) // ddr地址偏移
 NOC_cfg (addr=104 , wdata=0,cfifo_wdata=0,cfifo_en=0) // ddr地址偏移
 NOC_cfg (addr=108 , wdata=1,cfifo_wdata=0,cfifo_en=0) // 最内层循环递增，每次读入256bit
-NOC_cfg (addr=112 , wdata=1023,cfifo_wdata=0,cfifo_en=0) // fmap总长度2048-1
+NOC_cfg (addr=112 , wdata=2047,cfifo_wdata=0,cfifo_en=0) // fmap总长度2048-1
 NOC_cfg (addr=113 , wdata=0,cfifo_wdata=0,cfifo_en=0) //不采用pingpong
-NOC_cfg (addr=114 , wdata=1023,cfifo_wdata=0,cfifo_en=0)  // fmap总长度2048-1
+NOC_cfg (addr=114 , wdata=2047,cfifo_wdata=0,cfifo_en=0)  // fmap总长度2048-1
 NOC_cfg (addr=116 , wdata=0,cfifo_wdata=0,cfifo_en=0)//单播模式
 NOC_cfg (addr=117 , wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
 NOC_cfg (addr=118 , wdata=1,cfifo_wdata=0,cfifo_en=0) // 搬运fmap
@@ -48,9 +48,9 @@ NOC_cfg (addr=3,wdata=1,cfifo_wdata=0,cfifo_en=0) // 从片上读取数据
 NOC_cfg (addr=4,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong
 NOC_cfg (addr=6,wdata=0,cfifo_wdata=0,cfifo_en=0) // 基地址偏移为0
 NOC_cfg (addr=11,wdata=1,cfifo_wdata=0,cfifo_en=0) //最内层循环递增，每次读入256bit
-NOC_cfg (addr=15,wdata=1023,cfifo_wdata=0,cfifo_en=0)  // fmap总长度1023
+NOC_cfg (addr=15,wdata=2047,cfifo_wdata=0,cfifo_en=0)  // fmap总长度1023
 NOC_cfg (addr=16,wdata=0,cfifo_wdata=0,cfifo_en=0) //不采用pingpong  
-NOC_cfg (addr=17,wdata=1023,cfifo_wdata=0,cfifo_en=0) // ping传输的长度1023
+NOC_cfg (addr=17,wdata=2047,cfifo_wdata=0,cfifo_en=0) // ping传输的长度1023
 NOC_cfg (addr=19,wdata=0,cfifo_wdata=0,cfifo_en=0) //单播模式
 NOC_cfg (addr=20,wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
 NOC_cfg (addr=21,wdata=1,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组不同的地址）
