@@ -50,7 +50,7 @@ imm_wba(0x80008D00)
 imm_wba(0x80008DC0)
 imm_wba(0x80008E80)
 imm_gba(0x80015800)
-imm_cfg(0x000020C2) # base addr
+imm_cfg(0x0000211C) # base addr
 last_group(0xFFF)   #   
 imm_ba(0x80008000)
 imm_ba(0x80008000)
@@ -77,5 +77,5 @@ imm_wba(0x80034800)
 imm_wba(0x80036000)
 imm_wba(0x80037800) 
 imm_gba(0x80015800)
-imm_cfg(0x00004334) # base addr
+imm_cfg(0x00004338) # base addr
 finish_group(0xFFF)   # 启动节点0  

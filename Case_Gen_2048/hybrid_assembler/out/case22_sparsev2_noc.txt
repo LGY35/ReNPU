@@ -3,7 +3,13 @@
 06c40413 addi x8, x8, 108
     0436 c.slli x8, 13
 00040413 addi x8, x8, 0
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+00048493 addi x9, x9, 0
+    04b6 c.slli x9, 13
+00048493 addi x9, x9, 0
 0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
 0000005B next_fetch_is_npu
 400128A2 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
 0001B010 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
@@ -37,42 +43,6 @@
 76000112 NOC_cfg (addr=118 , wdata=1,cfifo_wdata=0,cfifo_en=0) // 搬运fmap
 06000017 noc_req (comd_type=3, bar=0,cfifo_wdata=0,cfifo_en=0) // 启动dma——wr
 08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
-00000019 MQ_NOP(bar=0,nop_cycle_num=0)
-00000019 MQ_NOP(bar=0,nop_cycle_num=0)
-00000019 MQ_NOP(bar=0,nop_cycle_num=0)
-00000019 MQ_NOP(bar=0,nop_cycle_num=0)
-00000019 MQ_NOP(bar=0,nop_cycle_num=0)
-00000019 MQ_NOP(bar=0,nop_cycle_num=0)
-00000019 MQ_NOP(bar=0,nop_cycle_num=0)
-00000019 MQ_NOP(bar=0,nop_cycle_num=0)
-00000019 MQ_NOP(bar=0,nop_cycle_num=0)
-00000073 next_fetch_is_cpu
-10500073 wfi
-    4401 c.li x8, 0
-    0426 c.slli x8, 9
-00040413 addi x8, x8, 0
-    0436 c.slli x8, 13
-00040413 addi x8, x8, 0
-    4481 c.li x9, 0
-    04a6 c.slli x9, 9
-00348493 addi x9, x9, 3
-    04b6 c.slli x9, 13
-02448493 addi x9, x9, 36
-    4501 c.li x10, 0
-    0526 c.slli x10, 9
-01050513 addi x10, x10, 16
-    0536 c.slli x10, 13
-00050513 addi x10, x10, 0
-1e811937 lui x18, 0x1E811
-03e90913 addi x18, x18, 0x03E
-1f4119b7 lui x19, 0x1F411
-03e98993 addi x19, x19, 0x03E
-0080105B storec x8, MQ; 
-0090105B storec x9, MQ; 
-00A0105B storec x10, MQ; 
-4120105B storec x18, VQ; 
-4130105B storec x19, VQ; 
-0000005B next_fetch_is_npu
 400128A2 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
 0001B010 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
 00000112 NOC_cfg (addr=0,wdata=1,cfifo_wdata=0,cfifo_en=0) // 相对寻址
@@ -90,6 +60,37 @@
 15000112 NOC_cfg (addr=21,wdata=1,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组不同的地址）
 1F000112 NOC_cfg (addr=31,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指
 80400491 npu_load           (we=wr,l1b_mode=cache,from_noc_or_sc=noc,sys_gap=1,  sub_gap=1,sub_len=0 ,addr=0, sys_len=8 ,mv_last_dis=0,cfifo_en=1,bar=0) //load_fmap
+08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000019 MQ_NOP(bar=0,nop_cycle_num=0)
+00000073 next_fetch_is_cpu
+10500073 wfi
+    4401 c.li x8, 0
+    0426 c.slli x8, 9
+00340413 addi x8, x8, 3
+    0436 c.slli x8, 13
+02440413 addi x8, x8, 36
+    4481 c.li x9, 0
+    04a6 c.slli x9, 9
+01048493 addi x9, x9, 16
+    04b6 c.slli x9, 13
+00048493 addi x9, x9, 0
+1e811937 lui x18, 0x1E811
+03e90913 addi x18, x18, 0x03E
+1f4119b7 lui x19, 0x1F411
+03e98993 addi x19, x19, 0x03E
+0080105B storec x8, MQ; 
+0090105B storec x9, MQ; 
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
 21000012 NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 设置为0即可，用ping addr
 22000112 NOC_cfg (addr=34,wdata=1,cfifo_wdata=0,cfifo_en=0)           // 数据输出到本地
 23000012 NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
@@ -724,8 +725,8 @@ B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
 58000821 VQ_NOP                         (bar=5,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-86A01FA1 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A01FA1 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
     4401 c.li x8, 0
@@ -1673,8 +1674,8 @@ B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
 58000821 VQ_NOP                         (bar=5,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-86A01FA1 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A01FA1 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
     4401 c.li x8, 0
@@ -2623,8 +2624,8 @@ B0000FA1 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
 58000821 VQ_NOP                         (bar=5,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-86A01FA1 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A01FA1 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
 
 25068012 NOC_cfg (addr=37,wdata=1664,cfifo_wdata=0,cfifo_en=0)
 00000013 npu_store(bar=0)

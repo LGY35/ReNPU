@@ -29,16 +29,6 @@ NOC_cfg (addr=117 , wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
 NOC_cfg (addr=118 , wdata=1,cfifo_wdata=0,cfifo_en=0) // 搬运fmap
 noc_req (comd_type=3, bar=0,cfifo_wdata=0,cfifo_en=0) // 启动dma——wr
 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
-MQ_NOP(bar=0,nop_cycle_num=0)
-MQ_NOP(bar=0,nop_cycle_num=0)
-MQ_NOP(bar=0,nop_cycle_num=0)
-MQ_NOP(bar=0,nop_cycle_num=0)
-MQ_NOP(bar=0,nop_cycle_num=0)
-MQ_NOP(bar=0,nop_cycle_num=0)
-MQ_NOP(bar=0,nop_cycle_num=0)
-MQ_NOP(bar=0,nop_cycle_num=0)
-MQ_NOP(bar=0,nop_cycle_num=0)
-wfi  
 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
 NOC_cfg (addr=0,wdata=1,cfifo_wdata=0,cfifo_en=0) // 相对寻址
@@ -56,6 +46,17 @@ NOC_cfg (addr=20,wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
 NOC_cfg (addr=21,wdata=1,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组不同的地址）
 NOC_cfg (addr=31,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指   
 npu_load           (we=wr,l1b_mode=cache,from_noc_or_sc=noc,sys_gap=1,  sub_gap=1,sub_len=0 ,addr=0, sys_len=8 ,mv_last_dis=0,cfifo_en=1,bar=0) //load_fmap
+noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+wfi  
 NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 设置为0即可，用ping addr
 NOC_cfg (addr=34,wdata=1,cfifo_wdata=0,cfifo_en=0)           // 数据输出到本地
 NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
@@ -206,8 +207,8 @@ conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,
 
 VQ_NOP                         (bar=5,nop_cycle_num=8) //100_000000000000000000_010_0001
 
-psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
+psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
 
 
 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=5) //mv_weight
@@ -399,8 +400,8 @@ conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,
 
 VQ_NOP                         (bar=5,nop_cycle_num=8) //100_000000000000000000_010_0001
 
-psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
+psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
 
 
 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=5) //mv_weight
@@ -593,8 +594,8 @@ conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,
 
 VQ_NOP                         (bar=5,nop_cycle_num=8) //100_000000000000000000_010_0001
 
-psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
+psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
 NOC_cfg (addr=37,wdata=1664,cfifo_wdata=0,cfifo_en=0)   
 npu_store(bar=0)
 VQ_alu_event_call(event_addr=6,bar=0)
