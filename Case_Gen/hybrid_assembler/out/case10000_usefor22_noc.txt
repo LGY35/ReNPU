@@ -4,6 +4,6 @@
 4120105B storec x18, VQ; 
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
+881C5523 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=170,wait_type=1,cfifo_en=1,bar=0)
 881906A3 VQ_scache_rd_en(addr=0,size=word,sign_ext=1,rd_cycle_num=525,wait_type=1,cfifo_en=1,bar=0)
-881D06A3 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=525,wait_type=1,cfifo_en=1,bar=0)
 
