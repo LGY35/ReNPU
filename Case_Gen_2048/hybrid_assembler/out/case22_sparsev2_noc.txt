@@ -91,6 +91,8 @@
 4120105B storec x18, VQ; 
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
+400128A2 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
+0001B010 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
 21000012 NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 设置为0即可，用ping addr
 22000112 NOC_cfg (addr=34,wdata=1,cfifo_wdata=0,cfifo_en=0)           // 数据输出到本地
 23000012 NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
