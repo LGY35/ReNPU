@@ -1,0 +1,9 @@
+00000073 next_fetch_is_cpu
+00000913 addi x18, x0, 0
+10000993 addi x19, x0, 256
+4120105B storec x18, VQ; 
+4130105B storec x19, VQ; 
+0000005B next_fetch_is_npu
+881C5523 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=170,wait_type=1,cfifo_en=1,bar=0)
+84041423 VQ_scache_wr_en(addr=256,size=byte,wr_cycle_num=40,wait_type=0,cfifo_en=1,bar=0)
+

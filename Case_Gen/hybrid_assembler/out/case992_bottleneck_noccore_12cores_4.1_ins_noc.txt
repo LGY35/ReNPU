@@ -625,7 +625,7 @@ B0080415   npu_mv (we=rd, l1b_mode=cache, sys_gap=1, sub_gap=1, sub_len=32, addr
 00002420   VQ_alu_csrw(csr_addr=8,csr_wdata=0b1)
 00240520   VQ_alu_csrw(csr_addr=10,csr_wdata=0b00000001_00100000)
 000025A0   VQ_alu_csrw(csr_addr=11,csr_wdata=0b1)
-84021423   VQ_scache_wr_en(addr=256,size=byte,wr_cycle_num=40,wait_type=0,cfifo_en=1,bar=0)
+84041423   VQ_scache_wr_en(addr=256,size=byte,wr_cycle_num=40,wait_type=0,cfifo_en=1,bar=0)
 B510D421   eltwise_start(elt_mode=1, elt_pric=INT8, elt_bsel=0, elt_32ch_i16=0, scache_rd_en=1, scache_rd_addr=0, scache_rd_size=byte, scache_sign_ext=1, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=32, rgba_mode=0, rgba_stride=0, rgba_shift=0, hl_op=0, bc_keep_2cycle_en=0, pad0_sel=end, pad0_len=0, run_cycle_num=40, cfifo_en=1, bar=3)
 00000073   next_fetch_is_cpu
 0040006F   j        0x9dc <main+0x9dc>
