@@ -1,9 +1,91 @@
 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=108,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+NOC_cfg (addr=2,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭多节点合并读   
+NOC_cfg (addr=3,wdata=0,cfifo_wdata=0,cfifo_en=0) // 直接从ddr读取数据
+NOC_cfg (addr=4,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong
+NOC_cfg (addr=6,wdata=0,cfifo_wdata=0,cfifo_en=0) // 基地址偏移为0，地址为512
+NOC_cfg (addr=11,wdata=1,cfifo_wdata=0,cfifo_en=0) //最内层循环递增，每次读入256bit
+NOC_cfg (addr=15,wdata=1727,cfifo_wdata=0,cfifo_en=0)  // weight总长度1728-1
+NOC_cfg (addr=16,wdata=0,cfifo_wdata=0,cfifo_en=0) //不采用pingpong
+NOC_cfg (addr=17,wdata=1727,cfifo_wdata=0,cfifo_en=0) // ping传输的长度
+NOC_cfg (addr=19,wdata=0,cfifo_wdata=0,cfifo_en=0) //单播模式
+NOC_cfg (addr=20,wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
+NOC_cfg (addr=21,wdata=0,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组统一的地址）
+NOC_cfg (addr=63,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指
 npu_load           (we=wr,l1b_mode=norm ,from_noc_or_sc=noc,sys_gap=149,sub_gap=1,sub_len=108,addr=0, sys_len=16,mv_last_dis=0,cfifo_en=1,bar=0) //load_weight
+noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成weight搬运
+NOC_cfg (addr=98  , wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭多节点合并读
+NOC_cfg (addr=99  , wdata=0,cfifo_wdata=0,cfifo_en=0) // 直接从ddr读取数据
+NOC_cfg (addr=100 , wdata=0 ,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong
+NOC_cfg (addr=101 , wdata=0,cfifo_wdata=0,cfifo_en=0) // 本地ram ping 基地址
+NOC_cfg (addr=103 , wdata=0,cfifo_wdata=0,cfifo_en=0) // ddr地址偏移
+NOC_cfg (addr=104 , wdata=0,cfifo_wdata=0,cfifo_en=0) // ddr地址偏移
+NOC_cfg (addr=108 , wdata=1,cfifo_wdata=0,cfifo_en=0) // 最内层循环递增，每次读入256bit
+NOC_cfg (addr=112 , wdata=2047,cfifo_wdata=0,cfifo_en=0) // fmap总长度2048-1
+NOC_cfg (addr=113 , wdata=0,cfifo_wdata=0,cfifo_en=0) //不采用pingpong
+NOC_cfg (addr=114 , wdata=2047,cfifo_wdata=0,cfifo_en=0)  // fmap总长度2048-1
+NOC_cfg (addr=116 , wdata=0,cfifo_wdata=0,cfifo_en=0)//单播模式
+NOC_cfg (addr=117 , wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
+NOC_cfg (addr=118 , wdata=1,cfifo_wdata=0,cfifo_en=0) // 搬运fmap
+noc_req (comd_type=3, bar=0,cfifo_wdata=0,cfifo_en=0) // 启动dma——wr
+noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
+CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
+MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=108,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+NOC_cfg (addr=0,wdata=1,cfifo_wdata=0,cfifo_en=0) // 相对寻址
+NOC_cfg (addr=1,wdata=0,cfifo_wdata=0,cfifo_en=0) //读取本地L2
+NOC_cfg (addr=2,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭多节点合并读
+NOC_cfg (addr=3,wdata=1,cfifo_wdata=0,cfifo_en=0) // 从片上读取数据
+NOC_cfg (addr=4,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong
+NOC_cfg (addr=6,wdata=0,cfifo_wdata=0,cfifo_en=0) // =====基地址偏移为0
+NOC_cfg (addr=10,wdata=512,cfifo_wdata=0,cfifo_en=0) //=====第二层循环递增gap=512
+NOC_cfg (addr=11,wdata=1,cfifo_wdata=0,cfifo_en=0) //=====最内层循环递增gap=1，每次读入256bit 
+NOC_cfg (addr=14,wdata=3,cfifo_wdata=0,cfifo_en=0)  //=====lenth2 = 4
+NOC_cfg (addr=15,wdata=159,cfifo_wdata=0,cfifo_en=0)  //=====lenth3 = 160
+NOC_cfg (addr=16,wdata=0,cfifo_wdata=0,cfifo_en=0) //不采用pingpong  
+NOC_cfg (addr=17,wdata=639,cfifo_wdata=0,cfifo_en=0) //=====ping传输的长度 160*4 = 640
+NOC_cfg (addr=19,wdata=0,cfifo_wdata=0,cfifo_en=0) //单播模式
+NOC_cfg (addr=20,wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
+NOC_cfg (addr=21,wdata=1,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组不同的地址）
+NOC_cfg (addr=63,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指   
 npu_load           (we=wr,l1b_mode=cache,from_noc_or_sc=noc,sys_gap=353,  sub_gap=1,sub_len=160 ,addr=0, sys_len=4 ,mv_last_dis=0,cfifo_en=1,bar=0) //load_fmap
+noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+wfi  
+CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
+MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=108,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+NOC_cfg (addr=0,wdata=1,cfifo_wdata=0,cfifo_en=0) // 相对寻址
+NOC_cfg (addr=1,wdata=0,cfifo_wdata=0,cfifo_en=0) //读取本地L2
+NOC_cfg (addr=2,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭多节点合并读
+NOC_cfg (addr=3,wdata=1,cfifo_wdata=0,cfifo_en=0) // 从片上读取数据
+NOC_cfg (addr=4,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong
+NOC_cfg (addr=6,wdata=160,cfifo_wdata=0,cfifo_en=0) // =====基地址偏移为160
+NOC_cfg (addr=10,wdata=512,cfifo_wdata=0,cfifo_en=0) //=====第二层循环递增gap=512
+NOC_cfg (addr=11,wdata=1,cfifo_wdata=0,cfifo_en=0) //=====最内层循环递增gap=1，每次读入256bit 
+NOC_cfg (addr=14,wdata=3,cfifo_wdata=0,cfifo_en=0)  //=====lenth2 = 4
+NOC_cfg (addr=15,wdata=127,cfifo_wdata=0,cfifo_en=0)  //=====lenth3 = 128
+NOC_cfg (addr=16,wdata=0,cfifo_wdata=0,cfifo_en=0) //不采用pingpong  
+NOC_cfg (addr=17,wdata=511,cfifo_wdata=0,cfifo_en=0) //=====ping传输的长度 128*4 = 512
+NOC_cfg (addr=19,wdata=0,cfifo_wdata=0,cfifo_en=0) //单播模式
+NOC_cfg (addr=20,wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
+NOC_cfg (addr=21,wdata=1,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组不同的地址）
+NOC_cfg (addr=63,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指
 hid_load           (we=rd,l1b_mode=cache,sys_gap=385,sub_gap=1,sub_len=128,addr=160,sys_len=4,cfifo_en=1,bar=0)
-
+NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 设置为0即可，用ping addr
+NOC_cfg (addr=34,wdata=1,cfifo_wdata=0,cfifo_en=0)           // 数据输出到本地
+NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
+NOC_cfg (addr=37,wdata=1536,cfifo_wdata=0,cfifo_en=0)           // 输出到bank3
+NOC_cfg (addr=42,wdata=1,cfifo_wdata=0,cfifo_en=0)           //最内层循环递增，每次读入256bit
+NOC_cfg (addr=46,wdata=63,cfifo_wdata=0,cfifo_en=0)             // 输出总长度64
+NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)           //不采用pingpong
+NOC_cfg (addr=48,wdata=63,cfifo_wdata=0,cfifo_en=0)            // ping传输的长度64
 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=36,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0) //mv_weight
 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=16,addr=0, sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1) //mv_fmap
 conv3d_start       (first_sub_flag=1,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=30,cfifo_en=1,bar=1)
@@ -703,6 +785,10 @@ psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_
 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
 
 hid_load_chk_done
+
+NOC_cfg (addr=6,wdata=288,cfifo_wdata=0,cfifo_en=0) // =====基地址偏移
+NOC_cfg (addr=15,wdata=127,cfifo_wdata=0,cfifo_en=0)  //=====lenth3 = 128
+NOC_cfg (addr=17,wdata=511,cfifo_wdata=0,cfifo_en=0) //=====ping传输的长度 128*4 = 512
 hid_load           (we=rd,l1b_mode=cache,sys_gap=385,sub_gap=1,sub_len=128,addr=288,sys_len=4,cfifo_en=1,bar=0)
 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=16,addr=96, sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
@@ -1457,6 +1543,9 @@ psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_
 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
 
 hid_load_chk_done
+NOC_cfg (addr=6,wdata=416,cfifo_wdata=0,cfifo_en=0) // =====基地址偏移
+NOC_cfg (addr=15,wdata=95,cfifo_wdata=0,cfifo_en=0)  //=====lenth3 = 96
+NOC_cfg (addr=17,wdata=383,cfifo_wdata=0,cfifo_en=0) //=====ping传输的长度 96*4 = 384
 hid_load           (we=rd,l1b_mode=cache,sys_gap=417,sub_gap=1,sub_len=96,addr=416,sys_len=4,cfifo_en=1,bar=0)
 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=16,addr=224 , sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
@@ -2897,6 +2986,42 @@ VQ_NOP             (bar=4,nop_cycle_num=0)
 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
 
 VQ_NOP                         (bar=5,nop_cycle_num=8) //100_000000000000000000_010_0001
-
+  
 psum_rd                        (rd_num=31,rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
 psum_rd                        (rd_num=31,rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=10,scache_wr_size=byte,run_cycle_num=1,cfifo_en=1,bar=0)
+
+//最后一次npu_store之前
+noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0) // 检查是否完成搬运
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0) 
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+wfi  
+CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
+MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=27,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+NOC_cfg (addr=66,wdata=0,cfifo_wdata=0,cfifo_en=0)           // 输出到ddr
+NOC_cfg (addr=67,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
+NOC_cfg (addr=68,wdata=1536,cfifo_wdata=0,cfifo_en=0)           // 输出基地址
+NOC_cfg (addr=70,wdata=0,cfifo_wdata=0,cfifo_en=0)           //noc地址
+NOC_cfg (addr=71,wdata=0,cfifo_wdata=0,cfifo_en=0)             // noc地址
+NOC_cfg (addr=75,wdata=1,cfifo_wdata=0,cfifo_en=0)             // loop gap3
+NOC_cfg (addr=79,wdata=191,cfifo_wdata=0,cfifo_en=0)             // loop lenth3 = 64*3
+NOC_cfg (addr=80,wdata=0,cfifo_wdata=0,cfifo_en=0)           //piingpang num
+NOC_cfg (addr=81,wdata=191,cfifo_wdata=0,cfifo_en=0)            // ping传输的长度64
+noc_req (comd_type=2, bar=0,cfifo_wdata=0,cfifo_en=0)   // 启动dma rd
+noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0) 
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+MQ_NOP(bar=0,nop_cycle_num=0)
+wfi  

@@ -17,7 +17,7 @@ OUT_TYPE ?= hex # 默认输出hex
 
 $(OUT_DIR)/%.txt: $(INSTR_DIR)/%.s
 	mkdir -p $(OUT_DIR)
-	./hybrid_assembler_v4.5 -i $< -o $@ -t $(OUT_TYPE) -mv 2
+	./hybrid_assembler_v5.1 -i $< -o $@ -t $(OUT_TYPE) -mv 2
 
 ## 第一次定义的时候，这里是从空的文件夹下面提取的，所以这里不会运行
 EX_SRC := $(OBJECTS) # 确保 EX_SRC 使用最新的 OBJECTS

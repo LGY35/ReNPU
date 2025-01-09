@@ -1,0 +1,14 @@
+第一次npu_load fmap (addr=0,   loop1: gap=1 lenth=160 loop2:gap=512 lenth=4)
+第二次hid_load fmap (addr=160, loop1: gap=1 lenth=128 loop2:gap=512 lenth=4)
+第三次hid_load fmap (addr=288, loop1: gap=1 lenth=128 loop2:gap=512 lenth=4)
+第四次hid_load fmap (addr=416, loop1: gap=1 lenth=96 loop2:gap=512 lenth=4)
+
+12-30更新数据：
+权重：
+    1728 * 32 = D800
+fmap：
+    起始地址就是 8000H + D800H = 15800H
+    fmap数据量： 2048*32=10000
+写回地址：
+    起始地址：25800
+    每次写回192*32  = 1800H
