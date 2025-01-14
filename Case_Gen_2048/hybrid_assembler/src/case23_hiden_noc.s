@@ -25,7 +25,7 @@ NOC_cfg (addr=112 , wdata=2047,cfifo_wdata=0,cfifo_en=0) // fmap总长度2048-1
 NOC_cfg (addr=113 , wdata=0,cfifo_wdata=0,cfifo_en=0) //不采用pingpong
 NOC_cfg (addr=114 , wdata=2047,cfifo_wdata=0,cfifo_en=0)  // fmap总长度2048-1
 NOC_cfg (addr=116 , wdata=0,cfifo_wdata=0,cfifo_en=0)//单播模式
-NOC_cfg (addr=117 , wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
+NOC_cfg (addr=117 , wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步 
 NOC_cfg (addr=118 , wdata=1,cfifo_wdata=0,cfifo_en=0) // 搬运fmap
 noc_req (comd_type=3, bar=0,cfifo_wdata=0,cfifo_en=0) // 启动dma——wr
 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
@@ -61,11 +61,11 @@ MQ_NOP(bar=0,nop_cycle_num=0)
 wfi   
 CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
 MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=108,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
-NOC_cfg (addr=0,wdata=1,cfifo_wdata=0,cfifo_en=0) // 相对寻址
+NOC_cfg (addr=0,wdata=1,cfifo_wdata=0,cfifo_en=0) // 相对寻址  
 NOC_cfg (addr=1,wdata=0,cfifo_wdata=0,cfifo_en=0) //读取本地L2
 NOC_cfg (addr=2,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭多节点合并读
 NOC_cfg (addr=3,wdata=1,cfifo_wdata=0,cfifo_en=0) // 从片上读取数据
-NOC_cfg (addr=4,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong
+NOC_cfg (addr=4,wdata=0,cfifo_wdata=0,cfifo_en=0) // 关闭pingpong 
 NOC_cfg (addr=6,wdata=160,cfifo_wdata=0,cfifo_en=0) // =====基地址偏移为160
 NOC_cfg (addr=10,wdata=512,cfifo_wdata=0,cfifo_en=0) //=====第二层循环递增gap=512
 NOC_cfg (addr=11,wdata=1,cfifo_wdata=0,cfifo_en=0) //=====最内层循环递增gap=1，每次读入256bit 
@@ -88,6 +88,8 @@ NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)           //不采用pingpong
 NOC_cfg (addr=48,wdata=63,cfifo_wdata=0,cfifo_en=0)             // ping传输的长度64
 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=36,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0) //mv_weight
 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=16,addr=0, sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1) //mv_fmap
+//TODO: result_output_flag=0, weight_16ch_sel=0,
+//conv3d_start (first_sub_flag=0, result_output_flag=0, start_index=0, end_index=29, weight_16ch_sel=0, tcache_stride=0, tcache_offset=0, bc_mode=0, bc_len=16, rgba_mode=0, rgba_stride=0, rgba_shift=0, hl_op=0, bc_keep_2cycle_en=0, bc_group=0, pad0_sel=end, pad0_len=0, run_cycle_num=32, cfifo_en=1, bar=1)
 conv3d_start       (first_sub_flag=1,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=30,cfifo_en=1,bar=1)
 VQ_NOP             (bar=2,nop_cycle_num=0)
 conv3d_start       (first_sub_flag=0,start_index=0,end_index=31,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
