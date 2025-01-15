@@ -118,6 +118,7 @@
 3F000112 NOC_cfg (addr=63,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指
 80010090 MQ_cfg2(hide_sub_gap=1, hide_sys_gap_ext=0b00001, l1b_norm_paral_mode=0)
 8022041B hid_load           (we=rd,l1b_mode=cache,sys_gap=385,sub_gap=1,sub_len=128,addr=160,sys_len=4,cfifo_en=1,bar=0)
+08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
 21000012 NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 设置为0即可，用ping addr
 22000112 NOC_cfg (addr=34,wdata=1,cfifo_wdata=0,cfifo_en=0)           // 数据输出到本地
 23000012 NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 关闭pingpong
@@ -3656,6 +3657,7 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 0F007F12 NOC_cfg (addr=15,wdata=127,cfifo_wdata=0,cfifo_en=0)  //=====lenth3 = 128
 1101FF12 NOC_cfg (addr=17,wdata=511,cfifo_wdata=0,cfifo_en=0) //=====ping传输的长度 128*4 = 512
 8026041B hid_load           (we=rd,l1b_mode=cache,sys_gap=385,sub_gap=1,sub_len=128,addr=288,sys_len=4,cfifo_en=1,bar=0)
+08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
 C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
 90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=16,addr=96, sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
 90000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=30,cfifo_en=1,bar=1)
@@ -7491,6 +7493,7 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 0F005F12 NOC_cfg (addr=15,wdata=95,cfifo_wdata=0,cfifo_en=0)  //=====lenth3 = 96
 11017F12 NOC_cfg (addr=17,wdata=383,cfifo_wdata=0,cfifo_en=0) //=====ping传输的长度 96*4 = 384
 8026841B hid_load           (we=rd,l1b_mode=cache,sys_gap=417,sub_gap=1,sub_len=96,addr=416,sys_len=4,cfifo_en=1,bar=0)
+08000017 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
 C0080515 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
 90080415 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=16,addr=224 , sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
 90000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=30,cfifo_en=1,bar=1)
