@@ -750,8 +750,9 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 00002420 VQ_alu_csrw(csr_addr=8,csr_wdata=0b1) //scache wr1: sub_gap=1
 00280520 VQ_alu_csrw(csr_addr=10,csr_wdata=0b101000000) //scache rd0: sys_len=1,sub_len=32*2
 000025A0 VQ_alu_csrw(csr_addr=11,csr_wdata=0b1) //scache rd1: sub_gap=1
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -1700,7 +1701,8 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
 80000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -1710,7 +1712,7 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4120105B storec x18, VQ; 
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 25064012 NOC_cfg (addr=37,wdata=1600,cfifo_wdata=0,cfifo_en=0)
 00000013 npu_store(bar=0)
 881C2323 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=70,wait_type=1,cfifo_en=1,bar=0)
@@ -2662,8 +2664,9 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -3613,7 +3616,8 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
 80000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -3623,7 +3627,7 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4120105B storec x18, VQ; 
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 2506C012 NOC_cfg (addr=37,wdata=1728,cfifo_wdata=0,cfifo_en=0)
 00000013 npu_store(bar=0)
 881C2323 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=70,wait_type=1,cfifo_en=1,bar=0)
@@ -4585,8 +4589,9 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -5536,7 +5541,8 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
 80000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -5546,7 +5552,7 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4120105B storec x18, VQ; 
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 25074012 NOC_cfg (addr=37,wdata=1856,cfifo_wdata=0,cfifo_en=0)
 00000013 npu_store(bar=0)
 881C2323 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=70,wait_type=1,cfifo_en=1,bar=0)
@@ -6498,8 +6504,9 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -7449,7 +7456,8 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
 80000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -7459,7 +7467,7 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4120105B storec x18, VQ; 
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 2507C012 NOC_cfg (addr=37,wdata=1984,cfifo_wdata=0,cfifo_en=0)
 00000013 npu_store(bar=0)
 881C2323 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=70,wait_type=1,cfifo_en=1,bar=0)
@@ -8421,8 +8429,9 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -9372,7 +9381,8 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
 80000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -9382,7 +9392,7 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4120105B storec x18, VQ; 
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 25084012 NOC_cfg (addr=37,wdata=2112,cfifo_wdata=0,cfifo_en=0)
 00000013 npu_store(bar=0)
 881C2323 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=70,wait_type=1,cfifo_en=1,bar=0)
@@ -10334,8 +10344,9 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -11285,7 +11296,8 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
 80000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -11295,7 +11307,7 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4120105B storec x18, VQ; 
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 2508C012 NOC_cfg (addr=37,wdata=2240,cfifo_wdata=0,cfifo_en=0)
 00000013 npu_store(bar=0)
 881C2323 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=70,wait_type=1,cfifo_en=1,bar=0)
@@ -12247,8 +12259,9 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -13198,7 +13211,8 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
 80000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -13208,7 +13222,7 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4120105B storec x18, VQ; 
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 25094012 NOC_cfg (addr=37,wdata=2368,cfifo_wdata=0,cfifo_en=0)
 00000013 npu_store(bar=0)
 881C2323 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=70,wait_type=1,cfifo_en=1,bar=0)
@@ -14160,8 +14174,9 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -14799,7 +14814,8 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 48000021 VQ_NOP             (bar=4,nop_cycle_num=0)
 80000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=end,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
 08000821 VQ_NOP                         (bar=0,nop_cycle_num=8) //100_000000000000000000_010_0001
-8681FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+04040023 VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=0,bar=0)
+8781FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=0,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=0,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
 
 00000073 next_fetch_is_cpu
 00000913 addi x18, x0, 0
@@ -14809,7 +14825,7 @@ B0000FA1 conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=
 4120105B storec x18, VQ; 
 4130105B storec x19, VQ; 
 0000005B next_fetch_is_npu
-86A1FFA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=0,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=31,cfifo_en=1,bar=0)
+87A23FA1 psum_rd                        (rd_num=31,rd_offset=0, rd_ch_sel=1,rd_rgb_sel=0,scache_wr_en_mask=1,scache_wr_addr=32,scache_wr_size=byte,run_cycle_num=35,cfifo_en=1,bar=0)
 2509C012 NOC_cfg (addr=37,wdata=2496,cfifo_wdata=0,cfifo_en=0)
 00000013 npu_store(bar=0)
 881C2323 VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=70,wait_type=1,cfifo_en=1,bar=0)
