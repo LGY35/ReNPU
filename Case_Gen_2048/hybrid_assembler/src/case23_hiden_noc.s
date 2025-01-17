@@ -77,7 +77,7 @@ NOC_cfg (addr=19,wdata=0,cfifo_wdata=0,cfifo_en=0) //单播模式
 NOC_cfg (addr=20,wdata=0,cfifo_wdata=0,cfifo_en=0) //不和任何节点同步
 NOC_cfg (addr=21,wdata=1,cfifo_wdata=0,cfifo_en=0) // 读取base地址为cluster指令中的weight地址（每组不同的地址）
 NOC_cfg (addr=63,wdata=1,cfifo_wdata=0,cfifo_en=0) //单独取指
-hid_load           (we=rd,l1b_mode=cache,sys_gap=385,sub_gap=1,sub_len=128,addr=160,sys_len=4,cfifo_en=1,bar=0)
+hid_load           (we=wr,l1b_mode=cache,sys_gap=385,sub_gap=1,sub_len=128,addr=160,sys_len=4,cfifo_en=1,bar=0)
 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
 NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)            // 设置为0即可，用ping addr
 NOC_cfg (addr=34,wdata=1,cfifo_wdata=0,cfifo_en=0)           // 数据输出到本地
@@ -813,7 +813,7 @@ hid_load_chk_done
 NOC_cfg (addr=6,wdata=288,cfifo_wdata=0,cfifo_en=0) // =====基地址偏移
 NOC_cfg (addr=15,wdata=127,cfifo_wdata=0,cfifo_en=0)  //=====lenth3 = 128
 NOC_cfg (addr=17,wdata=511,cfifo_wdata=0,cfifo_en=0) //=====ping传输的长度 128*4 = 512
-hid_load           (we=rd,l1b_mode=cache,sys_gap=385,sub_gap=1,sub_len=128,addr=288,sys_len=4,cfifo_en=1,bar=0)
+hid_load           (we=wr,l1b_mode=cache,sys_gap=385,sub_gap=1,sub_len=128,addr=288,sys_len=4,cfifo_en=1,bar=0)
 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=16,addr=96, sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
@@ -1587,7 +1587,7 @@ hid_load_chk_done
 NOC_cfg (addr=6,wdata=416,cfifo_wdata=0,cfifo_en=0) // =====基地址偏移
 NOC_cfg (addr=15,wdata=95,cfifo_wdata=0,cfifo_en=0)  //=====lenth3 = 96
 NOC_cfg (addr=17,wdata=383,cfifo_wdata=0,cfifo_en=0) //=====ping传输的长度 96*4 = 384
-hid_load           (we=rd,l1b_mode=cache,sys_gap=417,sub_gap=1,sub_len=96,addr=416,sys_len=4,cfifo_en=1,bar=0)
+hid_load           (we=wr,l1b_mode=cache,sys_gap=417,sub_gap=1,sub_len=96,addr=416,sys_len=4,cfifo_en=1,bar=0)
 noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)// 检查是否完成fmap搬运
 npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
 npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=16,addr=224 , sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
