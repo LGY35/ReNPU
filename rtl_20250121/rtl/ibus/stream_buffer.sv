@@ -3,7 +3,7 @@ module stream_buffer(
     input                   rst_n,
 
     input                   fetch_stream_req,
-    input           [18:0]  fetch_stream_addr,
+    input           [18:0]  fetch_stream_addr,  //预取的地址
     input           [18:0]  fetch_stream_addr_reg, //both compare
     output  logic           fetch_stream_gnt,
     output  logic           fetch_stream_r_valid,

@@ -1,3 +1,5 @@
+
+// 这个icache是使用状态机来实现的, 而cpu访存使用的cache一般是用pipeline实现
 module pri_icache(
     input                   clk,
     input                   rst_n,
@@ -39,22 +41,23 @@ logic [2:0] cs, ns;
 logic icache_sleep_en_reg;
 
 logic [3:0] me,we,re, we_ibuffer, we_icache, re_icache;
-logic [6:0] data_ram_addr;
-logic [18:0] ram_addr_cs, ram_addr_ns;
-logic [2:0] tag_ram_addr;
-logic [3:0][31:0] data_ram_out;
+logic [6:0] data_ram_addr;  // 7bit 对应128个entry,每个entry32bit为一条指令, 每16个entry是一条cacheline(128bit)
+logic [18:0] ram_addr_cs, ram_addr_ns;  // 总的19bit地址
+logic [2:0] tag_ram_addr;   // 一共8个cacheline, 所以3bit tag地址
+logic [3:0][31:0] data_ram_out; // 一次读出4way的指令
 logic [31:0] data_ram_in;
 logic [3:0][9:0] tag_ram_out;
 logic [9:0] tag_ram_in;
 
-logic [31:0] bit_mask_write;
+logic [31:0] bit_mask_write;    //一条指令里32bit的mask, 需要RAM带有WEM,此处不使用
 
 logic icache_hit, hit;
-logic [3:0] hit_state;
+logic [3:0] hit_state;  // 4个way的命中状态
 logic [18:0] fetch_addr_reg;
+//  用于时序修正
 logic [18:0] fetch_addr_speculative_reg;
 logic [9:0] tag_input;
-logic [7:0][3:0] cache_line_valid;
+logic [7:0][3:0] cache_line_valid;  // valid array, 8个cacheline, 每个4way
 //logic [2:0][3:0][1:0] cache_line_use;
 logic [3:0] cache_line_miss_sel, cache_line_miss_sel_reg, not_valid_onehot;
 
@@ -90,13 +93,16 @@ logic [2:0] hit_cache_line_addr;
 logic [3:0] plru_hit_index;
 logic [2:0] miss_cache_line_addr;
 logic [3:0] plru_old_onehot;
+    // stream_buffer
 
+//  这两个信号其实就是icache是否命中hit
 logic sfetch_miss, sfetch_miss_ns; //推测性访问icache
 logic [31:0] fetch_r_data_cs, fetch_r_data_ns;
 
 logic stream_hit_reg;
 logic [18:0] next_line_addr;
-assign next_line_addr = fetch_addr_reg + 64;
+// next_line_addr 地址就是当前core要取的cacheline的下一条line的地址
+assign next_line_addr = fetch_addr_reg + 64;// 一个entry是32bit=4B, 16个entry是64B
 
 
 always_ff @(posedge clk or negedge rst_n) begin
@@ -123,28 +129,31 @@ always_comb begin
     fetch_r_valid = 'b0;
     fetch_r_data = 'b0;
 
-    data_ram_addr = fetch_addr[8:2];
-    tag_ram_addr = fetch_addr[8:6];
+    data_ram_addr = fetch_addr[8:2];// fetch_addr是按照Bytes, 所以用4B对齐word
+    tag_ram_addr = fetch_addr[8:6]; // 一个tag对应16个entry,多了4bit.7-4=3bit = 8entry
     data_ram_in = icache_refill_r_data;
-    tag_ram_in = fetch_addr_reg[18:9];
+    tag_ram_in = fetch_addr_reg[18:9];  // 给到tag array的输入
 
     //use for compare
     tag_input = fetch_addr_reg[18:9];
-    cache_set_addr = fetch_addr_reg[8:6];
+    cache_set_addr = fetch_addr_reg[8:6];   // 一共有8个cacheline, 所以是3bit
 
     we = 'b0;
     re = 'b0; 
 
+    // refill接口
     ctr_refill_req = 1'b0;
-    ctr_refill_addr = {next_line_addr[18:6],6'b0};
+    ctr_refill_addr = {next_line_addr[18:6],6'b0};  // 64Byte
     ctr_refill_lenth = 1'b0;
     ctr_refill_mode = 1'b0; //0: stream buffer; 1: icache
 
+    // 更新plru
     plru_hit = 'b0;
     hit_cache_line_addr = cache_set_addr;
     plru_hit_index = hit_state;
     miss_cache_line_addr = cache_set_addr;
 
+    // stream_buffer
     stream_fetch_valid = 1'b0;
     fetch_stream_req = 'b0;
     fetch_stream_addr = fetch_addr;
@@ -161,22 +170,33 @@ always_comb begin
             if(icache_sleep_en | icache_sleep_en_reg)
                 ns = SLEEP;
             else if(fetch_req) begin
+                // 如果stream正在预取, 就只判断icache
                 if(stream_busy) begin
+                    // 推测执行状态下没有miss(按照cacheline下一条执行),就只需要看icache
+                    // 此时因为不确定是不是可以命中,就不返回gnt
 					if(~sfetch_miss)begin
                         fetch_gnt = 1'b1;
                     	ns = ICACHE_COMPARE;
                     	re = 4'hf;
 					end
+                    // 如果推测执行状态下miss了(sfetch_miss=1), 就保持状态不变,继续检测
                 end
+                // icache 和 stream buffer都需要比较
                 else begin
                     ns = BOTH_COMPARE;
                     re = 4'hf;
+                    // 恢复为推测状态执行:
+                    // 如果icache命中，那显然就是sfetch；如果stream命中，会move到icache里面，所以也要sfetch。如果都miss，就要从L2搬到L1中，也是继续sfetch
                     sfetch_miss_ns = 1'b0;
+                    // 如果上一拍没有miss,说明推测性执行肯定可以取到下一条cacheline,就可以返回gnt,代表收到了req.
                     if(~sfetch_miss) begin
                         fetch_gnt = 1'b1;
                     end
                 end
             end
+            // 这是发生了miss
+            // stream如果没有预取,就都比较-说明此时是预取完了,恢复推测执行,
+            // 反之因为icache miss, stream也在预取, 两个地方都没有数据,就等待,
             else if(sfetch_miss) begin
                 if(~stream_busy) begin
                     ns = BOTH_COMPARE;
@@ -201,17 +221,21 @@ always_comb begin
                 end
                 // fetch_r_data_ns = ({32{hit_state[3]}} & data_ram_out[3]) | ({32{hit_state[2]}} & data_ram_out[2]) | ...;
             end
+            // icache_hit=0, 即推测执行状态下miss
             else begin
                 ns = ICACHE;
                 sfetch_miss_ns = 1'b1;
             end
         end
         ICACHE_COMPARE_HIT: begin
+            // 返回fetch有效
             fetch_r_valid = 1'b1;
+            // 读取的指令
             fetch_r_data = fetch_r_data_cs;
-
+            // 命中之后,同拍处理下一个req. 因为此时是hit, 所以一定是推测执行,不需要判断sfetch
             if(fetch_req) begin
 				re = 4'hf;
+                // 这种情况就可以返回gnt
                 fetch_gnt = 1'b1;
                 if(stream_busy) begin
                     ns = ICACHE_COMPARE;
@@ -223,6 +247,7 @@ always_comb begin
             else begin
                 ns = ICACHE;
             end
+            // TODO: gnt的
         end
         BOTH_COMPARE: begin
             fetch_stream_req = 1'b1;
@@ -463,9 +488,12 @@ end
 
 assign bit_mask_write = {32{1'b1}};
 
-genvar i;
+genvar i;   // 4路组相联, 所以有4个way,即生成4份.
 generate
     for(i = 0; i < 4; i = i + 1) begin: pri_icache_sram_bank
+        //32bit的指令, 128/8=16 为1个cacheline, 128bit为一个cacheline, 
+        // 因为cache使用的是一个entry32bit, 所以需要将连续的16个entry作为一个cacheline. 
+        // 因此读写mask都是4bit, 针对一个cacheline里面的16个entry.
         std_spram128x32 U_pri_icache_data(
             .CLK(clk),
             .CE(me[i]),
@@ -475,7 +503,7 @@ generate
             .Q(data_ram_out[i])
             // .WEM(bit_mask_write)
         );
-
+        // 10bit的tag, 8个entry
         tag_reg8x10 U_pri_icache_tag(
             .CLK(clk),
             .ME(me[i]),
@@ -556,7 +584,8 @@ plru U_plru(
     .hit_cache_line_addr            (hit_cache_line_addr        ),
     .plru_hit_index                 (plru_hit_index             ),
 
-    .miss_cache_line_addr           (miss_cache_line_addr       ),
+    .miss_cache_line_add
+        // stream_bufferr           (miss_cache_line_addr       ),
     .choose_old_onehot              (plru_old_onehot            )
 );
 
