@@ -1,0 +1,250 @@
+
+block ictrl_regfile {
+  endian little;
+  bytes 4;
+  register ICTRL_RD_CFG_EN @'h0 {
+    field rd_cfg_en (rd_cfg_en) @0 {
+      bits 1;
+      access rw;
+      reset 1'h0;
+    }
+    field rsv_31_1 (rsv_31_1) @1 {
+      bits 31;
+      access ro;
+      reset 31'h00000000;
+      attributes {NO_REG_TEST 1};
+    }
+  }
+  register ICTRL_RD_AFIFO_CONTROL @'h4 {
+    field rd_afifo_init (rd_afifo_init) @0 {
+      bits 1;
+      access rw;
+      reset 1'h0;
+    }
+    field rsv_31_1 (rsv_31_1) @1 {
+      bits 31;
+      access ro;
+      reset 31'h00000000;
+      attributes {NO_REG_TEST 1};
+    }
+  }
+  register ICTRL_RD_DFIFO_CONTROL @'h8 {
+    field rd_dfifo_init (rd_dfifo_init) @0 {
+      bits 1;
+      access rw;
+      reset 1'h0;
+    }
+    field rsv_15_1 (rsv_15_1) @1 {
+      bits 15;
+      access ro;
+      reset 15'h0000;
+      attributes {NO_REG_TEST 1};
+    }
+    field rd_cfg_dfifo_thd (rd_cfg_dfifo_thd) @16 {
+      bits 8;
+      access rw;
+      reset 8'h00;
+    }
+    field rsv_31_24 (rsv_31_24) @24 {
+      bits 8;
+      access ro;
+      reset 8'h00;
+      attributes {NO_REG_TEST 1};
+    }
+  }
+  register ICTRL_RD_CTRL0 @'hC {
+    field rd_cfg_outstd (rd_cfg_outstd) @0 {
+      bits 4;
+      access rw;
+      reset 4'h0;
+    }
+    field rd_cfg_outstd_en (rd_cfg_outstd_en) @4 {
+      bits 1;
+      access rw;
+      reset 1'h0;
+    }
+    field rd_cfg_cross4k_en (rd_cfg_cross4k_en) @5 {
+      bits 1;
+      access rw;
+      reset 1'h0;
+    }
+    field rd_cfg_arvld_hold_en (rd_cfg_arvld_hold_en) @6 {
+      bits 1;
+      access rw;
+      reset 1'h0;
+    }
+    field rd_cfg_resi_mode (rd_cfg_resi_mode) @7 {
+      bits 1;
+      access rw;
+      reset 1'h0;
+    }
+    field rsv_31_8 (rsv_31_8) @8 {
+      bits 24;
+      access ro;
+      reset 24'h000000;
+      attributes {NO_REG_TEST 1};
+    }
+  }
+  register ICTRL_RD_RESI_FMAP_A @'h10 {
+    field rd_cfg_resi_fmap_a_addr (rd_cfg_resi_fmap_a_addr) @0 {
+      bits 32;
+      access rw;
+      reset 32'h00000000;
+    }
+  }
+  register ICTRL_RD_RESI_FMAP_B @'h14 {
+    field rd_cfg_resi_fmap_b_addr (rd_cfg_resi_fmap_b_addr) @0 {
+      bits 32;
+      access rw;
+      reset 32'h00000000;
+    }
+  }
+  register ICTRL_RD_RESI_ADDR_GAP @'h18 {
+    field rd_cfg_resi_addr_gap (rd_cfg_resi_addr_gap) @0 {
+      bits 32;
+      access rw;
+      reset 32'h00000000;
+    }
+  }
+  register ICTRL_RD_RESI_LOOP_NUM @'h1C {
+    field rd_cfg_resi_loop_num (rd_cfg_resi_loop_num) @0 {
+      bits 32;
+      access rw;
+      reset 32'h00000000;
+    }
+  }
+  register ICTRL_RD_REQ @'h20 {
+    field rd_req (rd_req) @0 {
+      bits 1;
+      access rw;
+      reset 1'h0;
+    }
+    field rsv_31_1 (rsv_31_1) @1 {
+      bits 31;
+      access ro;
+      reset 31'h00000000;
+      attributes {NO_REG_TEST 1};
+    }
+  }
+  register ICTRL_RD_ADDR @'h24 {
+    field rd_addr (rd_addr) @0 {
+      bits 32;
+      access rw;
+      reset 32'h00000000;
+    }
+  }
+  register ICTRL_RD_NUM @'h28 {
+    field rd_num (rd_num) @0 {
+      bits 32;
+      access rw;
+      reset 32'h00000000;
+    }
+  }
+  register ICTRL_CFG_SEND @'h2C {
+    field flit_send (flit_send) @0 {
+      bits 1;
+      access rw;
+      reset 1'h0;
+    }
+    field rsv_31_1 (rsv_31_1) @1 {
+      bits 31;
+      access ro;
+      reset 31'h00000000;
+      attributes {NO_REG_TEST 1};
+    }
+  }
+  register ICTRL_GROUP_INFO @'h30 {
+    field group_info (group_info) @0 {
+      bits 32;
+      access rw;
+      reset 32'h00000000;
+    }
+  }
+  register ICTRL_CACHE_INFO @'h34 {
+    field cache_info (cache_info) @0 {
+      bits 32;
+      access rw;
+      reset 32'h00000000;
+    }
+  }
+  register ICTRL_RD_CNT @'h38 {
+    field debug_dma_rd_in_cnt (debug_dma_rd_in_cnt) @0 {
+      bits 16;
+      access ro;
+      reset 16'h0000;
+    }
+    field rsv_31_16 (rsv_31_16) @16 {
+      bits 16;
+      access ro;
+      reset 16'h0000;
+      attributes {NO_REG_TEST 1};
+    }
+  }
+  register ICTRL_NODES_STATUS @'h3C {
+    field nodes_status (nodes_status) @0 {
+      bits 12;
+      access ro;
+      reset 12'h000;
+    }
+    field rsv_31_12 (rsv_31_12) @12 {
+      bits 20;
+      access ro;
+      reset 20'h00000;
+      attributes {NO_REG_TEST 1};
+    }
+  }
+  register ICTRL_INTR_INT_RAW @'h40 {
+    field nodes_intr_raw (nodes_intr_raw) @0 {
+      bits 1;
+      access w1c;
+      reset 1'h0;
+    }
+    field rd_done_intr_raw (rd_done_intr_raw) @1 {
+      bits 1;
+      access w1c;
+      reset 1'h0;
+    }
+    field rsv_31_2 (rsv_31_2) @2 {
+      bits 30;
+      access ro;
+      reset 30'h00000000;
+      attributes {NO_REG_TEST 1};
+    }
+  }
+  register ICTRL_INTR_INT_MASK @'h44 {
+    field nodes_intr_mask (nodes_intr_mask) @0 {
+      bits 1;
+      access rw;
+      reset 1'h1;
+    }
+    field rd_done_intr_mask (rd_done_intr_mask) @1 {
+      bits 1;
+      access rw;
+      reset 1'h1;
+    }
+    field rsv_31_2 (rsv_31_2) @2 {
+      bits 30;
+      access ro;
+      reset 30'h00000000;
+      attributes {NO_REG_TEST 1};
+    }
+  }
+  register ICTRL_INTR_INT_STATUS @'h48 {
+    field nodes_intr_status (nodes_intr_status) @0 {
+      bits 1;
+      access ro;
+      reset 1'h0;
+    }
+    field rd_done_intr_status (rd_done_intr_status) @1 {
+      bits 1;
+      access ro;
+      reset 1'h0;
+    }
+    field rsv_31_2 (rsv_31_2) @2 {
+      bits 30;
+      access ro;
+      reset 30'h00000000;
+      attributes {NO_REG_TEST 1};
+    }
+  }
+}

@@ -1,0 +1,12 @@
+rtl/idma/axi_addr_fifo.v
+rtl/idma/axi_data_fifo.v
+rtl/idma/axi_addr_cross4k.sv
+rtl/idma/axi_addr_manager.sv
+rtl/idma/ts_idma_axi_top.v
+rtl/idma/idma_rd_channel.v
+rtl/idma/idma_resi_raddr_gen.sv
+rtl/idma/axi_rdata_proc.sv
+rtl/idma/axi_rd_if.sv
+rtl/idma/idma_wr_channel.v
+rtl/idma/axi_wdata_proc.sv
+rtl/idma/axi_wr_if.sv

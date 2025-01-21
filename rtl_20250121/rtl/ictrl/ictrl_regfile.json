@@ -1,0 +1,406 @@
+[{
+   "addr"   : 0,
+   "name"   : "ICTRL_RD_CFG_EN",
+   "doc"    : "Enable DMA Read",
+   "fields" :[
+       {
+           "accType" : "W1P",
+           "name"    : "rd_cfg_en",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "read config enable"
+       },
+       {
+           "accType" : "NA",
+           "name"    : "--",
+           "width"   : 31,
+           "reset"   : 0,
+           "doc"     : "Reserved"
+       }
+   ]
+},
+{
+   "addr"   : 4,
+   "name"   : "ICTRL_RD_AFIFO_CONTROL",
+   "doc"    : "Init DMA Read Address FIFO",
+   "fields" :[
+       {
+           "accType" : "W1P",
+           "name"    : "rd_afifo_init",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "read addr fifo init"
+       },
+       {
+           "accType" : "NA",
+           "name"    : "--",
+           "width"   : 31,
+           "reset"   : 0,
+           "doc"     : "Reserved"
+       }
+   ]
+},
+{
+   "addr"   : 8,
+   "name"   : "ICTRL_RD_DFIFO_CONTROL",
+   "doc"    : "Control DMA Read Data FIFO",
+   "fields" :[
+       {
+           "accType" : "W1P",
+           "name"    : "rd_dfifo_init",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "read data fifo init"
+       },
+       {
+           "accType" : "NA",
+           "name"    : "--",
+           "width"   : 15,
+           "reset"   : 0,
+           "doc"     : "Reserved"
+       },
+       {
+           "accType" : "RW",
+           "name"    : "rd_cfg_dfifo_thd",
+           "width"   : 8,
+           "reset"   : 0,
+           "doc"     : "read data fifo threshold"
+       },
+       {
+           "accType" : "NA",
+           "name"    : "--",
+           "width"   : 8,
+           "reset"   : 0,
+           "doc"     : "Reserved"
+       }
+   ]
+},
+{
+   "addr"   : 12,
+   "name"   : "ICTRL_RD_CTRL0",
+   "doc"    : "Control DMA Read No.0",
+   "fields" :[
+       {
+           "accType" : "RW",
+           "name"    : "rd_cfg_outstd",
+           "width"   : 4,
+           "reset"   : 0,
+           "doc"     : "max outstanding num"
+       },
+       {
+           "accType" : "RW",
+           "name"    : "rd_cfg_outstd_en",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "enable outstanding"
+       },
+       {
+           "accType" : "RW",
+           "name"    : "rd_cfg_cross4k_en",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "enable cross 4k"
+       },
+       {
+           "accType" : "RW",
+           "name"    : "rd_cfg_arvld_hold_en",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "enable hold ar valid"
+       },
+       {
+           "accType" : "RW",
+           "name"    : "rd_cfg_resi_mode",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "resi mode"
+       },
+       {
+           "accType" : "NA",
+           "name"    : "--",
+           "width"   : 24,
+           "reset"   : 0,
+           "doc"     : "Reserved"
+       }
+   ]
+},
+{
+   "addr"   : 16,
+   "name"   : "ICTRL_RD_RESI_FMAP_A",
+   "doc"    : "Fmap A Address of DMA Read at Resi Mode",
+   "fields" :[
+       {
+           "accType" : "RW",
+           "name"    : "rd_cfg_resi_fmap_a_addr",
+           "width"   : 32,
+           "reset"   : 0,
+           "doc"     : "resi mode A address"
+       }
+   ]
+},
+{
+   "addr"   : 20,
+   "name"   : "ICTRL_RD_RESI_FMAP_B",
+   "doc"    : "Fmap B Address of DMA Read at Resi Mode",
+   "fields" :[
+       {
+           "accType" : "RW",
+           "name"    : "rd_cfg_resi_fmap_b_addr",
+           "width"   : 32,
+           "reset"   : 0,
+           "doc"     : "resi mode B address"
+       }
+   ]
+},
+{
+   "addr"   : 24,
+   "name"   : "ICTRL_RD_RESI_ADDR_GAP",
+   "doc"    : "Address Gap of DMA Read at Resi Mode",
+   "fields" :[
+       {
+           "accType" : "RW",
+           "name"    : "rd_cfg_resi_addr_gap",
+           "width"   : 32,
+           "reset"   : 0,
+           "doc"     : "resi mode address gap"
+       }
+   ]
+},
+{
+   "addr"   : 28,
+   "name"   : "ICTRL_RD_RESI_LOOP_NUM",
+   "doc"    : "Loop Number of DMA Read at Resi Mode",
+   "fields" :[
+       {
+           "accType" : "RW",
+           "name"    : "rd_cfg_resi_loop_num",
+           "width"   : 32,
+           "reset"   : 0,
+           "doc"     : "resi mode loop number"
+       }
+   ]
+},
+{
+   "addr"   : 32,
+   "name"   : "ICTRL_RD_REQ",
+   "doc"    : "Enable of DMA Read",
+   "fields" :[
+       {
+           "accType" : "W1P",
+           "name"    : "rd_req",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "start read"
+       },
+       {
+           "accType" : "NA",
+           "name"    : "--",
+           "width"   : 31,
+           "reset"   : 0,
+           "doc"     : "Reserved"
+       }
+   ]
+},
+{
+   "addr"   : 36,
+   "name"   : "ICTRL_RD_ADDR",
+   "doc"    : "Start Address of DMA Read",
+   "fields" :[
+       {
+           "accType" : "RW",
+           "name"    : "rd_addr",
+           "width"   : 32,
+           "reset"   : 0,
+           "doc"     : "read address"
+       }
+   ]
+},
+{
+   "addr"   : 40,
+   "name"   : "ICTRL_RD_NUM",
+   "doc"    : "Read How Many Data",
+   "fields" :[
+       {
+           "accType" : "RW",
+           "name"    : "rd_num",
+           "width"   : 32,
+           "reset"   : 0,
+           "doc"     : "read num"
+       }
+   ]
+},
+{
+   "addr"   : 44,
+   "name"   : "ICTRL_CFG_SEND",
+   "doc"    : "Enable Config Send",
+   "fields" :[
+       {
+           "accType" : "W1P",
+           "name"    : "flit_send",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "send config"
+       },
+       {
+           "accType" : "NA",
+           "name"    : "--",
+           "width"   : 31,
+           "reset"   : 0,
+           "doc"     : "Reserved"
+       }
+   ]
+},
+{
+   "addr"   : 48,
+   "name"   : "ICTRL_GROUP_INFO",
+   "doc"    : "Group Info",
+   "fields" :[
+       {
+           "accType" : "RW",
+           "name"    : "group_info",
+           "width"   : 32,
+           "reset"   : 0,
+           "doc"     : "group info"
+       }
+   ]
+},
+{
+   "addr"   : 52,
+   "name"   : "ICTRL_CACHE_INFO",
+   "doc"    : "Cache Start Addr/Work Enable",
+   "fields" :[
+       {
+           "accType" : "RW",
+           "name"    : "cache_info",
+           "width"   : 32,
+           "reset"   : 0,
+           "doc"     : "cache info"
+       }
+   ]
+},
+{
+   "addr"   : 56,
+   "name"   : "ICTRL_RD_CNT",
+   "doc"    : "DMA read in Count",
+   "fields" :[
+       {
+           "accType" : "RO",
+           "name"    : "debug_dma_rd_in_cnt",
+           "width"   : 16,
+           "reset"   : 0,
+           "doc"     : "DMA read in Count"
+       },
+       {
+           "accType" : "NA",
+           "name"    : "--",
+           "width"   : 16,
+           "reset"   : 0,
+           "doc"     : "Reserved"
+       }
+   ]
+},
+{
+   "addr"   : 60,
+   "name"   : "ICTRL_NODES_STATUS",
+   "doc"    : "Status of 12 Nodes",
+   "fields" :[
+       {
+           "accType" : "RO",
+           "name"    : "nodes_status",
+           "width"   : 12,
+           "reset"   : 0,
+           "doc"     : "Status of 12 Nodes"
+       },
+       {
+           "accType" : "NA",
+           "name"    : "--",
+           "width"   : 20,
+           "reset"   : 0,
+           "doc"     : "Reserved"
+       }
+   ]
+},
+{
+   "addr"   : 64,
+   "name"   : "ICTRL_INTR_INT_RAW",
+   "doc"    : "Interrupt Raw status Register\n set when event \n clear when write 1",
+   "fields" :[
+       {
+           "accType" : "W1C",
+           "name"    : "nodes_intr_raw",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "raw, default 0"
+       },
+       {
+           "accType" : "W1C",
+           "name"    : "rd_done_intr_raw",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "raw, default 0"
+       },
+       {
+           "accType" : "NA",
+           "name"    : "--",
+           "width"   : 30,
+           "reset"   : 0,
+           "doc"     : "Reserved"
+       }
+   ]
+},
+{
+   "addr"   : 68,
+   "name"   : "ICTRL_INTR_INT_MASK",
+   "doc"    : "Interrupt Mask   Register\n1: int off\n0: int open\n default 1, int off",
+   "fields" :[
+       {
+           "accType" : "RW",
+           "name"    : "nodes_intr_mask",
+           "width"   : 1,
+           "reset"   : 1,
+           "doc"     : "mask, default 1, int off"
+       },
+       {
+           "accType" : "RW",
+           "name"    : "rd_done_intr_mask",
+           "width"   : 1,
+           "reset"   : 1,
+           "doc"     : "mask, default 1, int off"
+       },
+       {
+           "accType" : "NA",
+           "name"    : "--",
+           "width"   : 30,
+           "reset"   : 0,
+           "doc"     : "Reserved"
+       }
+   ]
+},
+{
+   "addr"   : 72,
+   "name"   : "ICTRL_INTR_INT_STATUS",
+   "doc"    : "Interrupt status Register\n  status = raw && (!mask)",
+   "fields" :[
+       {
+           "accType" : "RO",
+           "name"    : "nodes_intr_status",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "stauts default 0"
+       },
+       {
+           "accType" : "RO",
+           "name"    : "rd_done_intr_status",
+           "width"   : 1,
+           "reset"   : 0,
+           "doc"     : "stauts default 0"
+       },
+       {
+           "accType" : "NA",
+           "name"    : "--",
+           "width"   : 30,
+           "reset"   : 0,
+           "doc"     : "Reserved"
+       }
+   ]
+}]
