@@ -1,3 +1,4 @@
+// 管理向L2 RAM的写入和读出
 module addr_mu_ns(
     input                               clk,
     input                               rst_n,
@@ -6,14 +7,14 @@ module addr_mu_ns(
     input               [3:0][12:0]     cfg_gap,
     input               [3:0][12:0]     cfg_lenth,
 
-    input                               addr_mu_initial_en,
-    input                               addr_mu_valid,
+    input                               addr_mu_initial_en, //第一次启动一下，后面就内部自动执行完了
+    input                               addr_mu_valid,  
 
     // output  logic       [17:0]      addr_mu_addr_ns,
     output  logic       [12:0]          addr_mu_addr
 );
 
-logic [12:0] base_addr, base_addr_reg;
+logic [12:0] base_addr;
 logic [3:0][12:0] loop_cnt, loop_cnt_ns;
 logic [3:0][12:0] loop_addr, loop_addr_ns;
 logic [3:0] loop_target;
@@ -26,7 +27,7 @@ assign loop_target[3] = (loop_cnt[3] == cfg_lenth[3]);
 
 // logic work_en;
 
-// always_ff @(posedge clk or negedge rst_n) begin
+// always_ff @(posedge clk or negedeg rst_n) begin
 //     if(!rst_n) begin
 //         work_en <= 'b0;
 //     end
@@ -40,14 +41,12 @@ assign loop_target[3] = (loop_cnt[3] == cfg_lenth[3]);
 
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
-        base_addr_reg <= 'b0;
+        base_addr <= 'b0;
     end
     else if(addr_mu_initial_en) begin
-        base_addr_reg <= cfg_base_addr;
+        base_addr <= cfg_base_addr;
     end
 end
-
-assign base_addr = addr_mu_initial_en ? cfg_base_addr : base_addr_reg;
 
 always_comb begin
     loop_cnt_ns[0] = loop_cnt[0];

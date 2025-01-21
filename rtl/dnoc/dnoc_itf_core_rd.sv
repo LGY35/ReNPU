@@ -14,19 +14,18 @@ module dnoc_itf_core_rd(
     input                           c_cfg_c_r_pingpong_en,
     input           [10:0]          c_cfg_c_r_pingpong_num,
 
-    input                           c_cfg_c_r_local_access, //计算得到，并非直接配置
-    input                           c_cfg_c_r_dma_transfer_n,
+    input                           c_cfg_c_r_local_access, //在ctr模块中计算得到
 
     input           [3:0][12:0]     c_cfg_c_r_loop_lenth,
     input           [3:0][12:0]     c_cfg_c_r_loop_gap,
     input           [3:0]           c_cfg_c_r_pad_up_len,
     input           [3:0]           c_cfg_c_r_pad_right_len,
-    input           [10:0]          c_cfg_c_r_pad_left_len,
-    input           [4:0]           c_cfg_c_r_pad_bottom_len,
+    input           [3:0]           c_cfg_c_r_pad_left_len,
+    input           [3:0]           c_cfg_c_r_pad_bottom_len,
 
     input           [10:0]          c_cfg_c_r_pad_row_num,
     input           [10:0]          c_cfg_c_r_pad_col_num,
-    input           [1:0]           c_cfg_c_r_pad_mode,
+    input                           c_cfg_c_r_pad_mode,
 
     input           [1:0]           pingpong_state,
     output  logic                   pingpong_rd_done,
@@ -42,18 +41,20 @@ module dnoc_itf_core_rd(
     output  logic                   core_rd_noc_out_req,
     input                           core_rd_noc_out_gnt,
 
+    // output  logic   [255:0] cmmu_out_noc_out_data,
+    // output  logic           cmmu_out_noc_out_valid,
+    // output  logic           cmmu_out_noc_out_last, //to be determined
+    // input                   cmmu_out_noc_out_ready,
+
     //noc input data
     input      [255:0]              noc_in_core_rd_data,
     input                           noc_in_core_rd_valid,
     input                           noc_in_core_rd_last,
     output  logic                   noc_in_core_rd_ready,
 
-    output  logic                   L2_dmem_core_rd_req,
-    input                           L2_dmem_core_rd_gnt,
+    output  logic                   L2_dmem_core_rd_en,
     output  logic   [12:0]          L2_dmem_core_rd_addr,
-    input                           L2_dmem_core_rd_valid,
-    input           [255:0]         L2_dmem_core_rd_data,
-    output  logic                   L2_dmem_core_rd_ready
+    input           [255:0]         L2_dmem_core_rd_data
 
 );
 
@@ -62,69 +63,82 @@ localparam NOC_RD_REQ           = 3'd1;
 localparam NOC_PINGPONG_CHECK   = 3'd2;
 localparam NOC_PING_RD          = 3'd3;
 localparam NOC_PONG_RD          = 3'd4;
+// localparam NORMAL_RD        = 3'd3;
 localparam PINGPONG_CHECK       = 3'd5;
 localparam PING_RD              = 3'd6;
 localparam PONG_RD              = 3'd7;
 // localparam WR_OUT_RESP  = 3'd3; //determine link list
 
 logic [2:0] cs, ns;
-// logic [12:0] transfer_cnt, transfer_cnt_ns;
+logic [12:0] transfer_cnt, transfer_cnt_ns;
 logic [11:0] pingpong_cnt, pingpong_cnt_ns;
 
-// logic addr_mu_initial_en;
-logic core_rd_start;
-logic core_rd_backpress_finish;
+logic addr_mu_initial_en;
 logic [12:0] addr_mu_initial_addr;
-// logic [12:0] addr_mu_addr, addr_mu_addr_ns;
-// logic addr_mu_valid;
+logic [12:0] addr_mu_addr, addr_mu_addr_ns;
+logic addr_mu_valid;
 // logic addr_mu_finish;
-logic [12:0] no_pad_target_lenth;
-
-logic      [255:0]      bp_noc_in_data     ;
-logic                   bp_noc_in_valid    ;
-logic                   bp_noc_in_last     ;
-logic                   bp_noc_in_ready    ;
-
 
 always_comb begin
     ns = cs;
+    transfer_cnt_ns = transfer_cnt;
     pingpong_cnt_ns = pingpong_cnt;
 
     core_cmd_core_rd_gnt = 'b0;
-    c_r_transaction_done = 1'b0;
+    // core_cmd_L2_ok = 'b0;
 
     core_rd_noc_out_req = 'b0;
+    
+
+    // cmmu_out_noc_out_data = core_cmmu_out_data;
+    // cmmu_out_noc_out_valid = 'b0;
+    core_in_data = L2_dmem_core_rd_data;
+    core_in_valid = 'b0;
+    core_in_last = 1'b0;
 
     pingpong_rd_done = 'b0;
-
-
+    addr_mu_initial_en = 'b0;
     addr_mu_initial_addr = c_cfg_c_r_base_addr[0];
-    core_rd_start = 1'b0;
-    no_pad_target_lenth = c_cfg_c_r_ping_lenth;
+    addr_mu_valid = 'b0;
+    // addr_mu_finish = 1'b0;
 
-    bp_noc_in_data = noc_in_core_rd_data;
-    bp_noc_in_valid = 1'b0;
-    bp_noc_in_last = 1'b0;
-    noc_in_core_rd_ready = 1'b0;
-    // bp_core_rd_ready = ;
+    L2_dmem_core_rd_en = 'b0;
+    L2_dmem_core_rd_addr = 'b0;
 
-    L2_dmem_core_rd_ready = 1'b1;
+    noc_in_core_rd_ready = 'b0;
 
-    case(cs)
+    c_r_transaction_done = 1'b0;
+
+    case(cs)    
     IDLE: begin
+        // core主动配置 core rd
         if(core_cmd_core_rd_req) begin
-            core_rd_start = 1'b1;
-
-            if(c_cfg_c_r_local_access & c_cfg_c_r_dma_transfer_n)begin
+            if(c_cfg_c_r_local_access)begin
                 core_cmd_core_rd_gnt = 1'b1;
+
                 ns = PING_RD;
+                L2_dmem_core_rd_en = 1'b1;
+                L2_dmem_core_rd_addr = c_cfg_c_r_base_addr[0];
+                addr_mu_initial_en = 1'b1;
+                // if(c_cfg_c_r_pingpong_en) begin
+                //     ns = PINGPONG_CHECK;
+                // end
+                // else begin
+                //     ns = NORMAL_RD;
+                //     L2_dmem_core_rd_en = 1'b1;
+                //     L2_dmem_core_rd_addr = c_cfg_c_r_base_addr[0];
+                //     addr_mu_initial_en = 1'b1;
+                // end
             end
             else begin
+                // core_cmd_core_rd_gnt = 1'b1;
+                // core_cmd_L2_ok = 1'b1; //? to be determined
                 ns = NOC_RD_REQ;
             end
         end
     end
     NOC_RD_REQ: begin
+        // noc向外发送请求
         core_rd_noc_out_req = 1'b1;
 
         if(core_rd_noc_out_gnt) begin
@@ -137,63 +151,113 @@ always_comb begin
         if(pingpong_cnt[11:1] == c_cfg_c_r_pingpong_num)begin //pingpong pairs number
             ns = IDLE;
             pingpong_cnt_ns = 'b0;
-            c_r_transaction_done = 1'b1;
+            c_r_transaction_done = 1'b1;    //TODO: check
         end
         else if(pingpong_cnt[0] & core_cmd_core_rd_req) begin
-            ns = NOC_PONG_RD;
+            ns = PONG_RD;
         end
         else if(~pingpong_cnt[0] & core_cmd_core_rd_req) begin
-            ns = NOC_PING_RD;
+            ns = PING_RD;
         end
     end
     NOC_PING_RD: begin
-        noc_in_core_rd_ready = bp_noc_in_ready;
-        bp_noc_in_valid = noc_in_core_rd_valid;
-        if(core_rd_backpress_finish) begin
-            ns = NOC_PINGPONG_CHECK;
-            pingpong_cnt_ns = pingpong_cnt + 12'd1;
+        core_in_data = noc_in_core_rd_data;
+        core_in_valid = noc_in_core_rd_valid;
+        noc_in_core_rd_ready = 1'b1;
+        if(noc_in_core_rd_valid & noc_in_core_rd_ready) begin
+            // if(transfer_cnt == core_cfg_core_rd_total_lenth) begin
+            if(transfer_cnt == c_cfg_c_r_ping_lenth)begin
+                ns = NOC_PINGPONG_CHECK;
+                transfer_cnt_ns = 'b0;
+                pingpong_cnt_ns = pingpong_cnt + 1'b1;
+                core_in_last = 1'b1;
+            end
+            else begin
+                transfer_cnt_ns = transfer_cnt + 1'b1;
+            end
         end
     end
     NOC_PONG_RD: begin
-        noc_in_core_rd_ready = bp_noc_in_ready;
-        bp_noc_in_valid = noc_in_core_rd_valid;
-        no_pad_target_lenth = c_cfg_c_r_pong_lenth;
-        if(core_rd_backpress_finish) begin
-            ns = NOC_PINGPONG_CHECK;
-            pingpong_cnt_ns = pingpong_cnt + 12'd1;
+        core_in_data = noc_in_core_rd_data;
+        core_in_valid = noc_in_core_rd_valid;
+        noc_in_core_rd_ready = 1'b1;
+        if(noc_in_core_rd_valid & noc_in_core_rd_ready) begin
+            // if(transfer_cnt == core_cfg_core_rd_total_lenth) begin
+            if(transfer_cnt == c_cfg_c_r_pong_lenth)begin
+                ns = NOC_PINGPONG_CHECK;
+                transfer_cnt_ns = 'b0;
+                pingpong_cnt_ns = pingpong_cnt + 1'b1;
+                core_in_last = 1'b1;
+            end
+            else begin
+                transfer_cnt_ns = transfer_cnt + 1'b1;
+            end
         end
     end
+    // NORMAL_RD: begin
+    //     L2_dmem_core_rd_addr = addr_mu_addr; //to be modified to rd addr ctrl output
+    //     // core_rd_L2_data_valid = 1'b1;
+    //     core_in_valid = 1'b1;
+    //     if(transfer_cnt == core_cfg_core_rd_total_lenth) begin //this cycle could trun off the ram rd enable
+    //         ns = IDLE;
+    //         transfer_cnt_ns = 'b0;
+    //     end
+    //     else begin
+    //         L2_dmem_core_rd_en = 1'b1;
+    //         transfer_cnt_ns = transfer_cnt + 1'b1;
+    //         addr_mu_valid = 1'b1;
+    //     end
+    // end
     PINGPONG_CHECK: begin
         if(pingpong_cnt[11:1] == c_cfg_c_r_pingpong_num)begin //pingpong pairs number
             ns = IDLE;
             pingpong_cnt_ns = 'b0;
-            c_r_transaction_done = 1'b1;
+            c_r_transaction_done = 1'b1;    //TODO: check
         end
-        else if(pingpong_cnt[0] & pingpong_state[1]) begin
+        else if(pingpong_cnt[0] & pingpong_state[1]) begin // PANG
+            pingpong_cnt_ns = pingpong_cnt + 1'b1;
             ns = PONG_RD;
-            core_rd_start = 1'b1;
+            L2_dmem_core_rd_en = 1'b1;
+            L2_dmem_core_rd_addr = c_cfg_c_r_base_addr[1];
+            addr_mu_initial_en = 1'b1;
             addr_mu_initial_addr = c_cfg_c_r_base_addr[1];
         end
-        else if(~pingpong_cnt[0] & pingpong_state[0]) begin
+        else if(~pingpong_cnt[0] & pingpong_state[0]) begin //PING
+            pingpong_cnt_ns = pingpong_cnt + 1'b1;
             ns = PING_RD;
-            core_rd_start = 1'b1;
+            L2_dmem_core_rd_en = 1'b1;
+            L2_dmem_core_rd_addr = c_cfg_c_r_base_addr[0];
+            addr_mu_initial_en = 1'b1;
         end
     end
     PING_RD: begin
-        if(core_rd_backpress_finish)begin
+        L2_dmem_core_rd_addr = addr_mu_addr;
+        core_in_valid = 1'b1;   // 告诉core读取的数据valid
+        if(transfer_cnt == c_cfg_c_r_ping_lenth)begin
             ns = PINGPONG_CHECK;
+            transfer_cnt_ns = 'b0;
             pingpong_rd_done = c_cfg_c_r_pingpong_en;
-            // core_in_last = 1'b1;
-            pingpong_cnt_ns = pingpong_cnt + 1'b1;
+            core_in_last = 1'b1;
+        end
+        else begin
+            L2_dmem_core_rd_en = 1'b1;
+            transfer_cnt_ns = transfer_cnt + 1'b1;
+            addr_mu_valid = 1'b1;   //TODO: 为什么第一次不给？
         end
     end
     PONG_RD: begin
-        no_pad_target_lenth = c_cfg_c_r_pong_lenth;
-        if(core_rd_backpress_finish)begin
+        L2_dmem_core_rd_addr = addr_mu_addr;
+        core_in_valid = 1'b1;
+        if(transfer_cnt == c_cfg_c_r_pong_lenth)begin
             ns = PINGPONG_CHECK;
+            transfer_cnt_ns = 'b0;
             pingpong_rd_done = c_cfg_c_r_pingpong_en;
-            pingpong_cnt_ns = pingpong_cnt + 1'b1;
-            // core_in_last = 1'b1;
+            core_in_last = 1'b1;
+        end
+        else begin
+            L2_dmem_core_rd_en = 1'b1;
+            transfer_cnt_ns = transfer_cnt + 1'b1;
+            addr_mu_valid = 1'b1;
         end
     end
     endcase
@@ -202,83 +266,42 @@ end
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         cs <= IDLE;
-        // transfer_cnt <= 'b0;
+        transfer_cnt <= 'b0;
         pingpong_cnt <= 'b0;
     end
     else begin
         cs <= ns;
-        // transfer_cnt <= transfer_cnt_ns;
+        transfer_cnt <= transfer_cnt_ns;
         pingpong_cnt <= pingpong_cnt_ns;
     end
 end
 
-// addr_mu U_addr_mu(
-//     .clk                (clk),
-//     .rst_n              (rst_n),
+addr_mu U_addr_mu(
+    .clk                (clk),
+    .rst_n              (rst_n),
 
-//     .cfg_base_addr      (addr_mu_initial_addr),
-//     .cfg_gap            (c_cfg_c_r_loop_gap),
-//     .cfg_lenth          (c_cfg_c_r_loop_lenth),
+    .cfg_base_addr      (addr_mu_initial_addr),
+    .cfg_gap            (c_cfg_c_r_loop_gap),
+    .cfg_lenth          (c_cfg_c_r_loop_lenth),
 
-//     .addr_mu_initial_en (addr_mu_initial_en),
-//     .addr_mu_valid      (addr_mu_valid),
+    .addr_mu_initial_en (addr_mu_initial_en),
+    .addr_mu_valid      (addr_mu_valid),
 
-//     .addr_mu_addr       (addr_mu_addr)
-// );
+    .addr_mu_addr       (addr_mu_addr)
+);
 
-// addr_mu_ns U_addr_mu_ns(
-//     .clk                (clk),
-//     .rst_n              (rst_n),
+addr_mu_ns U_addr_mu_ns(
+    .clk                (clk),
+    .rst_n              (rst_n),
 
-//     .cfg_base_addr      (addr_mu_initial_addr),
-//     .cfg_gap            (c_cfg_c_r_loop_gap),
-//     .cfg_lenth          (c_cfg_c_r_loop_lenth),
+    .cfg_base_addr      (addr_mu_initial_addr),
+    .cfg_gap            (c_cfg_c_r_loop_gap),
+    .cfg_lenth          (c_cfg_c_r_loop_lenth),
 
-//     .addr_mu_initial_en (addr_mu_initial_en),
-//     .addr_mu_valid      (addr_mu_valid),
+    .addr_mu_initial_en (addr_mu_initial_en),
+    .addr_mu_valid      (addr_mu_valid),
 
-//     .addr_mu_addr       (addr_mu_addr_ns)
-// );
-
-dnoc_core_rd_backpress U_dnoc_core_rd_backpress(
-    .clk                        (clk),
-    .rst_n                      (rst_n),
-
-    .c_cfg_c_r_pad_up_len       (c_cfg_c_r_pad_up_len),
-    .c_cfg_c_r_pad_right_len    (c_cfg_c_r_pad_right_len),
-    .c_cfg_c_r_pad_left_len     (c_cfg_c_r_pad_left_len),
-    .c_cfg_c_r_pad_bottom_len   (c_cfg_c_r_pad_bottom_len),
-
-    .c_cfg_c_r_pad_row_num      (c_cfg_c_r_pad_row_num),
-    .c_cfg_c_r_pad_col_num      (c_cfg_c_r_pad_col_num),
-
-    .c_cfg_c_r_pad_mode         (c_cfg_c_r_pad_mode),
-
-    .c_cfg_c_r_local_access     (c_cfg_c_r_local_access),
-    .c_cfg_c_r_dma_transfer_n   (c_cfg_c_r_dma_transfer_n),
-    .c_cfg_c_r_loop_lenth       (c_cfg_c_r_loop_lenth),
-    .c_cfg_c_r_loop_gap         (c_cfg_c_r_loop_gap),
-    .no_pad_target_lenth        (no_pad_target_lenth),
-
-    .rd_initial_addr            (addr_mu_initial_addr),
-    .core_rd_start              (core_rd_start),
-    .core_rd_backpress_finish   (core_rd_backpress_finish),
-
-    .bp_mem_rd_req              (L2_dmem_core_rd_req),
-    .bp_mem_rd_gnt              (L2_dmem_core_rd_gnt),
-    .bp_mem_rd_addr             (L2_dmem_core_rd_addr),
-    .bp_mem_rd_data             (L2_dmem_core_rd_data),
-    .bp_mem_rd_valid            (L2_dmem_core_rd_valid),
-
-    .noc_in_data                (bp_noc_in_data),
-    .noc_in_valid               (bp_noc_in_valid),
-    .noc_in_ready               (bp_noc_in_ready),
-    .noc_in_last                (bp_noc_in_last),
-
-    .core_in_data               (core_in_data),
-    .core_in_last               (core_in_last),
-    .core_in_valid              (core_in_valid)
-
+    .addr_mu_addr       (addr_mu_addr_ns)
 );
 
 endmodule

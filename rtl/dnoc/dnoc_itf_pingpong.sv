@@ -8,7 +8,7 @@ module dnoc_itf_pingpong(
     output  logic   [1:0]   pingpong_state
 );
 
-logic rd_ptr, wr_ptr;
+logic rd_ptr, wr_ptr;   // 区分现在是在做ping还是pang
 
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
@@ -34,9 +34,9 @@ always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         pingpong_state <= 'b0;
     end
-    else begin
+    else begin  
         for(i = 0; i < 2; i = i + 1) begin
-            if(pingpong_wr_done & (wr_ptr == i)) begin
+            if(pingpong_wr_done & (wr_ptr == i)) begin // 0 - ping ping先完成，再进行pang 
                 pingpong_state[i] <= 1'b1;
             end
             else if(pingpong_rd_done & (rd_ptr == i)) begin

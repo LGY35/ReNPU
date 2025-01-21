@@ -1,6 +1,6 @@
 module noc_router_lookup #(
     parameter FLIT_WIDTH = 32,
-    parameter DEST_WIDTH = 4,
+    parameter DEST_WIDTH = 5,
     parameter DESTS = 1,
     parameter OUTPUTS = 1,
     parameter [DESTS*OUTPUTS-1:0] ROUTES = {DESTS*OUTPUTS{1'b0}}
@@ -30,7 +30,7 @@ module noc_router_lookup #(
 
     // Extract destination from flit
     logic [DEST_WIDTH-1:0]   dest;
-    assign dest = in_flit[0 +: DEST_WIDTH];
+    assign dest = in_flit[FLIT_WIDTH-1 -: DEST_WIDTH];
 
     // This is the selection signal of the slave, one hot so that it
     // directly serves as flow control valid

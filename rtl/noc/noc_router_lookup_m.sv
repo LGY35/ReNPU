@@ -35,7 +35,7 @@ module noc_router_lookup_m
     localparam WEST  = 4;
     // We need to track worms and directly encode the output of the
     // current worm.
-    reg [OUTPUTS-1:0]       worm;
+    reg [OUTPUTS-1:0]       worm;   //输出的方向-5个
     logic [OUTPUTS-1:0]     nxt_worm;
     // This is high if we are in a worm
     logic                   wormhole;
@@ -43,16 +43,12 @@ module noc_router_lookup_m
 
     // Extract unicast destination from flit
     logic [ID_WIDTH-1:0]    dest;
-    assign dest = in_flit[0 +: ID_WIDTH];
+    assign dest = in_flit[0 +: ID_WIDTH];//flit中低ID_WIDTH bit是dest
 
     // Extract multicast destination from flit
     logic [ID_WIDTH-1:0] central_node;
     assign central_node = dest;
-
-    logic [15:0] multicast_target;
-    assign multicast_target = {4'd0, in_flit[171:160]};
-
-    //order is n e s w
+    //order is n e s w          广播multicast时的各个方向，低四位为核心坐标，然后以北向顺时针进行赋值
     logic [1:0] north_id, east_id, south_id, west_id;
     assign north_id = in_flit[ID_WIDTH +: 2];
     assign east_id = in_flit[ID_WIDTH+2 +: 2];
@@ -78,7 +74,6 @@ module noc_router_lookup_m
                 // This is a header. Lookup output
                 if(~in_flit[FLIT_WIDTH-1])begin
                     if(NODE_ID == central_node)begin
-                        // valid[LOCAL] = multicast_target[NODE_ID];
                         valid[LOCAL] = 1'b1;
                         out_flit = {~in_flit[FLIT_WIDTH-1], in_flit[FLIT_WIDTH-2:12] ,in_flit[11:0]};
                         if(Y != north_id)
@@ -95,8 +90,7 @@ module noc_router_lookup_m
                     end
                 end
                 else begin
-                    // valid[LOCAL] = 1'b1;
-                    valid[LOCAL] = multicast_target[NODE_ID];
+                    valid[LOCAL] = 1'b1;
                     if(Y != central_node[3:2])begin
                         if((Y > central_node[3:2]) & (Y < north_id))begin
                             valid[NORTH] = 1'b1;

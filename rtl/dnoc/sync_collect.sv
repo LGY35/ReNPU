@@ -4,7 +4,6 @@ module sync_collect(
 
     input                           sync_req,
     input           [3:0]           sync_node_id,
-    output  logic                   sync_gnt,
 
     output  logic                   sync_hit,
     input                           sync_init,
@@ -26,7 +25,6 @@ always_comb begin
     sync_buffer_ns = sync_buffer;
 
     sync_hit = 'b0;
-    sync_gnt = 1'b0;
 
     case(cs)
     IDLE: begin
@@ -36,7 +34,6 @@ always_comb begin
         end
     end
     WAIT: begin
-        sync_gnt = 1'b1;
         if(sync_req) begin
             sync_buffer_ns = sync_buffer | (11'd1 << (sync_node_id));
         end

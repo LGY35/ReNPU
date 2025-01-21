@@ -1,216 +1,169 @@
 /*
-    4 banks
+    8 banks
 */
 module L2_dmem(
     input                           clk,
     input                           rst_n,
 
-    input                           L2_dmem_core_rd_req,
-    output  logic                   L2_dmem_core_rd_gnt,
-    input           [10:0]          L2_dmem_core_rd_addr,
-    output  logic                   L2_dmem_core_rd_valid,
+    input                           L2_dmem_core_rd_en,
+    input           [12:0]          L2_dmem_core_rd_addr,   // 地址线13bit, 3bit用于bank选择, 每个bank [9:0]
     output  logic   [255:0]         L2_dmem_core_rd_data,
-    input                           L2_dmem_core_rd_ready,
 
-    input                           L2_dmem_core_wr_req,
-    output  logic                   L2_dmem_core_wr_gnt,
-    input           [10:0]          L2_dmem_core_wr_addr,
+    input                           L2_dmem_core_wr_en,
+    input           [12:0]          L2_dmem_core_wr_addr,
     input           [255:0]         L2_dmem_core_wr_data,
-    output  logic                   L2_dmem_core_wr_resp,
 
-    input                           L2_dmem_dma_rd_req,
-    output  logic                   L2_dmem_dma_rd_gnt,
-    input           [10:0]          L2_dmem_dma_rd_addr,
-    output  logic                   L2_dmem_dma_rd_valid,
+    input                           L2_dmem_dma_rd_en,
+    input           [12:0]          L2_dmem_dma_rd_addr,
     output  logic   [255:0]         L2_dmem_dma_rd_data,
-    input                           L2_dmem_dma_rd_ready,
 
-    input                           L2_dmem_dma_wr_req,
-    output  logic                   L2_dmem_dma_wr_gnt,
-    input           [10:0]          L2_dmem_dma_wr_addr,
-    input           [255:0]         L2_dmem_dma_wr_data,
-    output  logic                   L2_dmem_dma_wr_resp
+    input                           L2_dmem_dma_wr_en,
+    input           [12:0]          L2_dmem_dma_wr_addr,
+    input           [255:0]         L2_dmem_dma_wr_data
 );
 
-logic   [3:0]            bank_core_rd_req;
-logic   [3:0]            bank_core_rd_gnt;
-logic        [8:0]       bank_core_rd_addr;
-logic   [3:0]            bank_core_rd_valid;
-logic   [3:0][255:0]     bank_core_rd_data;
-logic   [3:0]            bank_core_rd_ready;
+logic [3:0][7:0] in_ce; //分别对应于4个通道的8个bank
+logic [7:0][3:0] in_ce_t; //transpose
+logic [1:0][7:0] in_we; // 只有两个通道会写
+logic [7:0][1:0] in_we_t; //transpose
+logic [1:0][7:0][255:0] in_wr_data;
+logic [7:0][1:0][255:0] in_wr_data_t;
+logic [3:0][7:0][9:0] in_addr;
+logic [7:0][3:0][9:0] in_addr_t;
 
-logic   [3:0]            bank_core_wr_req;
-logic   [3:0]            bank_core_wr_gnt;
-logic        [8:0]       bank_core_wr_addr;
-logic        [255:0]     bank_core_wr_data;
-// logic                    bank_core_wr_resp;
+logic [1:0][7:0] in_ce_rd_reg;
 
-logic   [3:0]            bank_dma_rd_req;
-logic   [3:0]            bank_dma_rd_gnt;
-logic        [8:0]       bank_dma_rd_addr;
-logic   [3:0]            bank_dma_rd_valid;
-logic   [3:0][255:0]     bank_dma_rd_data;
-logic   [3:0]            bank_dma_rd_ready;
+logic [7:0] ce, we;
+logic [7:0][255:0] wr_data, rd_data;
+logic [7:0][9:0] addr;
 
-logic   [3:0]            bank_dma_wr_req;
-logic   [3:0]            bank_dma_wr_gnt;
-logic        [8:0]       bank_dma_wr_addr;
-logic        [255:0]     bank_dma_wr_data;
-// logic                    bank_dma_wr_resp;
+assign in_ce[0] = L2_dmem_core_rd_en << L2_dmem_core_rd_addr[12:10];
+assign in_ce[1] = L2_dmem_core_wr_en << L2_dmem_core_wr_addr[12:10];
+assign in_ce[2] = L2_dmem_dma_rd_en << L2_dmem_dma_rd_addr[12:10];
+assign in_ce[3] = L2_dmem_dma_wr_en << L2_dmem_dma_wr_addr[12:10];
 
-//-------------------------core rd----------------------------
-logic           core_rd_req_fifo_full;
-logic           core_rd_req_fifo_empty;
-logic           core_rd_req_fifo_push;
-logic           core_rd_req_fifo_pop;
-logic [1:0]     core_rd_rvalid_mux_sel;
+assign in_we[0] = in_ce[1];
+assign in_we[1] = in_ce[3];
 
-assign core_rd_req_fifo_push = (|(bank_core_rd_req & bank_core_rd_gnt)) & (~core_rd_req_fifo_full);
-assign core_rd_req_fifo_pop = L2_dmem_core_rd_valid & (~core_rd_req_fifo_empty);
+integer h;
+always_comb begin
+    in_addr = 'b0;
+    for(h = 0; h < 8; h = h + 1) begin
+        if(in_ce[0][h]) begin
+            in_addr[0][h] = L2_dmem_core_rd_addr[9:0];  // bank内地址
+        end
+        if(in_ce[1][h]) begin
+            in_addr[1][h] = L2_dmem_core_wr_addr[9:0];
+        end
+        if(in_ce[2][h]) begin
+            in_addr[2][h] = L2_dmem_dma_rd_addr[9:0];
+        end
+        if(in_ce[3][h]) begin
+            in_addr[3][h] = L2_dmem_dma_wr_addr[9:0];
+        end
+    end
+end
 
-assign bank_core_rd_req[0] = L2_dmem_core_rd_req & (L2_dmem_core_rd_addr[1:0] == 2'd0);
-assign bank_core_rd_req[1] = L2_dmem_core_rd_req & (L2_dmem_core_rd_addr[1:0] == 2'd1);
-assign bank_core_rd_req[2] = L2_dmem_core_rd_req & (L2_dmem_core_rd_addr[1:0] == 2'd2);
-assign bank_core_rd_req[3] = L2_dmem_core_rd_req & (L2_dmem_core_rd_addr[1:0] == 2'd3);
-assign bank_core_rd_addr = L2_dmem_core_rd_addr[10:2];
-assign L2_dmem_core_rd_gnt = (|(bank_core_rd_req & bank_core_rd_gnt));
+integer k;
+always_comb begin
+    in_wr_data = 'b0;
+    for(k = 0; k < 8; k = k + 1) begin
+        if(in_ce[1][k]) begin
+            in_wr_data[0][k] = L2_dmem_core_wr_data;
+        end
+        if(in_ce[3][k]) begin
+            in_wr_data[1][k] = L2_dmem_dma_wr_data;
+        end
+    end
+end
 
-assign L2_dmem_core_rd_valid = (bank_core_rd_valid[0] & (core_rd_rvalid_mux_sel == 2'd0)) | 
-                               (bank_core_rd_valid[1] & (core_rd_rvalid_mux_sel == 2'd1)) |
-                               (bank_core_rd_valid[2] & (core_rd_rvalid_mux_sel == 2'd2)) |
-                               (bank_core_rd_valid[3] & (core_rd_rvalid_mux_sel == 2'd3)) ;
+integer i,j;
+always_comb begin
+    for(i = 0; i < 4; i = i + 1) begin
+        for(j = 0; j < 8; j = j + 1) begin
+            in_ce_t[j][i] = in_ce[i][j]; // 将4个通道-8个bank 换成 8个bank-4个通道
+        end
+    end
 
-assign L2_dmem_core_rd_data = ({256{bank_core_rd_valid[0] & (core_rd_rvalid_mux_sel == 2'd0)}} & bank_core_rd_data[0]) |
-                              ({256{bank_core_rd_valid[1] & (core_rd_rvalid_mux_sel == 2'd1)}} & bank_core_rd_data[1]) |
-                              ({256{bank_core_rd_valid[2] & (core_rd_rvalid_mux_sel == 2'd2)}} & bank_core_rd_data[2]) |
-                              ({256{bank_core_rd_valid[3] & (core_rd_rvalid_mux_sel == 2'd3)}} & bank_core_rd_data[3]) ;
+    for(j = 0; j < 8; j = j + 1) begin
+        ce[j] = | in_ce_t[j];           // 然后看每个bank 是否有 通道使能
+    end
 
-assign bank_core_rd_ready[0] = L2_dmem_core_rd_ready & (core_rd_rvalid_mux_sel == 2'd0);
-assign bank_core_rd_ready[1] = L2_dmem_core_rd_ready & (core_rd_rvalid_mux_sel == 2'd1);
-assign bank_core_rd_ready[2] = L2_dmem_core_rd_ready & (core_rd_rvalid_mux_sel == 2'd2);
-assign bank_core_rd_ready[3] = L2_dmem_core_rd_ready & (core_rd_rvalid_mux_sel == 2'd3);
+    for(i = 0; i < 2; i = i + 1) begin
+        for(j = 0; j < 8; j = j + 1) begin
+            in_we_t[j][i] = in_we[i][j];
+        end
+    end
 
-ram_req_fifo U_core_rd_req_fifo(
-    .clk(clk),
-    .rst_n(rst_n),
-    .push(core_rd_req_fifo_push),
-    .in_data(L2_dmem_core_rd_addr[1:0]),
-    .full(core_rd_req_fifo_full),
+    for(j = 0; j < 8; j = j + 1) begin
+        we[j] = | in_we_t[j];
+    end
 
-    .pop(core_rd_req_fifo_pop),
-    .out_data(core_rd_rvalid_mux_sel),
-    .empty(core_rd_req_fifo_empty)
-);
+    for(i = 0; i < 2; i = i + 1) begin
+        for(j = 0; j < 8; j = j + 1) begin
+            in_wr_data_t[j][i] = in_wr_data[i][j];
+        end
+    end
 
-//------------------------core wr-----------------------------------
+    for(j = 0; j < 8; j = j + 1) begin
+        wr_data[j] = in_wr_data_t[j][0] | in_wr_data_t[j][1];
+    end
 
-assign bank_core_wr_req[0] = L2_dmem_core_wr_req & (L2_dmem_core_wr_addr[1:0] == 2'd0);
-assign bank_core_wr_req[1] = L2_dmem_core_wr_req & (L2_dmem_core_wr_addr[1:0] == 2'd1);
-assign bank_core_wr_req[2] = L2_dmem_core_wr_req & (L2_dmem_core_wr_addr[1:0] == 2'd2);
-assign bank_core_wr_req[3] = L2_dmem_core_wr_req & (L2_dmem_core_wr_addr[1:0] == 2'd3);
-assign bank_core_wr_addr = L2_dmem_core_wr_addr[10:2];
-assign L2_dmem_core_wr_gnt = |(bank_core_wr_gnt & bank_core_wr_req);
+    for(i = 0; i < 4; i = i + 1) begin
+        for(j = 0; j < 8; j = j + 1) begin
+            in_addr_t[j][i] = in_addr[i][j];
+        end
+    end
 
-assign L2_dmem_core_wr_resp = |(bank_core_wr_gnt & bank_core_wr_req);
-assign bank_core_wr_data = L2_dmem_core_wr_data;
+    for(j = 0; j < 8; j = j + 1) begin
+        addr[j] = in_addr_t[j][0] | in_addr_t[j][1] | in_addr_t[j][2] | in_addr_t[j][3];
+    end
+end
 
-//-----------------------dma rd-----------------------------------------
-logic           dma_rd_req_fifo_full;
-logic           dma_rd_req_fifo_empty;
-logic           dma_rd_req_fifo_push;
-logic           dma_rd_req_fifo_pop;
-logic [1:0]     dma_rd_rvalid_mux_sel;
+always_ff @(posedge clk or negedge rst_n) begin
+    if(!rst_n) begin
+        in_ce_rd_reg[0] <= 'b0;
+    end
+    else if(L2_dmem_core_rd_en) begin
+        in_ce_rd_reg[0] <= in_ce[0];
+    end
+end
 
-assign dma_rd_req_fifo_push = (|(bank_dma_rd_req & bank_dma_rd_gnt)) & (~dma_rd_req_fifo_full);
-assign dma_rd_req_fifo_pop = L2_dmem_dma_rd_valid & (~dma_rd_req_fifo_empty);
+always_ff @(posedge clk or negedge rst_n) begin
+    if(!rst_n) begin
+        in_ce_rd_reg[1] <= 'b0;
+    end
+    else if(L2_dmem_dma_rd_en) begin
+        in_ce_rd_reg[1] <= in_ce[2];
+    end
+end
 
-assign bank_dma_rd_req[0] = L2_dmem_dma_rd_req & (L2_dmem_dma_rd_addr[1:0] == 2'd0);
-assign bank_dma_rd_req[1] = L2_dmem_dma_rd_req & (L2_dmem_dma_rd_addr[1:0] == 2'd1);
-assign bank_dma_rd_req[2] = L2_dmem_dma_rd_req & (L2_dmem_dma_rd_addr[1:0] == 2'd2);
-assign bank_dma_rd_req[3] = L2_dmem_dma_rd_req & (L2_dmem_dma_rd_addr[1:0] == 2'd3);
-assign bank_dma_rd_addr = L2_dmem_dma_rd_addr[10:2];
-assign L2_dmem_dma_rd_gnt = (|(bank_dma_rd_req & bank_dma_rd_gnt));
-
-assign L2_dmem_dma_rd_valid = (bank_dma_rd_valid[0] & (dma_rd_rvalid_mux_sel == 2'd0)) | 
-                               (bank_dma_rd_valid[1] & (dma_rd_rvalid_mux_sel == 2'd1)) |
-                               (bank_dma_rd_valid[2] & (dma_rd_rvalid_mux_sel == 2'd2)) |
-                               (bank_dma_rd_valid[3] & (dma_rd_rvalid_mux_sel == 2'd3)) ;
-
-assign L2_dmem_dma_rd_data = ({256{bank_dma_rd_valid[0] & (dma_rd_rvalid_mux_sel == 2'd0)}} & bank_dma_rd_data[0]) |
-                              ({256{bank_dma_rd_valid[1] & (dma_rd_rvalid_mux_sel == 2'd1)}} & bank_dma_rd_data[1]) |
-                              ({256{bank_dma_rd_valid[2] & (dma_rd_rvalid_mux_sel == 2'd2)}} & bank_dma_rd_data[2]) |
-                              ({256{bank_dma_rd_valid[3] & (dma_rd_rvalid_mux_sel == 2'd3)}} & bank_dma_rd_data[3]) ;
-
-assign bank_dma_rd_ready[0] = L2_dmem_dma_rd_ready & (dma_rd_rvalid_mux_sel == 2'd0);
-assign bank_dma_rd_ready[1] = L2_dmem_dma_rd_ready & (dma_rd_rvalid_mux_sel == 2'd1);
-assign bank_dma_rd_ready[2] = L2_dmem_dma_rd_ready & (dma_rd_rvalid_mux_sel == 2'd2);
-assign bank_dma_rd_ready[3] = L2_dmem_dma_rd_ready & (dma_rd_rvalid_mux_sel == 2'd3);
-
-ram_req_fifo U_dma_rd_req_fifo(
-    .clk(clk),
-    .rst_n(rst_n),
-    .push(dma_rd_req_fifo_push),
-    .in_data(L2_dmem_dma_rd_addr[1:0]),
-    .full(dma_rd_req_fifo_full),
-
-    .pop(dma_rd_req_fifo_pop),
-    .out_data(dma_rd_rvalid_mux_sel),
-    .empty(dma_rd_req_fifo_empty)
-);
-
-//------------------------dma wr------------------------------------------
-
-assign bank_dma_wr_req[0] = L2_dmem_dma_wr_req & (L2_dmem_dma_wr_addr[1:0] == 2'd0);
-assign bank_dma_wr_req[1] = L2_dmem_dma_wr_req & (L2_dmem_dma_wr_addr[1:0] == 2'd1);
-assign bank_dma_wr_req[2] = L2_dmem_dma_wr_req & (L2_dmem_dma_wr_addr[1:0] == 2'd2);
-assign bank_dma_wr_req[3] = L2_dmem_dma_wr_req & (L2_dmem_dma_wr_addr[1:0] == 2'd3);
-assign bank_dma_wr_addr = L2_dmem_dma_wr_addr[10:2];
-assign L2_dmem_dma_wr_gnt = |(bank_dma_wr_req & bank_dma_wr_gnt);
-
-assign L2_dmem_dma_wr_resp = |(bank_dma_wr_req & bank_dma_wr_gnt);
-assign bank_dma_wr_data = L2_dmem_dma_wr_data;
-
-// always_comb begin
-//     bank_core_rd_req = 'd0;
-//     L2_dmem_core_rd_gnt = |bank_core_rd_gnt;
-//     bank_core_rd_addr = L2_dmem_core_rd_addr[10:2];
-
-// end
-
+integer x;
+always_comb begin
+    L2_dmem_core_rd_data = 'b0;
+    L2_dmem_dma_rd_data = 'b0;
+    for(x = 0; x < 8; x = x + 1) begin
+        if(in_ce_rd_reg[0][x]) begin
+            L2_dmem_core_rd_data = rd_data[x];
+        end
+        if(in_ce_rd_reg[1][x]) begin
+            L2_dmem_dma_rd_data = rd_data[x];
+        end
+    end
+end
 
 genvar gen_i;
 generate
-    for(gen_i = 0; gen_i < 4; gen_i = gen_i + 1) begin: L2_dmem_banks
+    for(gen_i = 0; gen_i < 8; gen_i = gen_i + 1) begin: L2_dmem_banks
         L2_dmem_bank U_L2_dmem_bank(
-            .clk(clk),
-            .rst_n(rst_n),
-            .bank_core_rd_req(bank_core_rd_req[gen_i]),
-            .bank_core_rd_gnt(bank_core_rd_gnt[gen_i]),
-            .bank_core_rd_addr(bank_core_rd_addr),
-            .bank_core_rd_valid(bank_core_rd_valid[gen_i]),
-            .bank_core_rd_data(bank_core_rd_data[gen_i]),
-            .bank_core_rd_ready(bank_core_rd_ready[gen_i]),
-
-            .bank_core_wr_req(bank_core_wr_req[gen_i]),
-            .bank_core_wr_gnt(bank_core_wr_gnt[gen_i]),
-            .bank_core_wr_addr(bank_core_wr_addr),
-            .bank_core_wr_data(bank_core_wr_data),
-
-            .bank_dma_rd_req(bank_dma_rd_req[gen_i]),
-            .bank_dma_rd_gnt(bank_dma_rd_gnt[gen_i]),
-            .bank_dma_rd_addr(bank_dma_rd_addr),
-            .bank_dma_rd_valid(bank_dma_rd_valid[gen_i]),
-            .bank_dma_rd_data(bank_dma_rd_data[gen_i]),
-            .bank_dma_rd_ready(bank_dma_rd_ready[gen_i]),
-
-            .bank_dma_wr_req(bank_dma_wr_req[gen_i]),
-            .bank_dma_wr_gnt(bank_dma_wr_gnt[gen_i]),
-            .bank_dma_wr_addr(bank_dma_wr_addr),
-            .bank_dma_wr_data(bank_dma_wr_data)
+            .CLK(clk),
+            .CE(ce[gen_i]),
+            .WE(we[gen_i]),
+            .ADDR(addr[gen_i]),
+            .WR_DATA(wr_data[gen_i]),
+            .RD_DATA(rd_data[gen_i])
         );
     end
 endgenerate
-
-
     
 endmodule

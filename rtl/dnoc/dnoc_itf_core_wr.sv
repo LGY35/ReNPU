@@ -7,7 +7,7 @@ module dnoc_itf_core_wr(
 
     //core cfg cmmu
     input           [1:0][12:0]     c_cfg_c_w_base_addr,
-    // input           [12:0]          c_cfg_c_w_ping_lenth, //total lenth替换成了ping lenth
+    // input           [12:0]          c_cfg_c_w_ping_lenth, //total lenth\u66ff\u6362\u6210\u4e86ping lenth
     input           [12:0]          c_cfg_c_w_ping_lenth,
     input           [12:0]          c_cfg_c_w_pong_lenth,
 
@@ -27,7 +27,6 @@ module dnoc_itf_core_wr(
     //core output data
     input   logic   [255:0]         core_out_data,
     input   logic                   core_out_valid,
-    output  logic                   core_out_ready,
 
     //noc output read req 
     output  logic                   core_wr_noc_out_req,
@@ -44,11 +43,9 @@ module dnoc_itf_core_wr(
     // output  logic                   noc_in_core_rd_ready,
     input   logic                   noc_in_core_wr_response, //noc write response
 
-    output  logic                   L2_dmem_core_wr_req,
-    input                           L2_dmem_core_wr_gnt,
+    output  logic                   L2_dmem_core_wr_en,
     output  logic   [12:0]          L2_dmem_core_wr_addr,
-    output  logic   [255:0]         L2_dmem_core_wr_data,
-    input                           L2_dmem_core_wr_resp
+    output  logic   [255:0]         L2_dmem_core_wr_data
 
 );
 
@@ -63,11 +60,8 @@ localparam PONG_WR          = 3'd7;
 // localparam WR_OUT_RESP  = 3'd3; //determine link list
 
 logic [2:0] cs, ns;
-logic [12:0] transfer_req_cnt, transfer_req_cnt_ns;
-logic [12:0] transfer_valid_cnt, transfer_valid_cnt_ns;
+logic [12:0] transfer_cnt, transfer_cnt_ns;
 logic [11:0] pingpong_cnt, pingpong_cnt_ns;
-logic        wr_resp_cnt_hit;
-logic        wr_req_en, wr_req_en_ns;
 
 logic addr_mu_initial_en;
 logic [12:0] addr_mu_initial_addr, addr_mu_addr;
@@ -75,9 +69,8 @@ logic addr_mu_valid;
 
 always_comb begin
     ns = cs;
-    transfer_req_cnt_ns = transfer_req_cnt;
+    transfer_cnt_ns = transfer_cnt;
     pingpong_cnt_ns = pingpong_cnt;
-    wr_req_en_ns = wr_req_en;
 
     core_cmd_core_wr_gnt = 'b0;
     // core_cmd_L2_ok = 'b0;
@@ -94,7 +87,7 @@ always_comb begin
     addr_mu_initial_addr = c_cfg_c_w_base_addr[0];
     addr_mu_valid = 'b0;
 
-    L2_dmem_core_wr_req = 'b0;
+    L2_dmem_core_wr_en = 'b0;
     L2_dmem_core_wr_addr = 'b0;
 
     core_wr_noc_out_valid = 'b0;
@@ -102,8 +95,6 @@ always_comb begin
     core_wr_noc_out_data = core_out_data;
 
     c_w_transaction_done = 1'b0;
-
-    core_out_ready = 1'b0;
 
     case(cs)
     IDLE: begin
@@ -113,8 +104,20 @@ always_comb begin
 
                 addr_mu_initial_en = 1'b1;
                 ns = PING_WR;
+
+                // if(c_cfg_c_w_pingpong_en) begin
+                //     ns = PINGPONG_CHECK;
+                // end
+                // else begin
+                //     ns = NORMAL_WR;
+                //     // L2_dmem_core_wr_en = 1'b1;
+                //     // L2_dmem_core_wr_addr = c_cfg_c_w_base_addr[0];
+                //     addr_mu_initial_en = 1'b1;
+                // end
             end
             else begin
+                // core_cmd_core_wr_gnt = 1'b1;
+                // core_cmd_L2_ok = 1'b1; //? to be determined
                 ns = NOC_WR_REQ;
             end
         end
@@ -130,17 +133,16 @@ always_comb begin
     end
     NOC_WR: begin
         core_wr_noc_out_valid = core_out_valid;
-        core_out_ready = core_wr_noc_out_ready;
 
         // noc_in_core_rd_ready = 1'b1;
         if(core_wr_noc_out_valid & core_wr_noc_out_ready) begin
-            if(transfer_req_cnt == c_cfg_c_w_ping_lenth) begin
+            if(transfer_cnt == c_cfg_c_w_ping_lenth) begin
                 ns = NOC_WR_RESP;
-                transfer_req_cnt_ns = 'b0;
+                transfer_cnt_ns = 'b0;
                 core_wr_noc_out_last = 1'b1;
             end
             else begin
-                transfer_req_cnt_ns = transfer_req_cnt + 1'b1;
+                transfer_cnt_ns = transfer_cnt + 1'b1;
             end
         end
     end
@@ -150,6 +152,21 @@ always_comb begin
             c_w_transaction_done = 1'b1;
         end
     end
+    // NORMAL_WR: begin
+    //     L2_dmem_core_wr_addr = addr_mu_addr; //to be modified to rd addr ctrl output
+    //     // core_rd_L2_data_valid = 1'b1;
+    //     // core_in_valid = 1'b1;
+    //     L2_dmem_core_wr_en = core_out_valid;
+    //     addr_mu_valid = core_out_valid;
+
+    //     if((transfer_cnt == c_cfg_c_w_ping_lenth) & core_out_valid) begin //this cycle could trun off the ram rd enable
+    //         ns = IDLE;
+    //         transfer_cnt_ns = 'b0;
+    //     end
+    //     else if(core_out_valid) begin
+    //         transfer_cnt_ns = transfer_cnt + 1'b1;
+    //     end
+    // end
     PINGPONG_CHECK: begin
         if(pingpong_cnt[11:1] == c_cfg_c_w_pingpong_num)begin //pingpong pairs number
             ns = IDLE;
@@ -174,42 +191,32 @@ always_comb begin
     end
     PING_WR: begin
         L2_dmem_core_wr_addr = addr_mu_addr;
-        L2_dmem_core_wr_req = core_out_valid & wr_req_en;
-        core_out_ready = L2_dmem_core_wr_gnt;
-        addr_mu_valid = L2_dmem_core_wr_req & L2_dmem_core_wr_gnt;
-        if(L2_dmem_core_wr_req & L2_dmem_core_wr_gnt) begin
-            if(transfer_req_cnt == c_cfg_c_w_ping_lenth)begin
-                wr_req_en_ns = 1'b0;
-                transfer_req_cnt_ns = 'b0;
+        L2_dmem_core_wr_en = core_out_valid;
+        addr_mu_valid = core_out_valid;
+        if(core_out_valid) begin
+            if(transfer_cnt == c_cfg_c_w_ping_lenth)begin
+                ns = PINGPONG_CHECK;
+                transfer_cnt_ns = 'b0;
                 pingpong_wr_done = c_cfg_c_w_pingpong_en;
             end
             else begin
-                transfer_req_cnt_ns = transfer_req_cnt + 1'b1;
+                transfer_cnt_ns = transfer_cnt + 1'b1;
             end
-        end
-        if(wr_resp_cnt_hit) begin
-            wr_req_en_ns = 1'b1;
-            ns = PINGPONG_CHECK;
         end
     end
     PONG_WR: begin
         L2_dmem_core_wr_addr = addr_mu_addr;
-        L2_dmem_core_wr_req = core_out_valid & wr_req_en;
-        core_out_ready = L2_dmem_core_wr_gnt;
-        addr_mu_valid = L2_dmem_core_wr_req & L2_dmem_core_wr_gnt;
-        if(L2_dmem_core_wr_req & L2_dmem_core_wr_gnt) begin
-            if(transfer_req_cnt == c_cfg_c_w_pong_lenth)begin
-                wr_req_en_ns = 1'b0;
-                transfer_req_cnt_ns = 'b0;
+        L2_dmem_core_wr_en = core_out_valid;
+        addr_mu_valid = core_out_valid;
+        if(core_out_valid) begin
+            if(transfer_cnt == c_cfg_c_w_pong_lenth)begin
+                ns = PINGPONG_CHECK;
+                transfer_cnt_ns = 'b0;
                 pingpong_wr_done = c_cfg_c_w_pingpong_en;
             end
             else begin
-                transfer_req_cnt_ns = transfer_req_cnt + 1'b1;
+                transfer_cnt_ns = transfer_cnt + 1'b1;
             end
-        end
-        if(wr_resp_cnt_hit) begin
-            wr_req_en_ns = 1'b1;
-            ns = PINGPONG_CHECK;
         end
     end
     endcase
@@ -217,31 +224,14 @@ end
 
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
-        transfer_valid_cnt <= 'd0;
-    end
-    else if(wr_resp_cnt_hit) begin
-        transfer_valid_cnt <= 'd0;
-    end
-    else if(((cs == PING_WR) | (cs == PONG_WR)) & L2_dmem_core_wr_resp) begin
-        transfer_valid_cnt <= transfer_valid_cnt + 13'd1;
-    end
-end
-
-assign wr_resp_cnt_hit = ((cs == PING_WR) & (transfer_valid_cnt == c_cfg_c_w_ping_lenth) & L2_dmem_core_wr_resp) | 
-                         ((cs == PONG_WR) & (transfer_valid_cnt == c_cfg_c_w_pong_lenth) & L2_dmem_core_wr_resp);
-
-always_ff @(posedge clk or negedge rst_n) begin
-    if(!rst_n) begin
         cs <= IDLE;
-        transfer_req_cnt <= 'b0;
+        transfer_cnt <= 'b0;
         pingpong_cnt <= 'b0;
-        wr_req_en <= 1'b1;
     end
     else begin
         cs <= ns;
-        transfer_req_cnt <= transfer_req_cnt_ns;
+        transfer_cnt <= transfer_cnt_ns;
         pingpong_cnt <= pingpong_cnt_ns;
-        wr_req_en <= wr_req_en_ns;
     end
 end
 

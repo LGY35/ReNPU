@@ -1,3 +1,5 @@
+
+
 module cu_node #(
     parameter NODE_ID       = 4'd0,
     parameter CLUSTER_ID    = 6'd0,
@@ -6,22 +8,21 @@ module cu_node #(
 (
     input                           clk,
     input                           rst_n,
-
-    output  logic                   pc_serial_out,
-
-    //noc interface
-
+    
+    // core node 与noc的接口，即core与router之间的接口
+    //noc interface 
+    // core node给router发送的信号    
     input           [256-1:0]       node_out_flit_local,
     input                           node_out_last_local,
     input           [1:0]           node_out_valid_local,
     output  logic   [1:0]           node_out_ready_local,
-
+    // router给core发送的信号
     output  logic   [256-1:0]       node_in_flit_local,
     output  logic                   node_in_last_local,
     output  logic   [1:0]           node_in_valid_local,
     input           [1:0]           node_in_ready_local,
 
-    //instruction interface
+    //instruction interface //指令是all2all的
     output  logic   [31:0]          fetch_L2cache_info,
     output  logic                   fetch_L2cache_req,
     input                           fetch_L2cache_gnt,
@@ -33,31 +34,21 @@ module cu_node #(
 
 //memory
 
-logic                           L2_dmem_core_rd_req;
-logic                           L2_dmem_core_rd_gnt;
+logic                           L2_dmem_core_rd_en;
 logic           [12:0]          L2_dmem_core_rd_addr;
-logic                           L2_dmem_core_rd_valid;
 logic           [255:0]         L2_dmem_core_rd_data;
-logic                           L2_dmem_core_rd_ready;
 
-logic                           L2_dmem_core_wr_req;
-logic                           L2_dmem_core_wr_gnt;
+logic                           L2_dmem_core_wr_en;
 logic           [12:0]          L2_dmem_core_wr_addr;
 logic           [255:0]         L2_dmem_core_wr_data;
-logic                           L2_dmem_core_wr_resp;
 
-logic                           L2_dmem_dma_rd_req;
-logic                           L2_dmem_dma_rd_gnt;
+logic                           L2_dmem_dma_rd_en;
 logic           [12:0]          L2_dmem_dma_rd_addr;
-logic                           L2_dmem_dma_rd_valid;
 logic           [255:0]         L2_dmem_dma_rd_data;
-logic                           L2_dmem_dma_rd_ready;
 
-logic                           L2_dmem_dma_wr_req;
-logic                           L2_dmem_dma_wr_gnt;
+logic                           L2_dmem_dma_wr_en;
 logic           [12:0]          L2_dmem_dma_wr_addr;
 logic           [255:0]         L2_dmem_dma_wr_data;
-logic                           L2_dmem_dma_wr_resp;
 
 //core cfg
 logic   [6:0]           core_cfg_addr;
@@ -85,7 +76,7 @@ logic   [24:0]          c_cfg_d_r_noc_base_addr;
 logic   [3:0][12:0]     c_cfg_d_r_loop_lenth;
 logic   [3:0][12:0]     c_cfg_d_r_loop_gap;
 
-logic                   c_cfg_d_r_dma_transfer_n;
+logic                   c_cfg_d_r_dma_transfer;
 // logic                   c_cfg_d_r_dma_access_mode;
 
 
@@ -104,16 +95,9 @@ logic   [24:0]          c_cfg_d_w_noc_base_addr;
 logic   [3:0][12:0]     c_cfg_d_w_loop_lenth;
 logic   [3:0][12:0]     c_cfg_d_w_loop_gap;
 
-logic                   c_cfg_d_w_dma_rgba_en;
-
 logic                   c_cfg_d_w_mc;
-logic                   c_cfg_d_w_dma_transfer_n;
+logic                   c_cfg_d_w_dma_transfer;
 logic                   c_cfg_d_w_dma_access_mode;
-logic                   c_cfg_d_w_dma_loop_en;
-logic   [12:0]          c_cfg_d_w_dma_loop_len;
-logic   [10:0]          c_cfg_d_w_dma_loop_gap;
-logic   [10:0]          c_cfg_d_w_dma_loop_num;
-logic   [12:0]          c_cfg_d_w_dma_loop_Baddr;
 
 logic         [11:0]    c_cfg_d_w_noc_mc_scale;
 
@@ -133,31 +117,25 @@ logic   [12:0]          c_cfg_c_r_pong_lenth;
 logic                   c_cfg_c_r_local_access;
 
 logic   [1:0][12:0]     c_cfg_c_r_base_addr;
-logic   [11:0]           c_cfg_c_r_noc_target_id;
+logic   [3:0]           c_cfg_c_r_noc_target_id;
 logic   [3:0][12:0]     c_cfg_c_r_loop_lenth;
 logic   [3:0][12:0]     c_cfg_c_r_loop_gap;
 
-logic                   c_cfg_c_r_dma_rgba_en;
-
 logic                   c_cfg_c_r_mc;
-logic                   c_cfg_c_r_dma_transfer_n;
+logic                   c_cfg_c_r_dma_transfer;
 logic                   c_cfg_c_r_dma_access_mode;
-logic                   c_cfg_c_r_dma_loop_en;
-logic   [12:0]          c_cfg_c_r_dma_loop_len;
-logic   [10:0]          c_cfg_c_r_dma_loop_gap;
-logic   [10:0]          c_cfg_c_r_dma_loop_num;
 
 logic         [11:0]    c_cfg_c_r_noc_mc_scale;
 logic         [11:0]    c_cfg_c_r_sync_target;
 
 logic         [3:0]     c_cfg_c_r_pad_up_len;
 logic         [3:0]     c_cfg_c_r_pad_right_len;
-logic         [10:0]    c_cfg_c_r_pad_left_len;
-logic         [4:0]     c_cfg_c_r_pad_bottom_len;
+logic         [3:0]     c_cfg_c_r_pad_left_len;
+logic         [3:0]     c_cfg_c_r_pad_bottom_len;
 
 logic         [10:0]    c_cfg_c_r_pad_row_num;
 logic         [10:0]    c_cfg_c_r_pad_col_num;
-logic         [1:0]     c_cfg_c_r_pad_mode;
+logic                   c_cfg_c_r_pad_mode;
 
 //ctr core write channel
 logic                   core_cmd_core_wr_req;
@@ -173,39 +151,13 @@ logic   [12:0]          c_cfg_c_w_ping_lenth;
 logic   [12:0]          c_cfg_c_w_pong_lenth;
 
 logic   [1:0][12:0]     c_cfg_c_w_base_addr;
-logic   [11:0]          c_cfg_c_w_noc_target_id;
+logic   [3:0]           c_cfg_c_w_noc_target_id;
 logic   [3:0][12:0]     c_cfg_c_w_loop_lenth;
 logic   [3:0][12:0]     c_cfg_c_w_loop_gap;
 
-logic                   c_cfg_c_w_dma_transfer_n;
+logic                   c_cfg_c_w_dma_transfer;
 // logic                   c_cfg_c_w_dma_access_mode;
 
-
-//---------------------------rst_n buf-------------------------------
-
-logic [1:0] rst_n_reg;
-logic       rst_n_sync;
-
-always_ff @(posedge clk or negedge rst_n) begin
-    if(!rst_n) begin
-        rst_n_reg <= 2'd0;
-    end
-    else begin
-        rst_n_reg <= {rst_n_reg[0], 1'b1};
-    end
-end
-
-assign rst_n_sync = rst_n_reg[1];
-
-
-logic                   core_rst_n;
-logic                   core_rst_n_buf;
-
-`ifdef FPGA
-    assign core_rst_n_buf = core_rst_n;
-`else
-    logic_buf U_rstn_buf(.Z(core_rst_n_buf),.I(core_rst_n));
-`endif
 //--------------------- virtual channel mux -------------------------
 
 logic   [1:0][256-1:0]  out_flit;
@@ -218,11 +170,6 @@ logic   [1:0]           in_last;
 logic   [1:0]           in_valid;
 logic   [1:0]           in_ready;
 
-logic   [1:0][256-1:0]  in_flit_pipe;
-logic   [1:0]           in_last_pipe;
-logic   [1:0]           in_valid_pipe;
-logic   [1:0]           in_ready_pipe;
-
 noc_vchannel_mux
 #(
     .FLIT_WIDTH (256)
@@ -230,52 +177,14 @@ noc_vchannel_mux
 u_vc_mux
 (
     // .clk        (clk),
-    .in_flit    (in_flit_pipe),
-    .in_last    (in_last_pipe),
-    .in_valid   (in_valid_pipe),
-    .in_ready   (in_ready_pipe),
+    .in_flit    (in_flit),
+    .in_last    (in_last),
+    .in_valid   (in_valid),
+    .in_ready   (in_ready),
     .out_flit   (node_in_flit_local),
     .out_last   (node_in_last_local),
     .out_valid  (node_in_valid_local),
     .out_ready  (node_in_ready_local)
-);
-
-fwdbwd_pipe 
-#( 
-    .DATA_W(256+1)
-)
-U_cu_node_output_pipe_0
-(
-    .clk            (clk),
-    .rst_n          (rst_n_sync),
-//from/to master
-    .f_valid_in     (in_valid[0]),
-    .f_data_in      ({in_last[0], in_flit[0]}),
-    .f_ready_out    (in_ready[0]),
-//from/to slave
-    .b_valid_out    (in_valid_pipe[0]),
-    .b_data_out     ({in_last_pipe[0], in_flit_pipe[0]}),
-    .b_ready_in     (in_ready_pipe[0])
-
-);
-
-fwdbwd_pipe 
-#( 
-    .DATA_W(256+1)
-)
-U_cu_node_output_pipe_1
-(
-    .clk            (clk),
-    .rst_n          (rst_n_sync),
-//from/to master
-    .f_valid_in     (in_valid[1]),
-    .f_data_in      ({in_last[1], in_flit[1]}),
-    .f_ready_out    (in_ready[1]),
-//from/to slave
-    .b_valid_out    (in_valid_pipe[1]),
-    .b_data_out     ({in_last_pipe[1], in_flit_pipe[1]}),
-    .b_ready_in     (in_ready_pipe[1])
-
 );
 
 
@@ -296,7 +205,7 @@ endgenerate
 //----------------itf-------------------------------
 logic                   c_cfg_itf_single_fetch;
 logic                   c_cfg_itf_irq_en;
-
+logic                   core_rst_n;
 
 // logic                   core_cmd_itf_req;
 // logic                   core_cmd_itf_gnt;
@@ -308,7 +217,7 @@ dnoc_itf_ctr
 U_dnoc_itf_ctr
 (
     .clk                        (clk),
-    .rst_n                      (core_rst_n_buf),
+    .rst_n                      (core_rst_n),
 
     //core cfg
     .core_cfg_addr              (core_cfg_addr),
@@ -335,7 +244,7 @@ U_dnoc_itf_ctr
     .c_cfg_d_r_loop_lenth       (c_cfg_d_r_loop_lenth),
     .c_cfg_d_r_loop_gap         (c_cfg_d_r_loop_gap),
 
-    .c_cfg_d_r_dma_transfer_n     (c_cfg_d_r_dma_transfer_n),
+    .c_cfg_d_r_dma_transfer     (c_cfg_d_r_dma_transfer),
     // .c_cfg_d_r_dma_access_mode  (c_cfg_d_r_dma_access_mode),
 
     .core_cmd_dma_wr_req        (core_cmd_dma_wr_req),
@@ -353,16 +262,9 @@ U_dnoc_itf_ctr
     .c_cfg_d_w_loop_lenth       (c_cfg_d_w_loop_lenth),
     .c_cfg_d_w_loop_gap         (c_cfg_d_w_loop_gap),
 
-    .c_cfg_d_w_dma_rgba_en      (c_cfg_d_w_dma_rgba_en),
-
     .c_cfg_d_w_mc               (c_cfg_d_w_mc),
-    .c_cfg_d_w_dma_transfer_n   (c_cfg_d_w_dma_transfer_n),
+    .c_cfg_d_w_dma_transfer     (c_cfg_d_w_dma_transfer),
     .c_cfg_d_w_dma_access_mode  (c_cfg_d_w_dma_access_mode),
-    .c_cfg_d_w_dma_loop_en      (c_cfg_d_w_dma_loop_en),
-    .c_cfg_d_w_dma_loop_len     (c_cfg_d_w_dma_loop_len),
-    .c_cfg_d_w_dma_loop_gap     (c_cfg_d_w_dma_loop_gap),
-    .c_cfg_d_w_dma_loop_num     (c_cfg_d_w_dma_loop_num),
-    .c_cfg_d_w_dma_loop_Baddr   (c_cfg_d_w_dma_loop_Baddr),
 
     .c_cfg_d_w_noc_mc_scale     (c_cfg_d_w_noc_mc_scale),
 
@@ -386,16 +288,9 @@ U_dnoc_itf_ctr
     .c_cfg_c_r_loop_lenth       (c_cfg_c_r_loop_lenth),
     .c_cfg_c_r_loop_gap         (c_cfg_c_r_loop_gap),
 
-    .c_cfg_c_r_dma_rgba_en      (c_cfg_c_r_dma_rgba_en),
-
     .c_cfg_c_r_mc               (c_cfg_c_r_mc),
-    .c_cfg_c_r_dma_transfer_n   (c_cfg_c_r_dma_transfer_n),
+    .c_cfg_c_r_dma_transfer     (c_cfg_c_r_dma_transfer),
     .c_cfg_c_r_dma_access_mode  (c_cfg_c_r_dma_access_mode),
-    .c_cfg_c_r_dma_loop_en      (c_cfg_c_r_dma_loop_en),
-    .c_cfg_c_r_dma_loop_len     (c_cfg_c_r_dma_loop_len),
-    .c_cfg_c_r_dma_loop_gap     (c_cfg_c_r_dma_loop_gap),
-    .c_cfg_c_r_dma_loop_num     (c_cfg_c_r_dma_loop_num),
-
     .c_cfg_c_r_noc_mc_scale     (c_cfg_c_r_noc_mc_scale),
     .c_cfg_c_r_sync_target      (c_cfg_c_r_sync_target),
     .c_cfg_c_r_pad_up_len       (c_cfg_c_r_pad_up_len),
@@ -425,7 +320,7 @@ U_dnoc_itf_ctr
     .c_cfg_c_w_loop_lenth       (c_cfg_c_w_loop_lenth),
     .c_cfg_c_w_loop_gap         (c_cfg_c_w_loop_gap),
 
-    .c_cfg_c_w_dma_transfer_n     (c_cfg_c_w_dma_transfer_n),
+    .c_cfg_c_w_dma_transfer     (c_cfg_c_w_dma_transfer),
     // .c_cfg_c_w_dma_access_mode  (c_cfg_c_w_dma_access_mode),
 
     //----------------itf-------------------------------
@@ -439,7 +334,6 @@ U_dnoc_itf_ctr
 //
 
 logic                   sync_req;
-logic                   sync_gnt;
 logic   [3:0]           sync_node_id;
 
 //noc to dma rd cmd and cfg
@@ -450,7 +344,6 @@ logic   [1:0][12:0]     n_cfg_d_r_ram_base_addr;
 logic   [12:0]          n_cfg_d_r_ping_lenth;
 logic   [12:0]          n_cfg_d_r_pong_lenth;
 logic   [11:0]          n_cfg_d_r_noc_mc_scale;
-logic   [11:0]          n_cfg_d_r_sync_target;
 logic                   n_cfg_d_r_req_sel;
 logic                   n_cfg_d_r_pingpong_en;
 logic   [10:0]          n_cfg_d_r_pingpong_num;
@@ -463,7 +356,7 @@ logic                   noc_in_core_wr_response;
 dnoc_itf_in_c_channel U_in_c_channel
 (
     .clk                        (clk),
-    .rst_n                      (rst_n_sync),
+    .rst_n                      (core_rst_n),
 
     //noc signals
     .out_flit                   (out_flit[1]),
@@ -472,7 +365,6 @@ dnoc_itf_in_c_channel U_in_c_channel
     .out_ready                  (out_ready[1]),
 
     .sync_req                   (sync_req),
-    .sync_gnt                   (sync_gnt),
     .sync_node_id               (sync_node_id),
 
     .noc_cmd_dma_rd_req         (noc_cmd_dma_rd_req),
@@ -482,7 +374,6 @@ dnoc_itf_in_c_channel U_in_c_channel
     .n_cfg_d_r_ping_lenth       (n_cfg_d_r_ping_lenth),
     .n_cfg_d_r_pong_lenth       (n_cfg_d_r_pong_lenth),
     .n_cfg_d_r_noc_mc_scale     (n_cfg_d_r_noc_mc_scale),
-    .n_cfg_d_r_sync_target      (n_cfg_d_r_sync_target),
     .n_cfg_d_r_req_sel          (n_cfg_d_r_req_sel),
     .n_cfg_d_r_pingpong_en      (n_cfg_d_r_pingpong_en),
     .n_cfg_d_r_pingpong_num     (n_cfg_d_r_pingpong_num),
@@ -520,7 +411,7 @@ logic   [3:0][12:0]     n_cfg_d_w_loop_gap;
 dnoc_itf_in_d_channel U_in_d_channel
 (
     .clk                        (clk),
-    .rst_n                      (rst_n_sync),
+    .rst_n                      (core_rst_n),
 
     //noc signals
     .out_flit                   (out_flit[0]),
@@ -569,7 +460,6 @@ logic           [24:0]          d_w_n_o_cfg_base_addr;
 logic           [12:0]          d_w_n_o_cfg_lenth;
 logic                           d_w_n_o_cfg_mode;
 logic                           d_w_n_o_cfg_resp_sel;
-logic           [12:0]          d_w_n_o_cfg_dma_loop_Baddr;
 
 dnoc_itf_out_c_channel
 #(
@@ -579,7 +469,7 @@ dnoc_itf_out_c_channel
 U_out_c_channel
 (
     .clk                        (clk),
-    .rst_n                      (rst_n_sync),
+    .rst_n                      (core_rst_n),
 
     //noc 
     .in_flit                    (in_flit[1]),
@@ -596,14 +486,9 @@ U_out_c_channel
     .core_rd_noc_out_req        (core_rd_noc_out_req),
     .core_rd_noc_out_gnt        (core_rd_noc_out_gnt),
 
-    .c_cfg_c_r_dma_rgba_en      (c_cfg_c_r_dma_rgba_en),
     .c_cfg_c_r_mc               (c_cfg_c_r_mc),
-    .c_cfg_c_r_dma_transfer_n   (c_cfg_c_r_dma_transfer_n),
+    .c_cfg_c_r_dma_transfer     (c_cfg_c_r_dma_transfer),
     .c_cfg_c_r_dma_access_mode  (c_cfg_c_r_dma_access_mode),
-    .c_cfg_c_r_dma_loop_en      (c_cfg_c_r_dma_loop_en),
-    .c_cfg_c_r_dma_loop_len     (c_cfg_c_r_dma_loop_len),
-    .c_cfg_c_r_dma_loop_gap     (c_cfg_c_r_dma_loop_gap),
-    .c_cfg_c_r_dma_loop_num     (c_cfg_c_r_dma_loop_num),
     .c_cfg_c_r_noc_target_id    (c_cfg_c_r_noc_target_id),
 
     .c_cfg_c_r_noc_mc_scale     (c_cfg_c_r_noc_mc_scale),
@@ -627,15 +512,9 @@ U_out_c_channel
     .d_w_n_o_cfg_mode           (d_w_n_o_cfg_mode),
     .d_w_n_o_cfg_resp_sel       (d_w_n_o_cfg_resp_sel),
 
-    .c_cfg_d_w_dma_rgba_en      (c_cfg_d_w_dma_rgba_en),
     .c_cfg_d_w_mc               (c_cfg_d_w_mc),
-    .c_cfg_d_w_dma_transfer_n   (c_cfg_d_w_dma_transfer_n),
+    .c_cfg_d_w_dma_transfer     (c_cfg_d_w_dma_transfer),
     .c_cfg_d_w_dma_access_mode  (c_cfg_d_w_dma_access_mode),
-    .c_cfg_d_w_dma_loop_en      (c_cfg_d_w_dma_loop_en),
-    .c_cfg_d_w_dma_loop_len     (c_cfg_d_w_dma_loop_len),
-    .c_cfg_d_w_dma_loop_gap     (c_cfg_d_w_dma_loop_gap),
-    .c_cfg_d_w_dma_loop_num     (c_cfg_d_w_dma_loop_num),
-    .d_w_n_o_cfg_dma_loop_Baddr (d_w_n_o_cfg_dma_loop_Baddr),
     .c_cfg_d_w_noc_mc_scale     (c_cfg_d_w_noc_mc_scale),
 
     .c_cfg_d_w_sync_target      (c_cfg_d_w_sync_target)
@@ -667,7 +546,6 @@ logic                           d_r_n_o_cfg_mode;
 logic                           d_r_n_o_cfg_req_sel;
 
 logic           [11:0]          d_r_n_o_cfg_noc_mc_scale;
-logic           [11:0]          d_r_n_o_cfg_sync_target;
 
 
 dnoc_itf_out_d_channel 
@@ -678,7 +556,7 @@ dnoc_itf_out_d_channel
 U_out_d_channel
 (
     .clk                        (clk),
-    .rst_n                      (rst_n_sync),
+    .rst_n                      (core_rst_n),
 
     .in_flit                    (in_flit[0]),
     .in_last                    (in_last[0]),
@@ -693,7 +571,7 @@ U_out_d_channel
     .core_wr_noc_out_last       (core_wr_noc_out_last),
     .core_wr_noc_out_ready      (core_wr_noc_out_ready),
 
-    .c_cfg_c_w_dma_transfer_n     (c_cfg_c_w_dma_transfer_n),
+    .c_cfg_c_w_dma_transfer     (c_cfg_c_w_dma_transfer),
     // .c_cfg_c_w_dma_access_mode  (c_cfg_c_w_dma_access_mode),
     .c_cfg_c_w_noc_target_id    (c_cfg_c_w_noc_target_id),
 
@@ -716,10 +594,9 @@ U_out_d_channel
     .d_r_n_o_cfg_req_sel        (d_r_n_o_cfg_req_sel),
 
     .d_r_n_o_cfg_noc_mc_scale   (d_r_n_o_cfg_noc_mc_scale),
-    .d_r_n_o_cfg_sync_target    (d_r_n_o_cfg_sync_target),
 
     // .c_cfg_d_r_dma_access_mode  (c_cfg_d_r_dma_access_mode),
-    .c_cfg_d_r_dma_transfer_n     (c_cfg_d_r_dma_transfer_n)
+    .c_cfg_d_r_dma_transfer     (c_cfg_d_r_dma_transfer)
 );
 
 //
@@ -734,7 +611,7 @@ logic                           core_in_valid;
 dnoc_itf_core_rd U_core_rd
 (
     .clk                        (clk),
-    .rst_n                      (core_rst_n_buf),
+    .rst_n                      (core_rst_n),
 
     .core_cmd_core_rd_req       (core_cmd_core_rd_req),
     .core_cmd_core_rd_gnt       (core_cmd_core_rd_gnt),
@@ -748,7 +625,6 @@ dnoc_itf_core_rd U_core_rd
     .c_cfg_c_r_pingpong_num     (c_cfg_c_r_pingpong_num),
 
     .c_cfg_c_r_local_access     (c_cfg_c_r_local_access),
-    .c_cfg_c_r_dma_transfer_n   (c_cfg_c_r_dma_transfer_n),
 
     .c_cfg_c_r_loop_lenth       (c_cfg_c_r_loop_lenth),
     .c_cfg_c_r_loop_gap         (c_cfg_c_r_loop_gap),
@@ -782,12 +658,9 @@ dnoc_itf_core_rd U_core_rd
     .noc_in_core_rd_last        (noc_in_core_rd_last),
     .noc_in_core_rd_ready       (noc_in_core_rd_ready),
 
-    .L2_dmem_core_rd_req        (L2_dmem_core_rd_req),
-    .L2_dmem_core_rd_gnt        (L2_dmem_core_rd_gnt),
+    .L2_dmem_core_rd_en         (L2_dmem_core_rd_en),
     .L2_dmem_core_rd_addr       (L2_dmem_core_rd_addr),
-    .L2_dmem_core_rd_valid      (L2_dmem_core_rd_valid),
-    .L2_dmem_core_rd_data       (L2_dmem_core_rd_data),
-    .L2_dmem_core_rd_ready      (L2_dmem_core_rd_ready)
+    .L2_dmem_core_rd_data       (L2_dmem_core_rd_data)
 );
 
 //
@@ -797,12 +670,11 @@ logic                           out_pingpong_wr_done;
 //core output data
 logic           [255:0]         core_out_data;
 logic                           core_out_valid;
-logic                           core_out_ready;
 
 dnoc_itf_core_wr U_core_wr
 (
     .clk                        (clk),
-    .rst_n                      (core_rst_n_buf),
+    .rst_n                      (core_rst_n),
 
     .core_cmd_core_wr_req       (core_cmd_core_wr_req),
     .core_cmd_core_wr_gnt       (core_cmd_core_wr_gnt),
@@ -828,7 +700,6 @@ dnoc_itf_core_wr U_core_wr
     //core output data
     .core_out_data              (core_out_data),
     .core_out_valid             (core_out_valid),
-    .core_out_ready             (core_out_ready),
 
     //noc output read req
     .core_wr_noc_out_req        (core_wr_noc_out_req),
@@ -841,11 +712,9 @@ dnoc_itf_core_wr U_core_wr
 
     .noc_in_core_wr_response    (noc_in_core_wr_response),
 
-    .L2_dmem_core_wr_req        (L2_dmem_core_wr_req),
-    .L2_dmem_core_wr_gnt        (L2_dmem_core_wr_gnt),
+    .L2_dmem_core_wr_en         (L2_dmem_core_wr_en),
     .L2_dmem_core_wr_addr       (L2_dmem_core_wr_addr),
-    .L2_dmem_core_wr_data       (L2_dmem_core_wr_data),
-    .L2_dmem_core_wr_resp       (L2_dmem_core_wr_resp)
+    .L2_dmem_core_wr_data       (L2_dmem_core_wr_data)
 );
 
 //
@@ -855,7 +724,7 @@ logic                           out_pingpong_rd_done;
 dnoc_itf_dma_rd U_dma_rd
 (
     .clk                        (clk),
-    .rst_n                      (rst_n_sync),
+    .rst_n                      (core_rst_n),
 
     //core cfg dmmu
     .c_cfg_d_r_ram_base_addr    (c_cfg_d_r_ram_base_addr),
@@ -888,7 +757,6 @@ dnoc_itf_dma_rd U_dma_rd
     .n_cfg_d_r_loop_gap         (n_cfg_d_r_loop_gap),
 
     .n_cfg_d_r_noc_mc_scale     (n_cfg_d_r_noc_mc_scale),
-    .n_cfg_d_r_sync_target      (n_cfg_d_r_sync_target),
     .n_cfg_d_r_req_sel          (n_cfg_d_r_req_sel),
 
     .noc_cmd_dma_rd_req         (noc_cmd_dma_rd_req),
@@ -900,7 +768,6 @@ dnoc_itf_dma_rd U_dma_rd
     .d_r_n_o_cfg_base_addr      (d_r_n_o_cfg_base_addr),
     .d_r_n_o_cfg_lenth          (d_r_n_o_cfg_lenth),
     .d_r_n_o_cfg_noc_mc_scale   (d_r_n_o_cfg_noc_mc_scale),
-    .d_r_n_o_cfg_sync_target    (d_r_n_o_cfg_sync_target),
     .d_r_n_o_cfg_req_sel        (d_r_n_o_cfg_req_sel),
     .d_r_n_o_cfg_mode           (d_r_n_o_cfg_mode),
 
@@ -914,12 +781,9 @@ dnoc_itf_dma_rd U_dma_rd
     .noc_in_dma_rd_response     (noc_in_dma_rd_response),
 
     //ram rd control
-    .L2_dmem_dma_rd_req         (L2_dmem_dma_rd_req),
-    .L2_dmem_dma_rd_gnt         (L2_dmem_dma_rd_gnt),
+    .L2_dmem_dma_rd_en          (L2_dmem_dma_rd_en),
     .L2_dmem_dma_rd_addr        (L2_dmem_dma_rd_addr),
-    .L2_dmem_dma_rd_valid       (L2_dmem_dma_rd_valid),
-    .L2_dmem_dma_rd_data        (L2_dmem_dma_rd_data),
-    .L2_dmem_dma_rd_ready       (L2_dmem_dma_rd_ready)
+    .L2_dmem_dma_rd_data        (L2_dmem_dma_rd_data)
 );
 
 //
@@ -928,7 +792,7 @@ logic                           in_pingpong_wr_done;
 dnoc_itf_dma_wr U_dma_wr
 (
     .clk                        (clk),
-    .rst_n                      (rst_n_sync),
+    .rst_n                      (core_rst_n),
 
     //core cfg cmmu
     .c_cfg_d_w_ram_base_addr    (c_cfg_d_w_ram_base_addr),
@@ -939,7 +803,6 @@ dnoc_itf_dma_wr U_dma_wr
     .c_cfg_d_w_pingpong_num     (c_cfg_d_w_pingpong_num),
 
     .c_cfg_d_w_noc_base_addr    (c_cfg_d_w_noc_base_addr),
-    .c_cfg_d_w_dma_loop_Baddr   (c_cfg_d_w_dma_loop_Baddr),
 
     .c_cfg_d_w_loop_lenth       (c_cfg_d_w_loop_lenth),
     .c_cfg_d_w_loop_gap         (c_cfg_d_w_loop_gap),
@@ -972,24 +835,21 @@ dnoc_itf_dma_wr U_dma_wr
     .dma_wr_noc_out_req         (dma_wr_noc_out_req),
     .dma_wr_noc_out_gnt         (dma_wr_noc_out_gnt),
     .d_w_n_o_cfg_base_addr      (d_w_n_o_cfg_base_addr),
-    .d_w_n_o_cfg_dma_loop_Baddr (d_w_n_o_cfg_dma_loop_Baddr),
     .d_w_n_o_cfg_lenth          (d_w_n_o_cfg_lenth),
     .d_w_n_o_cfg_mode           (d_w_n_o_cfg_mode),
     .d_w_n_o_cfg_resp_sel       (d_w_n_o_cfg_resp_sel),
 
     //ram rd control
-    .L2_dmem_dma_wr_req         (L2_dmem_dma_wr_req),
-    .L2_dmem_dma_wr_gnt         (L2_dmem_dma_wr_gnt),
+    .L2_dmem_dma_wr_en          (L2_dmem_dma_wr_en),
     .L2_dmem_dma_wr_addr        (L2_dmem_dma_wr_addr),
-    .L2_dmem_dma_wr_data        (L2_dmem_dma_wr_data),
-    .L2_dmem_dma_wr_resp        (L2_dmem_dma_wr_resp)
+    .L2_dmem_dma_wr_data        (L2_dmem_dma_wr_data)
 );
 
 //
 dnoc_itf_pingpong U_in_pingpong
 (
     .clk                        (clk),
-    .rst_n                      (core_rst_n_buf),
+    .rst_n                      (core_rst_n),
 
     .pingpong_rd_done           (in_pingpong_rd_done),
     .pingpong_wr_done           (in_pingpong_wr_done),
@@ -1000,7 +860,7 @@ dnoc_itf_pingpong U_in_pingpong
 dnoc_itf_pingpong U_out_pingpong
 (
     .clk                        (clk),
-    .rst_n                      (core_rst_n_buf),
+    .rst_n                      (core_rst_n),
 
     .pingpong_rd_done           (out_pingpong_rd_done),
     .pingpong_wr_done           (out_pingpong_wr_done),
@@ -1012,50 +872,39 @@ dnoc_itf_pingpong U_out_pingpong
 
 sync_collect U_sync_collect
 (
-    .clk                        (clk),
-    .rst_n                      (core_rst_n_buf),
+    .clk                    (clk),
+    .rst_n                  (core_rst_n),
 
-    .sync_req                   (sync_req),
-    .sync_gnt                   (sync_gnt),
-    .sync_node_id               (sync_node_id),
+    .sync_req               (sync_req),
+    .sync_node_id           (sync_node_id),
 
-    .sync_hit                   (sync_hit),
-    .sync_init                  (sync_init),
-    .sync_target                (sync_target)
+    .sync_hit               (sync_hit),
+    .sync_init              (sync_init),
+    .sync_target            (sync_target)
 );
 
 //
 
 L2_dmem U_L2_dmem
 (
-    .clk                        (clk),
-    .rst_n                      (rst_n_sync),
+    .clk                    (clk),
+    .rst_n                  (core_rst_n),
 
-    .L2_dmem_core_rd_req        (L2_dmem_core_rd_req),
-    .L2_dmem_core_rd_gnt        (L2_dmem_core_rd_gnt),
-    .L2_dmem_core_rd_addr       (L2_dmem_core_rd_addr[10:0]),
-    .L2_dmem_core_rd_valid      (L2_dmem_core_rd_valid),
-    .L2_dmem_core_rd_data       (L2_dmem_core_rd_data),
-    .L2_dmem_core_rd_ready      (L2_dmem_core_rd_ready),
+    .L2_dmem_core_rd_en     (L2_dmem_core_rd_en),
+    .L2_dmem_core_rd_addr   (L2_dmem_core_rd_addr),
+    .L2_dmem_core_rd_data   (L2_dmem_core_rd_data),
 
-    .L2_dmem_core_wr_req        (L2_dmem_core_wr_req),
-    .L2_dmem_core_wr_gnt        (L2_dmem_core_wr_gnt),
-    .L2_dmem_core_wr_addr       (L2_dmem_core_wr_addr[10:0]),
-    .L2_dmem_core_wr_data       (L2_dmem_core_wr_data),
-    .L2_dmem_core_wr_resp       (L2_dmem_core_wr_resp),
+    .L2_dmem_core_wr_en     (L2_dmem_core_wr_en),
+    .L2_dmem_core_wr_addr   (L2_dmem_core_wr_addr),
+    .L2_dmem_core_wr_data   (L2_dmem_core_wr_data),
 
-    .L2_dmem_dma_rd_req         (L2_dmem_dma_rd_req),
-    .L2_dmem_dma_rd_gnt         (L2_dmem_dma_rd_gnt),
-    .L2_dmem_dma_rd_addr        (L2_dmem_dma_rd_addr[10:0]),
-    .L2_dmem_dma_rd_valid       (L2_dmem_dma_rd_valid),
-    .L2_dmem_dma_rd_data        (L2_dmem_dma_rd_data),
-    .L2_dmem_dma_rd_ready       (L2_dmem_dma_rd_ready),
+    .L2_dmem_dma_rd_en      (L2_dmem_dma_rd_en),
+    .L2_dmem_dma_rd_addr    (L2_dmem_dma_rd_addr),
+    .L2_dmem_dma_rd_data    (L2_dmem_dma_rd_data),
 
-    .L2_dmem_dma_wr_req         (L2_dmem_dma_wr_req),
-    .L2_dmem_dma_wr_gnt         (L2_dmem_dma_wr_gnt),
-    .L2_dmem_dma_wr_addr        (L2_dmem_dma_wr_addr[10:0]),
-    .L2_dmem_dma_wr_data        (L2_dmem_dma_wr_data),
-    .L2_dmem_dma_wr_resp        (L2_dmem_dma_wr_resp)
+    .L2_dmem_dma_wr_en      (L2_dmem_dma_wr_en),
+    .L2_dmem_dma_wr_addr    (L2_dmem_dma_wr_addr),
+    .L2_dmem_dma_wr_data    (L2_dmem_dma_wr_data)
 );
 
 //interface with core
@@ -1081,51 +930,10 @@ logic                   icache_lowpower_en;
 logic                   core_wakeup_irq;
 logic           [31:0]  boot_addr_i;
 
-logic   [31:0]          fetch_L2cache_info_pipe_in;
-logic                   fetch_L2cache_req_pipe_in;
-logic                   fetch_L2cache_gnt_pipe_in;
-logic   [31:0]          fetch_L2cache_r_data_pipe_out;
-logic                   fetch_L2cache_r_valid_pipe_out;
-logic                   fetch_L2cache_r_ready_pipe_out;
-
-fwdbwd_pipe #( 
-    .DATA_W(32)
-)
-U_instr_fetch_req_pipe
-(
-    .clk            (clk),
-    .rst_n          (rst_n_sync),
-//from/to master
-    .f_valid_in     (fetch_L2cache_req_pipe_in),
-    .f_data_in      (fetch_L2cache_info_pipe_in),
-    .f_ready_out    (fetch_L2cache_gnt_pipe_in),
-//from/to slave
-    .b_valid_out    (fetch_L2cache_req),
-    .b_data_out     (fetch_L2cache_info),
-    .b_ready_in     (fetch_L2cache_gnt)
-);
-
-fwdbwd_pipe #( 
-    .DATA_W(32)
-)
-U_instr_rvalid_pipe
-(
-    .clk            (clk),
-    .rst_n          (rst_n_sync),
-//from/to master
-    .f_valid_in     (fetch_L2cache_r_valid),
-    .f_data_in      (fetch_L2cache_r_data),
-    .f_ready_out    (fetch_L2cache_r_ready),
-//from/to slave
-    .b_valid_out    (fetch_L2cache_r_valid_pipe_out),
-    .b_data_out     (fetch_L2cache_r_data_pipe_out),
-    .b_ready_in     (fetch_L2cache_r_ready_pipe_out)
-);
-
 // instruction itf
 icache_L1_L2_itf U_icache_L1_L2_itf(
     .clk                        (clk),
-    .rst_n                      (rst_n_sync),
+    .rst_n                      (rst_n),
 
     // .core_cmd_itf_req           (core_cmd_itf_req),
     // .core_cmd_itf_gnt           (core_cmd_itf_gnt),
@@ -1150,15 +958,17 @@ icache_L1_L2_itf U_icache_L1_L2_itf(
     .core_rst_n                 (core_rst_n),
 
     //to control core
-    .fetch_L2cache_info         (fetch_L2cache_info_pipe_in),
-    .fetch_L2cache_req          (fetch_L2cache_req_pipe_in),
-    .fetch_L2cache_gnt          (fetch_L2cache_gnt_pipe_in),
-    .fetch_L2cache_r_data       (fetch_L2cache_r_data_pipe_out),
-    .fetch_L2cache_r_valid      (fetch_L2cache_r_valid_pipe_out),
-    .fetch_L2cache_r_ready      (fetch_L2cache_r_ready_pipe_out)
+    .fetch_L2cache_info         (fetch_L2cache_info),
+    .fetch_L2cache_req          (fetch_L2cache_req),
+    .fetch_L2cache_gnt          (fetch_L2cache_gnt),
+    .fetch_L2cache_r_data       (fetch_L2cache_r_data),
+    .fetch_L2cache_r_valid      (fetch_L2cache_r_valid),
+    .fetch_L2cache_r_ready      (fetch_L2cache_r_ready)
 );
 
+logic core_rst_n_buf;
 
+logic_buf U_rstn_buf(.Z(core_rst_n_buf),.I(core_rst_n));
 
 // pri cache
 
@@ -1265,7 +1075,7 @@ CU_core_wrapper #(
     .CLUSTER_ID                 (CLUSTER_ID)
 )U_cu_core_wrapper(
     .clk                        (clk),
-    .rst_n                      (core_rst_n_buf),
+    .rst_n                      (core_rst_n),
     
     //riscv core
     .clock_en_i                 (1'b1), //enable clock, otherwise it is gated
@@ -1304,27 +1114,34 @@ CU_core_wrapper #(
     .core_sleep_en_o            (core_sleep_irq_pulse),
 
     //from l2 noc
-    .l2c_datain_vld             (core_in_valid),
-    .l2c_datain_last            (core_in_last),
-    .l2c_datain_rdy             (),
-    .l2c_datain_data            (core_in_data),
-    //to l2 noc
-    .l2c_dataout_vld            (core_out_valid),
-    .l2c_dataout_last           (),
-    .l2c_dataout_rdy            (core_out_ready),
-    .l2c_dataout_data           (core_out_data)   
-);
+    .tcache_l2c_datain_vld      (core_in_valid),
+    .tcache_l2c_datain_last     (core_in_last),
+    .tcache_l2c_datain_ch0      (core_in_data),
 
-pc_debug U_pc_debug(
-    .clk                         (clk),
-    .rst_n                       (core_rst_n_buf),
-    .pc_input                    (fetch_addr[18:0]),
-
-    .fetch_en                    (icache_work_en),
-    .fetch_req                   (fetch_req),
-    .sleep_en                    (core_sleep_irq_pulse),
-
-    .pc_serial_out               (pc_serial_out)
+    //to share cache
+    .core_data_out              (core_out_data),
+    .core_data_out_vld          (core_out_valid)
 );
 
 endmodule
+
+
+
+// 这个out_valid代表当前节点的router接收到的数据有效，要发送给core内了
+assign out_valid = node_out_valid_local;    //其他router传递给本router的valid信号，当有效时，router发送给core
+
+assign node_out_ready_local = out_ready;    //out_ready 连接到in_c_channel的out_ready
+
+genvar i;
+
+generate
+
+    for(i = 0; i < 2; i = i+1) begin
+
+        assign out_flit[i] = node_out_flit_local;   //router要发送给core的flit
+
+        assign out_last[i] = node_out_last_local;
+
+    end
+
+endgenerate
