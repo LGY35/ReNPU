@@ -40,6 +40,16 @@ localparam ICACHE_STREAM_HIT = 3'b111;
 logic [2:0] cs, ns;
 logic icache_sleep_en_reg;
 
+/*
+    fetch_addr [18:0]
+    1. tag 10bit: tag_input = fetch_addr_reg[18:9];
+    2. 寻址tag ram的地址3bit(8个entry): tag_ram_addr = fetch_addr[8:6]
+    3. cache_set_addr = fetch_addr_reg[8:6];   // 一共有8个cacheline, 所以是3bit
+    4. 寻址data ram的地址7bit(128个entry, 16个entry为一个cacheline): data_ram_addr = fetch_addr[8:2];
+    5. 一个cacheline内的一条指令/word地址4bit: addr[5:2], 一共16B
+
+*/
+
 logic [3:0] me,we,re, we_ibuffer, we_icache, re_icache;
 logic [6:0] data_ram_addr;  // 7bit 对应128个entry,每个entry32bit为一条指令, 每16个entry是一条cacheline(128bit)
 logic [18:0] ram_addr_cs, ram_addr_ns;  // 总的19bit地址
@@ -172,6 +182,7 @@ always_comb begin
             else if(fetch_req) begin
                 // 如果stream正在预取, 就只判断icache
                 if(stream_busy) begin
+                    // 因为stream buffer在忙,所以只看icache.然后判断如果推测执行状态下,icache没有miss,就可以继续比较icache, 否则就保持.
                     // 推测执行状态下没有miss(按照cacheline下一条执行),就只需要看icache
                     // 此时因为不确定是不是可以命中,就不返回gnt
 					if(~sfetch_miss)begin
@@ -208,6 +219,7 @@ always_comb begin
         ICACHE_COMPARE: begin
             // tag_input = fetch_addr[18:9];
             // cache_set_addr = fetch_addr[8:6];
+            // fetch_addr_speculative_reg专门用作推测性执行使用, 所以只会给到icache
             tag_input = fetch_addr_speculative_reg[18:9];
             cache_set_addr = fetch_addr_speculative_reg[8:6];
             if(icache_hit) begin
@@ -247,7 +259,6 @@ always_comb begin
             else begin
                 ns = ICACHE;
             end
-            // TODO: gnt的
         end
         BOTH_COMPARE: begin
             fetch_stream_req = 1'b1;
@@ -273,12 +284,17 @@ always_comb begin
                     ns = ICACHE;
                 end
             end
+            // 只要icache没有hit，就进入 MISS_CHECK 状态
+            // 此时如果stream hit了，就直接返回有效的数据，和valid信号
+            // 但是不管stream hit与否，都要用next_line_addr 从cache中取出下一个cacheline，然后比较tag是不是hit
+            // 如果下一个hit了，就不用refill icache了。
+            // 此时，再分析，如果stream hit，就真的不需要refill，而stream 也miss，就需要refill stream 而不需要stream icache
             else if(stream_hit) begin
                 fetch_r_valid = 1'b1;
                 fetch_r_data = fetch_stream_r_data;
                 ns = MISS_CHECK;
                 ram_addr_ns = {fetch_addr_reg[18:6],6'b0};
-
+                // 取出下一行的tag和data
                 data_ram_addr = next_line_addr[8:2];
                 tag_ram_addr = next_line_addr[8:6];
                 re = 4'hf;
@@ -289,31 +305,35 @@ always_comb begin
                 ram_addr_ns = {fetch_addr_reg[18:6],6'b0};
 
                 data_ram_addr = next_line_addr[8:2];
+                //取icache中的tag所用的地址，下一拍取出来之后得到icache中的实际cacheline tag
                 tag_ram_addr = next_line_addr[8:6];
+                //下一拍在misscheck的时候，用要取的next_line的addr和cacheline中实际的next_line addr比较
                 re = 4'hf;
             end
         end
+        //检查下一个地址在不在当前的icache里面。比如可能是上一个小循环留下的。//检查的方式就是看下一个cacheline的内容
         MISS_CHECK: begin
             tag_input = next_line_addr[18:9];
             cache_set_addr =  next_line_addr[8:6];
             if(stream_hit_reg) begin
                 ns = ICACHE_STREAM_HIT;
+                // 这个状态里面的icachehit就是判断下一条cacheline是不是在icache里面
                 if(~icache_hit) begin
-                    ctr_refill_req = 1'b1;
-                    ctr_refill_lenth = 1'b0;
-                    stream_fetch_valid = 1'b1;
+                    ctr_refill_req = 1'b1;  // refill都是从上一级cache中取
+                    ctr_refill_lenth = 1'b0;//一个cacheline
+                    stream_fetch_valid = 1'b1;//告诉stream buffer，要预取了，就是icache没有
                 end
             end
             else begin
                 ns = ICACHE_MISS;
                 ctr_refill_req = 1'b1;
                 ctr_refill_addr = {fetch_addr_reg[18:6],6'b0};
-                if(icache_hit) begin
+                if(icache_hit) begin    // 如果下一条是命中，就只需要取一条
                     ctr_refill_lenth = 1'b0;
                     ctr_refill_mode = 1'b1;
                 end
                 else begin
-                    ctr_refill_lenth = 1'b1;
+                    ctr_refill_lenth = 1'b1;// 如果都miss就要取2条
                     stream_fetch_valid = 1'b1;
                 end
             end
@@ -338,19 +358,22 @@ always_comb begin
         end
         ICACHE_STREAM_HIT: begin
             data_ram_in = stream_to_icache_data;
-
+            // stream 与 core 的连接
+            //stream一边给icache发送数据，一边给core提供数据，这就是用来处理core的req(req没有gnt的话是一直保持的)
             fetch_gnt = fetch_stream_gnt;
             fetch_stream_req = fetch_req;
             fetch_stream_addr = fetch_addr;
             fetch_r_data = fetch_stream_r_data;
-            fetch_r_valid = fetch_stream_r_valid;
-
+            fetch_r_valid = fetch_stream_r_valid; //hit之后当拍给出valid
+            // 从stream中搬数据到core中
             tag_ram_addr = ram_addr_cs[8:6];
             data_ram_addr = ram_addr_cs[8:2];
+            // stream给icache发数据的valid
             if(stream_to_icache_valid) begin
                 we = cache_line_miss_sel_reg;
-                ram_addr_ns = ram_addr_cs + 4;
+                ram_addr_ns = ram_addr_cs + 4;//单个word 地址递增，传16个周期
             end
+            //只要没有move_done，就保持这个状态
             if(stream_move_done) begin
                 ns = ICACHE;
                 plru_hit = 1'b1;
@@ -358,7 +381,7 @@ always_comb begin
             end
         end
     endcase
-
+    //ram使能信号
 	me = we | re;
 
 end
@@ -392,7 +415,11 @@ end
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n)
         fetch_addr_speculative_reg <= 'b0;
+
+    //两组条件就是把分别在两个状态——ICACHE和ICACHE_COMPARE_HIT下，会进入到ICACHE_COMPARE状态的条件进行了提取
+        //icache状态下, 如果有req,但是stream在预取, icache还在推测执行,就可以保存下这个推测地址
     else if(((cs == ICACHE) & ~(icache_sleep_en | icache_sleep_en_reg) & (fetch_req & stream_busy & ~sfetch_miss)) |
+            // 如果icache比较, stream也在预取, 也可以把地址保存下来
             ((cs == ICACHE_COMPARE_HIT) & (fetch_req & stream_busy)))
         fetch_addr_speculative_reg <= fetch_addr;
 end
@@ -409,7 +436,7 @@ end
 assign icache_hit = |hit_state;
 assign hit = icache_hit | stream_hit;
 
-integer k;
+integer k;  // way
 
 always_comb begin
     hit_state = 'b0;
@@ -430,12 +457,15 @@ find_not_valid U_find_not_valid(
     .result_onehot(not_valid_onehot)
 );
 
+// 选择哪个要替换哪个entry：8个entry是不是都有效，如果都有效，就用plru_old_onehot，否则就用 invalid的那个entry
 assign cache_line_miss_sel = (&cache_line_valid[cache_set_addr]) ? plru_old_onehot : not_valid_onehot;
 
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n)
         cache_line_miss_sel_reg <= 'b0;
+    // 注释的代码: 如果BOTH_COMPARE，并且 没有hit或者只有stream_hit，此时需要选判断是哪个miss
     // else if((cs == BOTH_COMPARE) & (~hit | stream_hit))
+    // TODO: 更改为了: 只要icache没有命中即就要更新
     else if((cs == BOTH_COMPARE) & (~icache_hit))
         cache_line_miss_sel_reg <= cache_line_miss_sel;
 end
@@ -443,9 +473,12 @@ end
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n)
         cache_line_valid <= 'b0;
+    //如果是在ICACHE状态，并且需要sleep，那么就全都invalid
     else if((cs == ICACHE) & (icache_sleep_en | icache_sleep_en_reg))
         cache_line_valid <= 'b0;
+    //如果MISS，并且refill完成，或者stream hit并且stream也move完成
     else if(((cs == ICACHE_MISS) & icache_refill_done) | ((cs == ICACHE_STREAM_HIT) & stream_move_done))
+        // 等于自身或上miss之后选择的那个line
         cache_line_valid[cache_set_addr] <= cache_line_valid[cache_set_addr] | cache_line_miss_sel_reg;
 end
 

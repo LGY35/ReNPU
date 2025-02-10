@@ -1,7 +1,7 @@
 module stream_buffer(
     input                   clk,
     input                   rst_n,
-
+    // fetch_stream_req 连接到core，当streamhit的时候，一边向core搬运数据，一边向icache中也搬运数据
     input                   fetch_stream_req,
     input           [18:0]  fetch_stream_addr,  //预取的地址
     input           [18:0]  fetch_stream_addr_reg, //both compare
@@ -12,6 +12,7 @@ module stream_buffer(
     output  logic           stream_to_icache_valid,
     output  logic   [31:0]  stream_to_icache_data,
 
+    // 从L2取出来的数据
     input                   prefetch_r_valid,
     input           [31:0]  prefetch_r_data,
     // output  logic   [18:0]  prefetch_addr,
@@ -34,9 +35,13 @@ localparam STREAM_MOVE = 3'b011;
 // localparam STREAM_MOVE_WAIT = 3'b100;
 localparam STREAM_MOVE_HIT = 3'b101;
 
+//16个words，即1个cacheline;
+// 指令总线是32bit宽, 所以streambuffer要分16个周期把指令传给icachr / core
 logic [15:0][31:0] stream_buffer;
+// tag + entry(即3bit代表8个cacheline) 
 logic [12:0] stream_buffer_addr;
 logic [3:0] hit_index;
+// stream的move是向icache中搬运指令
 logic [3:0] move_hit_index, move_hit_index_ns;
 logic stream_hit_reg;
 logic stream_move_hit, stream_move_hit_reg;
@@ -87,7 +92,7 @@ always_comb begin
     stream_to_icache_data = stream_buffer[stream_move_cnt];
 
     fetch_stream_r_valid = 'b0;
-    hit_index = fetch_stream_addr_reg[5:2];
+    hit_index = fetch_stream_addr_reg[5:2]; // 一个cacheline中的1B(共16B)
     move_hit_index_ns = move_hit_index;
     fetch_stream_r_data = stream_buffer[hit_index];
     fetch_stream_gnt = 'b0;
@@ -108,6 +113,7 @@ always_comb begin
                 if(stream_hit) begin
                     // prefetch_buffer_addr_ns = (line_addr_cut + 1'b1);
                     ns = FETCH_CHECK;
+                    //hit之后就给出valid信号  //TODO: 回环??
                     // fetch_stream_r_valid = 1'b1;
                 end
                 else if(stream_miss) begin
