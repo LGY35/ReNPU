@@ -227,10 +227,10 @@ F8A42623   sw	a0, -0x74(s0)
 F8042503   lw	a0, -0x80(s0)
 F7442583   lw	a1, -0x8c(s0)
 00A0105B   storec	a0, 0x0
-00B0105B   storec	a1, 0x0
+40B0105B   storec	a1, 0x1
 0000005B   next_fetch_is_npu
 80080515   npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=4, addr=0,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=0)
-800001A1   conv3d_start       (first_sub_flag=0,result_output_flag=0,start_index=0,end_index=3,weight_16ch_sel=0,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=4,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=0,run_cycle_num=4,cfifo_en=1,bar=0)
+80000021   conv3d_start       (first_sub_flag=0,result_output_flag=0,start_index=0,end_index=0,weight_16ch_sel=0,tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=4,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=0,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=0,run_cycle_num=4,cfifo_en=1,bar=0)
 00000073   next_fetch_is_cpu
 0040006F   j	0x3ac <main+0x3ac>
 F8842503   lw	a0, -0x78(s0)
@@ -282,7 +282,7 @@ F6C42603   lw	a2, -0x94(s0)
 84040023   VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=1,bar=0)
 00840520   VQ_alu_csrw(csr_addr=10,csr_wdata=0b100_00100000, cfifo_wdata=0, cfifo_en=0)
 000105A0   VQ_alu_csrw(csr_addr=11,csr_wdata=0b1000, cfifo_wdata=0, cfifo_en=0)
-200105A0   VQ_alu_csrw(csr_addr=11,csr_wdata=0b1000, cfifo_wdata=0, cfifo_en=1)
+20010620   VQ_alu_csrw(csr_addr=12,csr_wdata=0b1000, cfifo_wdata=0, cfifo_en=1)
 881C0A23   VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=20,wait_type=1,cfifo_en=1,bar=0)
 00000073   next_fetch_is_cpu
 F6842503   lw	a0, -0x98(s0)
