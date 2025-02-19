@@ -16,7 +16,7 @@ FEA42A23   sw	a0, -0xc(s0)
 3F000112   NOC_cfg (addr=63,wdata=1,cfifo_wdata=0,cfifo_en=0)
 00000073   next_fetch_is_cpu
 000015B7   lui	a1, 0x1
-E0858593   addi	a1, a1, -0x1f8
+40858593   addi	a1, a1, 0x408
 FEB42823   sw	a1, -0x10(s0)
 00500593   li	a1, 0x5
 00959593   slli	a1, a1, 0x9
@@ -168,7 +168,7 @@ F9C42783   lw	a5, -0x64(s0)
 00001044   cub.event_finish
 30000019   MQ_NOP(bar=3,nop_cycle_num=0)
 30000023   VQ_alu_event_call(event_addr=0,bar=3)
-00000020   VQ_alu_csrw(csr_addr=0,csr_wdata=0b0,cfifo_wdata=0, cfifo_en=0)
+00030020   VQ_alu_csrw(csr_addr=0,csr_wdata=0b0_0_0_1_1_000, cfifo_wdata=0, cfifo_en=0)
 48000021   VQ_NOP(bar=4,nop_cycle_num=0)
 40000019   MQ_NOP(bar=4,nop_cycle_num=0)
 00000073   next_fetch_is_cpu
