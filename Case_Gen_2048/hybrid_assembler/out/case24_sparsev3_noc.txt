@@ -561,7 +561,7 @@ FEC42503   lw	a0, -0x14(s0)
 F6842603   lw	a2, -0x98(s0)
 01761613   slli	a2, a2, 0x17
 00C50533   add	a0, a0, a2
-F2842603   lw	a2, -0xd8(s0)
+F2442603   lw	a2, -0xdc(s0)
 01661613   slli	a2, a2, 0x16
 00C50533   add	a0, a0, a2
 F5842603   lw	a2, -0xa8(s0)
