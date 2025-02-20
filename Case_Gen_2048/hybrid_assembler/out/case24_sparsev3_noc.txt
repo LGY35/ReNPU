@@ -581,7 +581,7 @@ F1C42703   lw	a4, -0xe4(s0)
 00A0105B   storec	a0, 0x0
 00C0105B   storec	a2, 0x0
 40D0105B   storec	a3, 0x1
-40D0105B   storec	a3, 0x1
+40E0105B   storec	a4, 0x1
 FC042503   lw	a0, -0x40(s0)
 02B51863   bne	a0, a1, 0x6d4 <main+0x6d4>
 0040006F   j	0x6ac <main+0x6ac>
@@ -649,7 +649,7 @@ F0A42623   sw	a0, -0xf4(s0)
 F1842503   lw	a0, -0xe8(s0)
 F0C42583   lw	a1, -0xf4(s0)
 00A0105B   storec	a0, 0x0
-40A0105B   storec	a0, 0x1
+40B0105B   storec	a1, 0x1
 0000005B   next_fetch_is_npu
 A5000012   NOC_cfg (addr=37,wdata=0,cfifo_wdata=0,cfifo_en=1)
 08000821   VQ_NOP                         (bar=0,nop_cycle_num=8)
