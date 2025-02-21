@@ -226,7 +226,7 @@ FAA42A23   sw	a0, -0x4c(s0)
 0040006F   j	0x108 <main+0x108>
 FB442503   lw	a0, -0x4c(s0)
 FE842583   lw	a1, -0x18(s0)
-70B55463   bge	a0, a1, 0x818 <main+0x818>
+72B55C63   bge	a0, a1, 0x848 <main+0x848>
 0040006F   j	0x118 <main+0x118>
 FC442503   lw	a0, -0x3c(s0)
 00251593   slli	a1, a0, 0x2
@@ -336,7 +336,7 @@ F8A42023   sw	a0, -0x80(s0)
 0040006F   j	0x2c0 <main+0x2c0>
 F8042503   lw	a0, -0x80(s0)
 F8442583   lw	a1, -0x7c(s0)
-52B55E63   bge	a0, a1, 0x804 <main+0x804>
+56B55663   bge	a0, a1, 0x834 <main+0x834>
 0040006F   j	0x2d0 <main+0x2d0>
 00000513   li	a0, 0x0
 F6A42E23   sw	a0, -0x84(s0)
@@ -369,7 +369,7 @@ F6A42A23   sw	a0, -0x8c(s0)
 0040006F   j	0x344 <main+0x344>
 F7442583   lw	a1, -0x8c(s0)
 00000513   li	a0, 0x0
-4AB54263   blt	a0, a1, 0x7f0 <main+0x7f0>
+4CB54A63   blt	a0, a1, 0x820 <main+0x820>
 0040006F   j	0x354 <main+0x354>
 F8042503   lw	a0, -0x80(s0)
 F6A42823   sw	a0, -0x90(s0)
@@ -641,15 +641,27 @@ F0A42C23   sw	a0, -0xe8(s0)
 00000513   li	a0, 0x0
 F0A42A23   sw	a0, -0xec(s0)
 F0A42823   sw	a0, -0xf0(s0)
-F1042503   lw	a0, -0xf0(s0)
-00951513   slli	a0, a0, 0x9
-F1442583   lw	a1, -0xec(s0)
-00B50533   add	a0, a0, a1
-F0A42623   sw	a0, -0xf4(s0)
+F1042583   lw	a1, -0xf0(s0)
+00959593   slli	a1, a1, 0x9
+F1442603   lw	a2, -0xec(s0)
+00C585B3   add	a1, a1, a2
+F0B42623   sw	a1, -0xf4(s0)
+02000593   li	a1, 0x20
+F0B42A23   sw	a1, -0xec(s0)
+F1042583   lw	a1, -0xf0(s0)
+00959593   slli	a1, a1, 0x9
+F1442603   lw	a2, -0xec(s0)
+00C585B3   add	a1, a1, a2
+F0B42423   sw	a1, -0xf8(s0)
+F0A42223   sw	a0, -0xfc(s0)
 F1842503   lw	a0, -0xe8(s0)
 F0C42583   lw	a1, -0xf4(s0)
+F0842603   lw	a2, -0xf8(s0)
+F0442683   lw	a3, -0xfc(s0)
 00A0105B   storec	a0, 0x0
 40B0105B   storec	a1, 0x1
+40C0105B   storec	a2, 0x1
+40D0105B   storec	a3, 0x1
 0000005B   next_fetch_is_npu
 A5000012   NOC_cfg (addr=37,wdata=0,cfifo_wdata=0,cfifo_en=1)
 08000821   VQ_NOP                         (bar=0,nop_cycle_num=8)
@@ -661,21 +673,21 @@ A5000012   NOC_cfg (addr=37,wdata=0,cfifo_wdata=0,cfifo_en=1)
 FB842503   lw	a0, -0x48(s0)
 00150513   addi	a0, a0, 0x1
 FAA42C23   sw	a0, -0x48(s0)
-0040006F   j	0x7e0 <main+0x7e0>
+0040006F   j	0x810 <main+0x810>
 F7442503   lw	a0, -0x8c(s0)
 00150513   addi	a0, a0, 0x1
 F6A42A23   sw	a0, -0x8c(s0)
-B59FF06F   j	0x344 <main+0x344>
-0040006F   j	0x7f4 <main+0x7f4>
+B29FF06F   j	0x344 <main+0x344>
+0040006F   j	0x824 <main+0x824>
 F8042503   lw	a0, -0x80(s0)
 00150513   addi	a0, a0, 0x1
 F8A42023   sw	a0, -0x80(s0)
-AC1FF06F   j	0x2c0 <main+0x2c0>
-0040006F   j	0x808 <main+0x808>
+A91FF06F   j	0x2c0 <main+0x2c0>
+0040006F   j	0x838 <main+0x838>
 FB442503   lw	a0, -0x4c(s0)
 00150513   addi	a0, a0, 0x1
 FAA42A23   sw	a0, -0x4c(s0)
-8F5FF06F   j	0x108 <main+0x108>
+8C5FF06F   j	0x108 <main+0x108>
 0000005B   next_fetch_is_npu
 08000017   noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)
 00000019   MQ_NOP(bar=0,nop_cycle_num=0)
