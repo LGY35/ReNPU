@@ -72,7 +72,8 @@ hex_gen:
 #	python3 hex_gen.py -i ./out/case994_idma.txt ./out/case994_bottleneck_noccore_1cores_4.1_ins_noc.txt    		 ./data/bottleneck_combined_input_data.txt 	-o ./hex_gen/case994_merge_inst.txt ./hex_gen/case994_out_hex.txt
 #	python3 hex_gen.py -i ./out/case995_idma.txt ./out/case995_2layerconv_noc.txt    		 						 ./data/2layerconv.txt 	-o ./hex_gen/case995_merge_inst.txt ./hex_gen/case995_out_hex.txt
 #	python3 hex_gen.py -i ./out/case996_idma.txt ./out/case996_bottleneck_noccore_12cores_5.1_ins_noc.txt    		 						 ./data/bottleneck_combined_input_data.txt 	-o ./hex_gen/case996_merge_inst.txt ./hex_gen/case996_out_hex.txt
-	python3 hex_gen.py -i ./out/case25_idma.txt ./out/case25_rnn_noccore_5.2_1.0_noc.txt    		 						 ./data/rnn_combined_input.txt 	-o ./hex_gen/case25_merge_inst.txt ./hex_gen/case25_out_hex.txt
+#	python3 hex_gen.py -i ./out/case25_idma.txt ./out/case25_rnn_noccore_5.2_1.0_noc.txt    		 						 ./data/rnn_combined_input.txt 	-o ./hex_gen/case25_merge_inst.txt ./hex_gen/case25_out_hex.txt
+	python3 hex_gen.py -i ./out/case26_idma.txt ./out/case26_maxpool_noc.txt    		 						 ./data/yolo5lite_combined_input_1.0.txt 	-o ./hex_gen/case26_merge_inst.txt ./hex_gen/case26_out_hex.txt
 
 clean:
 	rm -rf $(HEX_GEN_DIR)
