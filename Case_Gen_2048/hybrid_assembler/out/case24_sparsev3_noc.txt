@@ -25,6 +25,7 @@ FD442583   lw	a1, -0x2c(s0)
 0000005B   next_fetch_is_npu
 400128A2   CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
 0006C010   MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=108,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+40010090   MQ_cfg1 (sub_gap=1, sys_gap_ext=0b00001, iob_pric=INT8, iob_l2c_in_cfg=0, tcache_mvfmap_stride=0, tcache_mvfmap_offset=0)
 02000012   NOC_cfg (addr=2,wdata=0,cfifo_wdata=0,cfifo_en=0)
 03000012   NOC_cfg (addr=3,wdata=0,cfifo_wdata=0,cfifo_en=0)
 04000012   NOC_cfg (addr=4,wdata=0,cfifo_wdata=0,cfifo_en=0)
@@ -63,11 +64,11 @@ FD442583   lw	a1, -0x2c(s0)
 FCA42823   sw	a0, -0x30(s0)
 FCA42623   sw	a0, -0x34(s0)
 FCA42423   sw	a0, -0x38(s0)
-0040006F   j	0x108 <main+0x108>
+0040006F   j	0x10c <main+0x10c>
 FC842583   lw	a1, -0x38(s0)
 00000513   li	a0, 0x0
-16B54663   blt	a0, a1, 0x27c <main+0x27c>
-0040006F   j	0x118 <main+0x118>
+16B54663   blt	a0, a1, 0x280 <main+0x280>
+0040006F   j	0x11c <main+0x11c>
 FC842503   lw	a0, -0x38(s0)
 00251593   slli	a1, a0, 0x2
 FE040513   addi	a0, s0, -0x20
@@ -82,8 +83,8 @@ FC842503   lw	a0, -0x38(s0)
 FFE5F593   andi	a1, a1, -0x2
 40B50533   sub	a0, a0, a1
 00100593   li	a1, 0x1
-02B51463   bne	a0, a1, 0x178 <main+0x178>
-0040006F   j	0x158 <main+0x158>
+02B51463   bne	a0, a1, 0x17c <main+0x17c>
+0040006F   j	0x15c <main+0x15c>
 FC842503   lw	a0, -0x38(s0)
 00251513   slli	a0, a0, 0x2
 FE040593   addi	a1, s0, -0x20
@@ -91,7 +92,7 @@ FE040593   addi	a1, s0, -0x20
 FFC52503   lw	a0, -0x4(a0)
 00251513   slli	a0, a0, 0x2
 FCA42023   sw	a0, -0x40(s0)
-0040006F   j	0x178 <main+0x178>
+0040006F   j	0x17c <main+0x17c>
 FC442503   lw	a0, -0x3c(s0)
 00551513   slli	a0, a0, 0x5
 FAA42E23   sw	a0, -0x44(s0)
@@ -136,8 +137,8 @@ FB842783   lw	a5, -0x48(s0)
 91027F12   NOC_cfg (addr=17,wdata=639,cfifo_wdata=0,cfifo_en=1)
 00000073   next_fetch_is_cpu
 FC842503   lw	a0, -0x38(s0)
-04051063   bnez	a0, 0x268 <main+0x268>
-0040006F   j	0x230 <main+0x230>
+04051063   bnez	a0, 0x26c <main+0x26c>
+0040006F   j	0x234 <main+0x234>
 0000005B   next_fetch_is_npu
 80258491   npu_load           (we=wr,l1b_mode=cache,from_noc_or_sc=noc,sys_gap=353, sub_gap=1,sub_len=160 ,addr=0, sys_len=4 ,mv_last_dis=0,cfifo_en=1,bar=0)
 08000017   noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)
@@ -151,12 +152,12 @@ FC842503   lw	a0, -0x38(s0)
 00000019   MQ_NOP(bar=0,nop_cycle_num=0)
 00000019   MQ_NOP(bar=0,nop_cycle_num=0)
 00000073   next_fetch_is_cpu
-0040006F   j	0x268 <main+0x268>
 0040006F   j	0x26c <main+0x26c>
+0040006F   j	0x270 <main+0x270>
 FC842503   lw	a0, -0x38(s0)
 00150513   addi	a0, a0, 0x1
 FCA42423   sw	a0, -0x38(s0)
-E91FF06F   j	0x108 <main+0x108>
+E91FF06F   j	0x10c <main+0x10c>
 10500073   wfi
 F0010113   addi	sp, sp, -0x100
 0E112E23   sw	ra, 0xfc(sp)
@@ -186,6 +187,7 @@ FCB42023   sw	a1, -0x40(s0)
 0000005B   next_fetch_is_npu
 400128A2   CVEC_cfg2          (cal_mode=sparse_conv,wreg_wr_cnt=2,fprec=INT8,wprec=INT8,v_tq=0)
 0006C010   MQ_cfg0            (gpu_mode=0,para_mode=0,tcache_mode=16CH_DFIFO,one_ram_base_addr=108,tcache_trans_swbank=0,tcache_trans_prici=INT8,mv_cub_dst_sel=weight,wr_hl_mask=0)
+40010090   MQ_cfg1 (sub_gap=1, sys_gap_ext=0b00001, iob_pric=INT8, iob_l2c_in_cfg=0, tcache_mvfmap_stride=0, tcache_mvfmap_offset=0)
 00000112   NOC_cfg (addr=0,wdata=1,cfifo_wdata=0,cfifo_en=0)
 01000012   NOC_cfg (addr=1,wdata=0,cfifo_wdata=0,cfifo_en=0)
 02000012   NOC_cfg (addr=2,wdata=0,cfifo_wdata=0,cfifo_en=0)
@@ -197,13 +199,13 @@ FCB42023   sw	a1, -0x40(s0)
 3F000112   NOC_cfg (addr=63,wdata=1,cfifo_wdata=0,cfifo_en=0)
 00000073   next_fetch_is_cpu
 0000005B   next_fetch_is_npu
-00020020   VQ_alu_csrw(csr_addr=0,csr_wdata=0b10000)
-00000120   VQ_alu_csrw(csr_addr=2,csr_wdata=0b000000000000000)
-004001A0   VQ_alu_csrw(csr_addr=3,csr_wdata=0b1000000000)
-002803A0   VQ_alu_csrw(csr_addr=7,csr_wdata=0b101000000)
-00002420   VQ_alu_csrw(csr_addr=8,csr_wdata=0b1)
-00280520   VQ_alu_csrw(csr_addr=10,csr_wdata=0b101000000)
-000025A0   VQ_alu_csrw(csr_addr=11,csr_wdata=0b1)
+00020020   VQ_alu_csrw(csr_addr=0,csr_wdata=0b10000, cfifo_wdata=0, cfifo_en=0)
+00000120   VQ_alu_csrw(csr_addr=2,csr_wdata=0b000000000000000, cfifo_wdata=0, cfifo_en=0)
+004001A0   VQ_alu_csrw(csr_addr=3,csr_wdata=0b1000000000, cfifo_wdata=0, cfifo_en=0)
+002803A0   VQ_alu_csrw(csr_addr=7,csr_wdata=0b101000000, cfifo_wdata=0, cfifo_en=0)
+00002420   VQ_alu_csrw(csr_addr=8,csr_wdata=0b1, cfifo_wdata=0, cfifo_en=0)
+00280520   VQ_alu_csrw(csr_addr=10,csr_wdata=0b101000000, cfifo_wdata=0, cfifo_en=0)
+000025A0   VQ_alu_csrw(csr_addr=11,csr_wdata=0b1, cfifo_wdata=0, cfifo_en=0)
 20000112   NOC_cfg (addr=32,wdata=1,cfifo_wdata=0,cfifo_en=0)
 21000012   NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)
 22000112   NOC_cfg (addr=34,wdata=1,cfifo_wdata=0,cfifo_en=0)
@@ -223,11 +225,11 @@ FFC5A583   lw	a1, -0x4(a1)
 FAB42E23   sw	a1, -0x44(s0)
 FAA42C23   sw	a0, -0x48(s0)
 FAA42A23   sw	a0, -0x4c(s0)
-0040006F   j	0x108 <main+0x108>
+0040006F   j	0x10c <main+0x10c>
 FB442503   lw	a0, -0x4c(s0)
 FE842583   lw	a1, -0x18(s0)
-72B55C63   bge	a0, a1, 0x848 <main+0x848>
-0040006F   j	0x118 <main+0x118>
+72B55C63   bge	a0, a1, 0x84c <main+0x84c>
+0040006F   j	0x11c <main+0x11c>
 FC442503   lw	a0, -0x3c(s0)
 00251593   slli	a1, a0, 0x2
 FD840513   addi	a0, s0, -0x28
@@ -242,8 +244,8 @@ FC442503   lw	a0, -0x3c(s0)
 FFE5F593   andi	a1, a1, -0x2
 40B50533   sub	a0, a0, a1
 00100593   li	a1, 0x1
-02B51463   bne	a0, a1, 0x178 <main+0x178>
-0040006F   j	0x158 <main+0x158>
+02B51463   bne	a0, a1, 0x17c <main+0x17c>
+0040006F   j	0x15c <main+0x15c>
 FC442503   lw	a0, -0x3c(s0)
 00251513   slli	a0, a0, 0x2
 FD840593   addi	a1, s0, -0x28
@@ -251,7 +253,7 @@ FD840593   addi	a1, s0, -0x28
 FFC52503   lw	a0, -0x4(a0)
 00251513   slli	a0, a0, 0x2
 FAA42623   sw	a0, -0x54(s0)
-0040006F   j	0x178 <main+0x178>
+0040006F   j	0x17c <main+0x17c>
 FB042503   lw	a0, -0x50(s0)
 00551513   slli	a0, a0, 0x5
 FAA42423   sw	a0, -0x58(s0)
@@ -297,8 +299,8 @@ FA442783   lw	a5, -0x5c(s0)
 FC442503   lw	a0, -0x3c(s0)
 FE842583   lw	a1, -0x18(s0)
 FFF58593   addi	a1, a1, -0x1
-02B55463   bge	a0, a1, 0x254 <main+0x254>
-0040006F   j	0x234 <main+0x234>
+02B55463   bge	a0, a1, 0x258 <main+0x258>
+0040006F   j	0x238 <main+0x238>
 0000005B   next_fetch_is_npu
 8026041B   hid_load           (we=rd,l1b_mode=cache,sys_gap=385,sub_gap=1,sub_len=128,addr=0,sys_len=4,cfifo_en=1,bar=0)
 08000017   noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)
@@ -306,18 +308,18 @@ FFF58593   addi	a1, a1, -0x1
 FC442503   lw	a0, -0x3c(s0)
 00150513   addi	a0, a0, 0x1
 FCA42223   sw	a0, -0x3c(s0)
-0300006F   j	0x280 <main+0x280>
+0300006F   j	0x284 <main+0x284>
 FC442503   lw	a0, -0x3c(s0)
 FE842583   lw	a1, -0x18(s0)
 FFF58593   addi	a1, a1, -0x1
-00B51E63   bne	a0, a1, 0x27c <main+0x27c>
-0040006F   j	0x268 <main+0x268>
+00B51E63   bne	a0, a1, 0x280 <main+0x280>
+0040006F   j	0x26c <main+0x26c>
 0000005B   next_fetch_is_npu
 8026841B   hid_load           (we=rd,l1b_mode=cache,sys_gap=417,sub_gap=1,sub_len=96,addr=0,sys_len=4,cfifo_en=1,bar=0)
 08000017   noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)
 00000073   next_fetch_is_cpu
-0040006F   j	0x27c <main+0x27c>
 0040006F   j	0x280 <main+0x280>
+0040006F   j	0x284 <main+0x284>
 FB442503   lw	a0, -0x4c(s0)
 00251593   slli	a1, a0, 0x2
 FC840513   addi	a0, s0, -0x38
@@ -325,52 +327,52 @@ FC840513   addi	a0, s0, -0x38
 00052503   lw	a0, 0x0(a0)
 F8A42223   sw	a0, -0x7c(s0)
 FB442503   lw	a0, -0x4c(s0)
-00050C63   beqz	a0, 0x2b4 <main+0x2b4>
-0040006F   j	0x2a4 <main+0x2a4>
+00050C63   beqz	a0, 0x2b8 <main+0x2b8>
+0040006F   j	0x2a8 <main+0x2a8>
 0000005B   next_fetch_is_npu
 0000021B   hid_load_chk_done
 00000073   next_fetch_is_cpu
-0040006F   j	0x2b4 <main+0x2b4>
+0040006F   j	0x2b8 <main+0x2b8>
 00000513   li	a0, 0x0
 F8A42023   sw	a0, -0x80(s0)
-0040006F   j	0x2c0 <main+0x2c0>
+0040006F   j	0x2c4 <main+0x2c4>
 F8042503   lw	a0, -0x80(s0)
 F8442583   lw	a1, -0x7c(s0)
-56B55663   bge	a0, a1, 0x834 <main+0x834>
-0040006F   j	0x2d0 <main+0x2d0>
+56B55663   bge	a0, a1, 0x838 <main+0x838>
+0040006F   j	0x2d4 <main+0x2d4>
 00000513   li	a0, 0x0
 F6A42E23   sw	a0, -0x84(s0)
 00300513   li	a0, 0x3
 F6A42C23   sw	a0, -0x88(s0)
 FB442503   lw	a0, -0x4c(s0)
-02051063   bnez	a0, 0x304 <main+0x304>
-0040006F   j	0x2ec <main+0x2ec>
+02051063   bnez	a0, 0x308 <main+0x308>
+0040006F   j	0x2f0 <main+0x2f0>
 F8042503   lw	a0, -0x80(s0)
-00051A63   bnez	a0, 0x304 <main+0x304>
-0040006F   j	0x2f8 <main+0x2f8>
+00051A63   bnez	a0, 0x308 <main+0x308>
+0040006F   j	0x2fc <main+0x2fc>
 00100513   li	a0, 0x1
 F6A42E23   sw	a0, -0x84(s0)
-0040006F   j	0x304 <main+0x304>
+0040006F   j	0x308 <main+0x308>
 FB442503   lw	a0, -0x4c(s0)
 FE842583   lw	a1, -0x18(s0)
 FFF58593   addi	a1, a1, -0x1
-02B51463   bne	a0, a1, 0x338 <main+0x338>
-0040006F   j	0x318 <main+0x318>
+02B51463   bne	a0, a1, 0x33c <main+0x33c>
+0040006F   j	0x31c <main+0x31c>
 F8042503   lw	a0, -0x80(s0)
 F8442583   lw	a1, -0x7c(s0)
 FFF58593   addi	a1, a1, -0x1
-00B51A63   bne	a0, a1, 0x338 <main+0x338>
-0040006F   j	0x32c <main+0x32c>
+00B51A63   bne	a0, a1, 0x33c <main+0x33c>
+0040006F   j	0x330 <main+0x330>
 00200513   li	a0, 0x2
 F6A42C23   sw	a0, -0x88(s0)
-0040006F   j	0x338 <main+0x338>
+0040006F   j	0x33c <main+0x33c>
 00000513   li	a0, 0x0
 F6A42A23   sw	a0, -0x8c(s0)
-0040006F   j	0x344 <main+0x344>
+0040006F   j	0x348 <main+0x348>
 F7442583   lw	a1, -0x8c(s0)
 00000513   li	a0, 0x0
-4CB54A63   blt	a0, a1, 0x820 <main+0x820>
-0040006F   j	0x354 <main+0x354>
+4CB54A63   blt	a0, a1, 0x824 <main+0x824>
+0040006F   j	0x358 <main+0x358>
 F8042503   lw	a0, -0x80(s0)
 F6A42823   sw	a0, -0x90(s0)
 F7442503   lw	a0, -0x8c(s0)
@@ -381,8 +383,8 @@ FB442503   lw	a0, -0x4c(s0)
 00B505B3   add	a1, a0, a1
 FFE5F593   andi	a1, a1, -0x2
 40B50533   sub	a0, a0, a1
-02050863   beqz	a0, 0x3ac <main+0x3ac>
-0040006F   j	0x384 <main+0x384>
+02050863   beqz	a0, 0x3b0 <main+0x3b0>
+0040006F   j	0x388 <main+0x388>
 FB442503   lw	a0, -0x4c(s0)
 00251513   slli	a0, a0, 0x2
 FD840593   addi	a1, s0, -0x28
@@ -392,23 +394,23 @@ FFC52503   lw	a0, -0x4(a0)
 F8042583   lw	a1, -0x80(s0)
 00B50533   add	a0, a0, a1
 F6A42823   sw	a0, -0x90(s0)
-0040006F   j	0x3ac <main+0x3ac>
+0040006F   j	0x3b0 <main+0x3b0>
 00100513   li	a0, 0x1
 F6A42423   sw	a0, -0x98(s0)
 F7C42503   lw	a0, -0x84(s0)
 F6A42223   sw	a0, -0x9c(s0)
-0040006F   j	0x3c0 <main+0x3c0>
+0040006F   j	0x3c4 <main+0x3c4>
 F6442503   lw	a0, -0x9c(s0)
 F7842583   lw	a1, -0x88(s0)
-3AB55663   bge	a0, a1, 0x774 <main+0x774>
-0040006F   j	0x3d0 <main+0x3d0>
+3AB55663   bge	a0, a1, 0x778 <main+0x778>
+0040006F   j	0x3d4 <main+0x3d4>
 00000513   li	a0, 0x0
 F6A42023   sw	a0, -0xa0(s0)
-0040006F   j	0x3dc <main+0x3dc>
+0040006F   j	0x3e0 <main+0x3e0>
 F6042583   lw	a1, -0xa0(s0)
 00200513   li	a0, 0x2
-36B54E63   blt	a0, a1, 0x760 <main+0x760>
-0040006F   j	0x3ec <main+0x3ec>
+36B54E63   blt	a0, a1, 0x764 <main+0x764>
+0040006F   j	0x3f0 <main+0x3f0>
 02000513   li	a0, 0x20
 F4A42E23   sw	a0, -0xa4(s0)
 00000513   li	a0, 0x0
@@ -435,17 +437,17 @@ FB442503   lw	a0, -0x4c(s0)
 00B505B3   add	a1, a0, a1
 FFE5F593   andi	a1, a1, -0x2
 40B50533   sub	a0, a0, a1
-06051663   bnez	a0, 0x4c0 <main+0x4c0>
-0040006F   j	0x45c <main+0x45c>
+06051663   bnez	a0, 0x4c4 <main+0x4c4>
+0040006F   j	0x460 <main+0x460>
 FB442503   lw	a0, -0x4c(s0)
-06050063   beqz	a0, 0x4c0 <main+0x4c0>
-0040006F   j	0x468 <main+0x468>
+06050063   beqz	a0, 0x4c4 <main+0x4c4>
+0040006F   j	0x46c <main+0x46c>
 F8042503   lw	a0, -0x80(s0)
-04051A63   bnez	a0, 0x4c0 <main+0x4c0>
-0040006F   j	0x474 <main+0x474>
+04051A63   bnez	a0, 0x4c4 <main+0x4c4>
+0040006F   j	0x478 <main+0x478>
 F6442503   lw	a0, -0x9c(s0)
-04051463   bnez	a0, 0x4c0 <main+0x4c0>
-0040006F   j	0x480 <main+0x480>
+04051463   bnez	a0, 0x4c4 <main+0x4c4>
+0040006F   j	0x484 <main+0x484>
 FB442503   lw	a0, -0x4c(s0)
 00251513   slli	a0, a0, 0x2
 FD840593   addi	a1, s0, -0x28
@@ -461,13 +463,13 @@ FB442503   lw	a0, -0x4c(s0)
 00B50533   add	a0, a0, a1
 FFC52503   lw	a0, -0x4(a0)
 F4A42423   sw	a0, -0xb8(s0)
-0040006F   j	0x4c0 <main+0x4c0>
+0040006F   j	0x4c4 <main+0x4c4>
 F7442503   lw	a0, -0x8c(s0)
-02051C63   bnez	a0, 0x4fc <main+0x4fc>
-0040006F   j	0x4cc <main+0x4cc>
+02051C63   bnez	a0, 0x500 <main+0x500>
+0040006F   j	0x4d0 <main+0x4d0>
 F6042503   lw	a0, -0xa0(s0)
-02051663   bnez	a0, 0x4fc <main+0x4fc>
-0040006F   j	0x4d8 <main+0x4d8>
+02051663   bnez	a0, 0x500 <main+0x500>
+0040006F   j	0x4dc <main+0x4dc>
 01F00513   li	a0, 0x1f
 F4A42E23   sw	a0, -0xa4(s0)
 00100513   li	a0, 0x1
@@ -476,28 +478,28 @@ F4A42C23   sw	a0, -0xa8(s0)
 F4C42503   lw	a0, -0xb4(s0)
 00150513   addi	a0, a0, 0x1
 F4A42623   sw	a0, -0xb4(s0)
-0040006F   j	0x4fc <main+0x4fc>
+0040006F   j	0x500 <main+0x500>
 F7442503   lw	a0, -0x8c(s0)
-02051A63   bnez	a0, 0x534 <main+0x534>
-0040006F   j	0x508 <main+0x508>
+02051A63   bnez	a0, 0x538 <main+0x538>
+0040006F   j	0x50c <main+0x50c>
 F6042503   lw	a0, -0xa0(s0)
 00200593   li	a1, 0x2
-02B51263   bne	a0, a1, 0x534 <main+0x534>
-0040006F   j	0x518 <main+0x518>
+02B51263   bne	a0, a1, 0x538 <main+0x538>
+0040006F   j	0x51c <main+0x51c>
 01F00513   li	a0, 0x1f
 F4A42E23   sw	a0, -0xa4(s0)
 00100513   li	a0, 0x1
 F4A42A23   sw	a0, -0xac(s0)
 00000513   li	a0, 0x0
 F4A42C23   sw	a0, -0xa8(s0)
-0040006F   j	0x534 <main+0x534>
+0040006F   j	0x538 <main+0x538>
 00000513   li	a0, 0x0
 F4A42223   sw	a0, -0xbc(s0)
-0040006F   j	0x540 <main+0x540>
+0040006F   j	0x544 <main+0x544>
 F4442583   lw	a1, -0xbc(s0)
 00300513   li	a0, 0x3
-20B54263   blt	a0, a1, 0x74c <main+0x74c>
-0040006F   j	0x550 <main+0x550>
+20B54263   blt	a0, a1, 0x750 <main+0x750>
+0040006F   j	0x554 <main+0x554>
 00300513   li	a0, 0x3
 F4A42023   sw	a0, -0xc0(s0)
 F5C42503   lw	a0, -0xa4(s0)
@@ -583,8 +585,8 @@ F1C42703   lw	a4, -0xe4(s0)
 40D0105B   storec	a3, 0x1
 40E0105B   storec	a4, 0x1
 FC042503   lw	a0, -0x40(s0)
-02B51863   bne	a0, a1, 0x6d4 <main+0x6d4>
-0040006F   j	0x6ac <main+0x6ac>
+02B51863   bne	a0, a1, 0x6d8 <main+0x6d8>
+0040006F   j	0x6b0 <main+0x6b0>
 00000513   li	a0, 0x0
 FCA42023   sw	a0, -0x40(s0)
 0000005B   next_fetch_is_npu
@@ -594,15 +596,15 @@ FCA42023   sw	a0, -0x40(s0)
 28000021   VQ_NOP             (bar=2,nop_cycle_num=0)
 80000FA1   conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
 00000073   next_fetch_is_cpu
-0680006F   j	0x738 <main+0x738>
+0680006F   j	0x73c <main+0x73c>
 F4442503   lw	a0, -0xbc(s0)
 01F55593   srli	a1, a0, 0x1f
 00B505B3   add	a1, a0, a1
 FFE5F593   andi	a1, a1, -0x2
 40B50533   sub	a0, a0, a1
 00100593   li	a1, 0x1
-02B51463   bne	a0, a1, 0x714 <main+0x714>
-0040006F   j	0x6f4 <main+0x6f4>
+02B51463   bne	a0, a1, 0x718 <main+0x718>
+0040006F   j	0x6f8 <main+0x6f8>
 0000005B   next_fetch_is_npu
 A0080515   npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=39,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=2)
 B0080415   npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=16,addr=512,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=3)
@@ -610,7 +612,7 @@ B0000FA1   conv3d_start       (first_sub_flag=0,result_output_flag=0, start_inde
 48000021   VQ_NOP             (bar=4,nop_cycle_num=0)
 80000FA1   conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
 00000073   next_fetch_is_cpu
-0240006F   j	0x734 <main+0x734>
+0240006F   j	0x738 <main+0x738>
 0000005B   next_fetch_is_npu
 C0080515   npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=3, addr=42,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=4)
 90080415   npu_mv             (we=rd,l1b_mode=cache,sys_gap=1,sub_gap=1,sub_len=16,addr=1024,sys_len=1,mv_last_dis=0,cfifo_en=1,bar=1)
@@ -618,23 +620,23 @@ C0080515   npu_mv             (we=rd,l1b_mode=norm ,sys_gap=1,sub_gap=1,sub_len=
 28000021   VQ_NOP             (bar=2,nop_cycle_num=0)
 80000FA1   conv3d_start       (first_sub_flag=0,result_output_flag=0, start_index=0,end_index=31,weight_16ch_sel=0, tcache_stride=0,tcache_offset=0,bc_mode=0,bc_len=31,rgba_mode=0,rgba_stride=0,rgba_shift=0,hl_op=1,bc_keep_2cycle_en=0,bc_group=0,pad0_sel=head,pad0_len=1,run_cycle_num=31,cfifo_en=1,bar=0)
 00000073   next_fetch_is_cpu
-0040006F   j	0x734 <main+0x734>
 0040006F   j	0x738 <main+0x738>
 0040006F   j	0x73c <main+0x73c>
+0040006F   j	0x740 <main+0x740>
 F4442503   lw	a0, -0xbc(s0)
 00150513   addi	a0, a0, 0x1
 F4A42223   sw	a0, -0xbc(s0)
-DF9FF06F   j	0x540 <main+0x540>
-0040006F   j	0x750 <main+0x750>
+DF9FF06F   j	0x544 <main+0x544>
+0040006F   j	0x754 <main+0x754>
 F6042503   lw	a0, -0xa0(s0)
 00150513   addi	a0, a0, 0x1
 F6A42023   sw	a0, -0xa0(s0)
-C81FF06F   j	0x3dc <main+0x3dc>
-0040006F   j	0x764 <main+0x764>
+C81FF06F   j	0x3e0 <main+0x3e0>
+0040006F   j	0x768 <main+0x768>
 F6442503   lw	a0, -0x9c(s0)
 00150513   addi	a0, a0, 0x1
 F6A42223   sw	a0, -0x9c(s0)
-C51FF06F   j	0x3c0 <main+0x3c0>
+C51FF06F   j	0x3c4 <main+0x3c4>
 FB842503   lw	a0, -0x48(s0)
 00551513   slli	a0, a0, 0x5
 F0A42C23   sw	a0, -0xe8(s0)
@@ -673,21 +675,21 @@ A5000012   NOC_cfg (addr=37,wdata=0,cfifo_wdata=0,cfifo_en=1)
 FB842503   lw	a0, -0x48(s0)
 00150513   addi	a0, a0, 0x1
 FAA42C23   sw	a0, -0x48(s0)
-0040006F   j	0x810 <main+0x810>
+0040006F   j	0x814 <main+0x814>
 F7442503   lw	a0, -0x8c(s0)
 00150513   addi	a0, a0, 0x1
 F6A42A23   sw	a0, -0x8c(s0)
-B29FF06F   j	0x344 <main+0x344>
-0040006F   j	0x824 <main+0x824>
+B29FF06F   j	0x348 <main+0x348>
+0040006F   j	0x828 <main+0x828>
 F8042503   lw	a0, -0x80(s0)
 00150513   addi	a0, a0, 0x1
 F8A42023   sw	a0, -0x80(s0)
-A91FF06F   j	0x2c0 <main+0x2c0>
-0040006F   j	0x838 <main+0x838>
+A91FF06F   j	0x2c4 <main+0x2c4>
+0040006F   j	0x83c <main+0x83c>
 FB442503   lw	a0, -0x4c(s0)
 00150513   addi	a0, a0, 0x1
 FAA42A23   sw	a0, -0x4c(s0)
-8C5FF06F   j	0x108 <main+0x108>
+8C5FF06F   j	0x10c <main+0x10c>
 0000005B   next_fetch_is_npu
 08000017   noc_req (comd_type=4, bar=0,cfifo_wdata=0,cfifo_en=0)
 00000019   MQ_NOP(bar=0,nop_cycle_num=0)
