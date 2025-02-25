@@ -1,0 +1,14 @@
+1
+core write 写到本地，四层loop，然后再dma 
+
+2
+上下左右全补一行 都补0
+pad mode
+ping length 与pad的关系
+（1）一种从本地ram读的时候加pad 可以2种
+（2）从外部读只能补0  pinglength 是不带pad的有效总数据长度
+
+npu_load 中是带pad的总数 保持他的数不变，然后npu cfg 减小
+
+（3）从其他节点下是2种都可
+
