@@ -177,8 +177,34 @@ def main():
     merge_inst = args.output[0]  
     hex_file   = args.output[1]  
     
+     # ---------------------------- 地址提取逻辑 ----------------------------
+    with open(param1, 'r') as f_param1:
+        lines = f_param1.readlines()
+        if len(lines) < 26:
+            raise ValueError(f"{param1} 文件不足26行")
+        
+        line_26 = lines[25].strip()
+        if not line_26:
+            raise ValueError(f"{param1} 第26行为空")
+        
+        try:
+            value = int(line_26, 16)
+        except ValueError:
+            raise ValueError(f"{param1} 第26行内容 '{line_26}' 不是有效的十六进制数值")
+        
+        new_address = value - 0x80000000
+        if new_address < 0:
+            raise ValueError(f"计算后的地址 0x{new_address:X} 为负数，无效")
+        
+        address_marker = f"@{new_address:08X}"
+        # 打印详细信息
+        print(f"提取的地址分界符: {address_marker}")
+        print(f"计算过程: 0x{value:X} (第26行值) - 0x80000000 = 0x{new_address:X}")
+    # -------------------------------------------------------------------
+    
     # 分界符列表
-    address_list = ["@00004000",  "@00020000"]  # "@00002F48" "@00008000"
+    # address_list = ["@00004000",  "@00020000"]  # "@00002F48" "@00008000"
+    address_list = [address_marker,  "@00020000"]  # "@00002F48" "@00008000"
     
     # 拼接文件
     append_files_with_marker(files_to_merge, address_list, merge_inst)

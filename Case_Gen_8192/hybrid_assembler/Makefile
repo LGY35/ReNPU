@@ -20,8 +20,9 @@ $(OUT_DIR)/%.txt: $(INSTR_DIR)/%.s
 	./hybrid_assembler_v4.6 -i $< -o $@ -t $(OUT_TYPE) -mv 2
 
 ## 第一次定义的时候，这里是从空的文件夹下面提取的，所以这里不会运行
-EX_SRC := $(OBJECTS) # 确保 EX_SRC 使用最新的 OBJECTS
-# EX_SRC += $(wildcard $(OUT_DIR)/case*.txt) 
+EX_SRC := $(wildcard $(OUT_DIR)/*.out)
+
+# 第三个参数是文件列表
 OUT_EXTRACT := $(patsubst $(OUT_DIR)/%.txt, $(OUT_EXTRACT_DIR)/%_extract.txt, $(EX_SRC))
 
 $(OUT_EXTRACT_DIR)/%_extract.txt: $(OUT_DIR)/%.txt
@@ -30,7 +31,7 @@ $(OUT_EXTRACT_DIR)/%_extract.txt: $(OUT_DIR)/%.txt
 
 
 # all:  $(OBJECTS) $(OUT_EXTRACT) 
-all: $(OBJECTS)  $(OUT_EXTRACT)
+all: $(OUT_EXTRACT)
 
 out: $(OBJECTS) 
 	
