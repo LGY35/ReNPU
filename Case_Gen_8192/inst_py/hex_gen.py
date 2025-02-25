@@ -178,7 +178,7 @@ def main():
     hex_file   = args.output[1]  
     
     # 分界符列表
-    address_list = ["@00002000",  "@00020000"]  # "@00002F48" "@00008000"
+    address_list = ["@00004000",  "@00020000"]  # "@00002F48" "@00008000"
     
     # 拼接文件
     append_files_with_marker(files_to_merge, address_list, merge_inst)
