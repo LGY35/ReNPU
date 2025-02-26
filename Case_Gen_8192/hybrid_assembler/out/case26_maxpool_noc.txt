@@ -315,7 +315,7 @@ F2A42023   sw	a0, -0xe0(s0)
 F0A42E23   sw	a0, -0xe4(s0)
 F2842503   lw	a0, -0xd8(s0)
 00551593   slli	a1, a0, 0x5
-00100513   li	a0, 0x1
+02100513   li	a0, 0x21
 40B50533   sub	a0, a0, a1
 F0A42C23   sw	a0, -0xe8(s0)
 F8842503   lw	a0, -0x78(s0)
@@ -442,7 +442,7 @@ F8842583   lw	a1, -0x78(s0)
 00002420   VQ_alu_csrw(csr_addr=8,csr_wdata=0b1, cfifo_wdata=0, cfifo_en=0)
 84040023   VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=1,bar=0)
 00840520   VQ_alu_csrw(csr_addr=10,csr_wdata=0b100_00100000, cfifo_wdata=0, cfifo_en=0)
-000025A0   VQ_alu_csrw(csr_addr=11,csr_wdata=0b1, cfifo_wdata=0, cfifo_en=0)
+000025A0   VQ_alu_csrw(csr_addr=11,csr_wdata=0b1, cfifo_wdata=0, cfifo_en=0
 88144423   VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=136,wait_type=0,cfifo_en=1,bar=0)
 00000073   next_fetch_is_cpu
 0040006F   j	0x700 <main+0x700>
