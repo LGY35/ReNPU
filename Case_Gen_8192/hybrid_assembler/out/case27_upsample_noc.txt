@@ -67,3 +67,180 @@ FCB42423   sw	a1, -0x38(s0)
 FCB42223   sw	a1, -0x3c(s0)
 04000593   li	a1, 0x40
 FCB42023   sw	a1, -0x40(s0)
+FAB42E23   sw	a1, -0x44(s0)
+FC042583   lw	a1, -0x40(s0)
+FAB42C23   sw	a1, -0x48(s0)
+FBC42583   lw	a1, -0x44(s0)
+FAB42A23   sw	a1, -0x4c(s0)
+FAA42823   sw	a0, -0x50(s0)
+0040006F   j	0x130 <main+0x130>
+FB042503   lw	a0, -0x50(s0)
+FB842583   lw	a1, -0x48(s0)
+41F5D613   srai	a2, a1, 0x1f
+01D65613   srli	a2, a2, 0x1d
+00C585B3   add	a1, a1, a2
+4035D593   srai	a1, a1, 0x3
+28B55663   bge	a0, a1, 0x3d4 <main+0x3d4>
+0040006F   j	0x150 <main+0x150>
+00000513   li	a0, 0x0
+FAA42623   sw	a0, -0x54(s0)
+0040006F   j	0x15c <main+0x15c>
+FAC42583   lw	a1, -0x54(s0)
+00700513   li	a0, 0x7
+16B54A63   blt	a0, a1, 0x2d8 <main+0x2d8>
+0040006F   j	0x16c <main+0x16c>
+00000513   li	a0, 0x0
+FAA42423   sw	a0, -0x58(s0)
+0040006F   j	0x178 <main+0x178>
+FA842503   lw	a0, -0x58(s0)
+FB442583   lw	a1, -0x4c(s0)
+41F5D613   srai	a2, a1, 0x1f
+01E65613   srli	a2, a2, 0x1e
+00C585B3   add	a1, a1, a2
+4025D593   srai	a1, a1, 0x2
+12B55A63   bge	a0, a1, 0x2c4 <main+0x2c4>
+0040006F   j	0x198 <main+0x198>
+00000513   li	a0, 0x0
+FAA42223   sw	a0, -0x5c(s0)
+0040006F   j	0x1a4 <main+0x1a4>
+FA442583   lw	a1, -0x5c(s0)
+00300513   li	a0, 0x3
+0AB54863   blt	a0, a1, 0x25c <main+0x25c>
+0040006F   j	0x1b4 <main+0x1b4>
+FB042503   lw	a0, -0x50(s0)
+00351513   slli	a0, a0, 0x3
+FAC42583   lw	a1, -0x54(s0)
+00B50533   add	a0, a0, a1
+FAA42023   sw	a0, -0x60(s0)
+FA842503   lw	a0, -0x58(s0)
+00251513   slli	a0, a0, 0x2
+FA442583   lw	a1, -0x5c(s0)
+00B50533   add	a0, a0, a1
+F8A42E23   sw	a0, -0x64(s0)
+FA042503   lw	a0, -0x60(s0)
+FC842583   lw	a1, -0x38(s0)
+02B50533   mul	a0, a0, a1
+FC042583   lw	a1, -0x40(s0)
+02B54533   div	a0, a0, a1
+F8A42C23   sw	a0, -0x68(s0)
+F9C42503   lw	a0, -0x64(s0)
+FC442583   lw	a1, -0x3c(s0)
+02B50533   mul	a0, a0, a1
+FBC42583   lw	a1, -0x44(s0)
+02B54533   div	a0, a0, a1
+F8A42A23   sw	a0, -0x6c(s0)
+F9842503   lw	a0, -0x68(s0)
+00551513   slli	a0, a0, 0x5
+F9442583   lw	a1, -0x6c(s0)
+00B50533   add	a0, a0, a1
+F8A42823   sw	a0, -0x70(s0)
+F9042503   lw	a0, -0x70(s0)
+C0A0105B   storec	a0, 0x3
+FAC42503   lw	a0, -0x54(s0)
+FBC42583   lw	a1, -0x44(s0)
+02B50533   mul	a0, a0, a1
+F9C42583   lw	a1, -0x64(s0)
+00B50533   add	a0, a0, a1
+F8A42623   sw	a0, -0x74(s0)
+F8C42503   lw	a0, -0x74(s0)
+C0A0105B   storec	a0, 0x3
+0040006F   j	0x24c <main+0x24c>
+FA442503   lw	a0, -0x5c(s0)
+00150513   addi	a0, a0, 0x1
+FAA42223   sw	a0, -0x5c(s0)
+F4DFF06F   j	0x1a4 <main+0x1a4>
+0000005B   next_fetch_is_npu
+00220040   cub_alu_insn_fill(addr=0,num=17)
+000000C4   cub.lci x1
+000002C4   cub.lci x5
+00000144   cub.lci x2
+00000344   cub.lci x6
+000001C4   cub.lci x3
+000003C4   cub.lci x7
+00000244   cub.lci x4
+00000444   cub.lci x8
+0000A4CD   cub.lw.l1b x9, 0(x1)
+0001254D   cub.lw.l1b x10, 0(x2)
+0001A5CD   cub.lw.l1b x11, 0(x3)
+0002264D   cub.lw.l1b x12, 0(x4)
+0092C04F   cub.sb.scache x9, 0(x5)
+00A3404F   cub.sb.scache x10, 0(x6)
+00B3C04F   cub.sb.scache x11, 0(x7)
+00C4404F   cub.sb.scache x12, 0(x8)
+00001044   cub.event_finish
+00000023   VQ_alu_event_call(event_addr=0,bar=0)
+00000073   next_fetch_is_cpu
+0040006F   j	0x2b4 <main+0x2b4>
+FA842503   lw	a0, -0x58(s0)
+00150513   addi	a0, a0, 0x1
+FAA42423   sw	a0, -0x58(s0)
+EB9FF06F   j	0x178 <main+0x178>
+0040006F   j	0x2c8 <main+0x2c8>
+FAC42503   lw	a0, -0x54(s0)
+00150513   addi	a0, a0, 0x1
+FAA42623   sw	a0, -0x54(s0)
+E89FF06F   j	0x15c <main+0x15c>
+FEC42503   lw	a0, -0x14(s0)
+00651513   slli	a0, a0, 0x6
+FF042583   lw	a1, -0x10(s0)
+FB842603   lw	a2, -0x48(s0)
+02C585B3   mul	a1, a1, a2
+FB442603   lw	a2, -0x4c(s0)
+02C585B3   mul	a1, a1, a2
+00B50533   add	a0, a0, a1
+F8A42423   sw	a0, -0x78(s0)
+00000513   li	a0, 0x0
+F8A42223   sw	a0, -0x7c(s0)
+F8842503   lw	a0, -0x78(s0)
+00F51513   slli	a0, a0, 0xf
+01C55513   srli	a0, a0, 0x1c
+F8A42023   sw	a0, -0x80(s0)
+F8842503   lw	a0, -0x78(s0)
+01351513   slli	a0, a0, 0x13
+01355513   srli	a0, a0, 0x13
+F6A42E23   sw	a0, -0x84(s0)
+F8042503   lw	a0, -0x80(s0)
+F7C42583   lw	a1, -0x84(s0)
+F8442603   lw	a2, -0x7c(s0)
+00A0105B   storec	a0, 0x0
+00B0105B   storec	a1, 0x0
+40C0105B   storec	a2, 0x1
+0000005B   next_fetch_is_npu
+00020020   VQ_alu_csrw(csr_addr=0,csr_wdata=0b10000,cfifo_wdata=0,cfifo_en=0)
+02040520   VQ_alu_csrw(csr_addr=10,csr_wdata=0b10000_00100000,cfifo_wdata=0,cfifo_en=0)
+000025A0   VQ_alu_csrw(csr_addr=11,csr_wdata=0b1,cfifo_wdata=0,cfifo_en=0)
+00002620   VQ_alu_csrw(csr_addr=12,csr_wdata=0b1,cfifo_wdata=0,cfifo_en=0)
+20000012   NOC_cfg (addr=32,wdata=0,cfifo_wdata=0,cfifo_en=0)
+21000012   NOC_cfg (addr=33,wdata=0,cfifo_wdata=0,cfifo_en=0)
+22000012   NOC_cfg (addr=34,wdata=0,cfifo_wdata=0,cfifo_en=0)
+23000012   NOC_cfg (addr=35,wdata=0,cfifo_wdata=0,cfifo_en=0)
+A4000012   NOC_cfg (addr=36,wdata=0,cfifo_wdata=0,cfifo_en=1)
+A5000012   NOC_cfg (addr=37,wdata=0,cfifo_wdata=0,cfifo_en=1)
+2A000112   NOC_cfg (addr=42,wdata=1,cfifo_wdata=0,cfifo_en=0)
+2E01FF12   NOC_cfg (addr=46,wdata=511,cfifo_wdata=0,cfifo_en=0)
+2F000012   NOC_cfg (addr=47,wdata=0,cfifo_wdata=0,cfifo_en=0)
+3001FF12   NOC_cfg (addr=48,wdata=511,cfifo_wdata=0,cfifo_en=0)
+00000013   npu_store(bar =0)
+881D06A3   VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=525,wait_type=1,cfifo_en=1,bar=0)
+08000017   noc_req (comd_type=4, bar=0)
+00000019   MQ_NOP(bar=0,nop_cycle_num=0)
+00000019   MQ_NOP(bar=0,nop_cycle_num=0)
+00000019   MQ_NOP(bar=0,nop_cycle_num=0)
+00000019   MQ_NOP(bar=0,nop_cycle_num=0)
+00000019   MQ_NOP(bar=0,nop_cycle_num=0)
+00000019   MQ_NOP(bar=0,nop_cycle_num=0)
+00000019   MQ_NOP(bar=0,nop_cycle_num=0)
+00000019   MQ_NOP(bar=0,nop_cycle_num=0)
+00000019   MQ_NOP(bar=0,nop_cycle_num=0)
+00000019   MQ_NOP(bar=0,nop_cycle_num=0)
+00000019   MQ_NOP(bar=0,nop_cycle_num=0)
+00000073   next_fetch_is_cpu
+FEC42503   lw	a0, -0x14(s0)
+00850513   addi	a0, a0, 0x8
+FEA42623   sw	a0, -0x14(s0)
+0040006F   j	0x3c4 <main+0x3c4>
+FB042503   lw	a0, -0x50(s0)
+00150513   addi	a0, a0, 0x1
+FAA42823   sw	a0, -0x50(s0)
+D61FF06F   j	0x130 <main+0x130>
+10500073   wfi

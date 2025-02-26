@@ -72,8 +72,9 @@ hex_gen:
 #	python3 hex_gen.py -i ./out/case993_idma.txt ./out/case993_bottleneck_noccore_1cores_4.1_ins_noc.txt    		 ./data/bottleneck_combined_input_data.txt 	-o ./hex_gen/case993_merge_inst.txt ./hex_gen/case993_out_hex.txt
 #	python3 hex_gen.py -i ./out/case994_idma.txt ./out/case994_bottleneck_noccore_1cores_4.1_ins_noc.txt    		 ./data/bottleneck_combined_input_data.txt 	-o ./hex_gen/case994_merge_inst.txt ./hex_gen/case994_out_hex.txt
 #	python3 hex_gen.py -i ./out/case995_idma.txt ./out/case995_2layerconv_noc.txt    		 						 ./data/2layerconv.txt 	-o ./hex_gen/case995_merge_inst.txt ./hex_gen/case995_out_hex.txt
-	python3 hex_gen.py -i ./out/case24_idma.txt ./out/case24_sparsev3_noc.txt    	 ./data/sparse_22.txt 							-o ./hex_gen/case24_merge_inst.txt ./hex_gen/case24_out_hex.txt
+#   python3 hex_gen.py -i ./out/case24_idma.txt ./out/case24_sparsev3_noc.txt    	 ./data/sparse_22.txt 							-o ./hex_gen/case24_merge_inst.txt ./hex_gen/case24_out_hex.txt
 	python3 hex_gen.py -i ./out/case26_idma.txt ./out/case26_maxpool_noc.txt    		 						 ./data/yolo5lite_combined_input_1.0.txt 	-o ./hex_gen/case26_merge_inst.txt ./hex_gen/case26_out_hex.txt
+	python3 hex_gen.py -i ./out/case27_idma.txt ./out/case27_upsample_noc.txt    		 						 ./data/yolo5lite_combined_input_1.0.txt 	-o ./hex_gen/case27_merge_inst.txt ./hex_gen/case27_out_hex.txt
 clean:
 	rm -rf $(HEX_GEN_DIR)
 	rm -rf $(OUT_DIR)
