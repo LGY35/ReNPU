@@ -442,7 +442,7 @@ EF842583   lw	a1, -0x108(s0)
 84040023   VQ_scache_wr_en(addr=0,size=byte,wr_cycle_num=0,wait_type=0,cfifo_en=1,bar=0)
 00840520   VQ_alu_csrw(csr_addr=10,csr_wdata=0b100_00100000, cfifo_wdata=0, cfifo_en=0)
 000025A0   VQ_alu_csrw(csr_addr=11,csr_wdata=0b1, cfifo_wdata=0, cfifo_en=0)
-88144423   VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=136,wait_type=0,cfifo_en=1,bar=0)
+881C4423   VQ_scache_rd_en(addr=0,size=byte,sign_ext=1,rd_cycle_num=136,wait_type=1,cfifo_en=1,bar=0)
 00000073   next_fetch_is_cpu
 0040006F   j	0x6fc <main+0x6fc>
 F7C42503   lw	a0, -0x84(s0)
