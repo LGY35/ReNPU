@@ -162,10 +162,10 @@ F4DFF06F   j	0x1ac <main+0x1ac>
 000003C4   cub.lci x7
 00000244   cub.lci x4
 00000444   cub.lci x8
-0000A4CD   cub.lw.l1b x9, 0(x1)
-0001254D   cub.lw.l1b x10, 0(x2)
-0001A5CD   cub.lw.l1b x11, 0(x3)
-0002264D   cub.lw.l1b x12, 0(x4)
+000084CD   cub.lb.l1b x9, 0(x1)
+0001054D   cub.lb.l1b x10, 0(x2)
+000185CD   cub.lb.l1b x11, 0(x3)
+0002064D   cub.lb.l1b x12, 0(x4)
 00022044   cub.nop 4
 0092C04F   cub.sb.scache x9, 0(x5)
 00A3404F   cub.sb.scache x10, 0(x6)
